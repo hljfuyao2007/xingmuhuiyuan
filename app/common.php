@@ -479,3 +479,34 @@ if (!function_exists('make_ico')) {
         imagedestroy($tmp);
     }
 }
+
+if (!function_exists('rand_string')) {
+    /**
+     * 随机产生数字与字母混合且小写的字符串(唯一)
+     * @param int $len 数值长度,默认32位
+     * @param bool $lower 是否小写,否则大写
+     * @return string
+     */
+    function rand_string(int $len = 32, bool $lower = true): string
+    {
+        $string = mb_substr(md5(uniqid(rand(), true)), 0, $len, 'utf-8');
+        return $lower ? $string : mb_strtoupper($string, 'utf-8');
+    }
+}
+
+
+if (!function_exists('generateInviteCode')) {
+    /**
+     * 生成不重复的分销邀请码
+     * @return string
+     */
+    function generateInviteCode(): string
+    {
+        $code = rand_string(6, false);
+
+        \app\common\model\Member::where('invite_code', $code)
+            ->value('member_id', '') && generateInviteCode();
+
+        return $code;
+    }
+}

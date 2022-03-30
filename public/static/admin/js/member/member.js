@@ -18,6 +18,7 @@ define(['jquery', 'utils'], function ($, utils) {
                     {field: 'member_id', maxWidth: 60, search: false, title: '会员ID'},
                     {field: 'nickname', minWidth: 100, title: '昵称'},
                     {field: 'phone', minWidth: 100, title: '手机号'},
+                    {field: 'invite_code', minWidth: 100, title: '邀请码'},
                     {field: 'email', minWidth: 100, title: '邮箱'},
                     {field: 'avatar', maxWidth: 60, title: '头像', search: false, templet: utils.table.image},
                     {
@@ -29,8 +30,6 @@ define(['jquery', 'utils'], function ($, utils) {
                         templet: utils.table.switch
                     },
                     {field: 'register_time', minWidth: 120, search: 'range', title: '注册时间'},
-                    {field: 'register_ip', minWidth: 120, search: false, title: '注册IP'},
-                    {field: 'login_ip', minWidth: 120, search: false, title: '登入IP'},
                     {
                         width: 100,
                         title: '操作',

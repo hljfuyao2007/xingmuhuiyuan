@@ -12,6 +12,7 @@ namespace app\admin\controller\member;
 
 use app\admin\model\Member as MemberModel;
 use app\common\controller\AdminController;
+use app\common\model\MemberTree;
 
 class Member extends AdminController
 {
@@ -51,9 +52,15 @@ class Member extends AdminController
 
             $member->valid($param, 'member');
 
-            $member->is_exist($param['phone'], '用户存在, 不能重复创建');
+            $this->db->startTrans();
+            $data = $member::create($param);
 
-            $member::create($param);
+            MemberTree::create([
+                'member_id' => $data['member_id'],
+                'parent_id' => 0,
+                'level'     => 0
+            ]);
+            $this->db->commit();
 
             return $this->success([], '添加成功', 1);
         }

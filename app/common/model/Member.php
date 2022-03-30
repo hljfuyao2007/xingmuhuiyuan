@@ -47,6 +47,7 @@ class Member extends BasicModel
         $model->register_ip = ip2long(Request::ip());
         $model->login_time = time();
         $model->login_ip = ip2long(Request::ip());
+        $model->invite_code = generateInviteCode();
     }
 
     /**
