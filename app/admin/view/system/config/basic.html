@@ -1,0 +1,38 @@
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <blockquote class="layui-elem-quote layui-text">
+            <div style="font-size: 15px; font-weight: bold;">
+                <i class="layui-icon" style="margin-right: 6px; color: #FFB800;">&#xe702;</i>操作提示
+            </div>
+            <ul>
+                <li>平台相关信息设置，请谨慎填写信息</li>
+                <li>LOGO图标尺寸建议 <font color="red">100 * 100，PNG格式</font></li>
+            </ul>
+        </blockquote>
+
+        <div class="layui-tab layui-tab-brief">
+            <ul class="layui-tab-title">
+                <li class="layui-this">网站设置</li>
+                {if env('app_debug')}
+                <li>上传配置</li>
+                <li>短信配置</li>
+                {/if}
+            </ul>
+
+            <div class="layui-tab-content">
+                <div class="layui-tab-item layui-show">
+                    {include file="system/config/site" /}
+                </div>
+
+                <div class="layui-tab-item">
+                    {include file="system/config/upload" /}
+                </div>
+
+                <div class="layui-tab-item">
+                    {include file="system/config/sms" /}
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

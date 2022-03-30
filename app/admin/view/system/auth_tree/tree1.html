@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>编辑权限</title>
+    <link rel="stylesheet" href="__PLUG__/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="__PLUG__/layui-v2.5.6/css/layui.css">
+    <style>
+        .layui-elem-quote {
+            border-left: 5px solid #1e9fff;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <el-row>
+        <el-col :span="20" :offset="2">
+            <blockquote class="layui-elem-quote layui-text" style="margin-bottom: 30px;">
+                <div style="font-size: 15px; font-weight: bold;">
+                    <i class="layui-icon" style="margin-right: 6px; color: #FFB800;">&#xe702;</i>操作提示
+                </div>
+                <ul>
+                    <li>查看或编辑用户组权限。</li>
+                </ul>
+            </blockquote>
+            <el-col :span="16" :offset="4">
+                <el-tree
+                        ref="tree"
+                        class="tree"
+                        :data="data"
+                        show-checkbox
+                        node-key="id"
+                        :props="defaultProps"
+                        :default-checked-keys="checked_arr"
+                        highlight-current
+                        default-expand-all
+                        @check-change="checkChange"
+                >
+                </el-tree>
+            </el-col>
+        </el-col>
+    </el-row>
+    <div class="layui-form-item" style="text-align: center; margin-top: 30px;">
+        <button type="button" class="layui-btn layui-btn-normal layui-btn-sm"
+                data-refresh="false" @click="save">确认
+        </button>
+        <button type="button" @click="reset" class="layui-btn layui-btn-primary layui-btn-sm">重置</button>
+    </div>
+</div>
+</body>
+<script src="__PLUG__/vue-2.6.10/vue.js"></script>
+<script src="__PLUG__/element-ui/lib/index.js"></script>
+<script src="__PLUG__/jquery-3.4.1/jquery-3.4.1.min.js"></script>
+<script src="__PLUG__/layui-v2.5.6/layui.all.js"></script>
+<script>
+    var app = new Vue({
+        el: '#app',
+        data() {
+            return {
+                data: [],
+                checked_arr: [],
+                defaultProps: {
+                    children: 'child',
+                    label: 'title'
+                }
+            }
+        },
+        methods: {
+            __init() {
+                let that = this,
+                    loadIndex = 0
+
+                $.ajax({
+                    type: 'post',
+                    url: '/admin/auth_tree/tree',
+                    data: {role_id: this.getParam('role_id')},
+                    beforeSend: function () {
+                        loadIndex = layer.msg('加载中', {icon: 16, scrollbar: false, shade: [0.02, '#000'], time: 0})
+                    },
+                    success: function (res) {
+                        if (res.code === 0) {
+                            that.data = res.data.data
+                            that.checked_arr = res.data.checked
+                            return
+                        }
+                        layer.msg(res.msg, {icon: 2, time: 2000}, function () {
+                            let index = parent.layer.getFrameIndex(window.name)
+                            parent.layer.close(index);
+                        })
+                    },
+                    complete: function () {
+                        layer.close(loadIndex)
+                    }
+                })
+            },
+            checkChange(data, checked, indeterminate) {
+                let anode = this.$refs.tree.getNode(data)
+                !anode.checked ? this.findChildren(anode.parent) : ''
+            },
+            findChildren(current) {
+                let fnode = this.$refs.tree.getNode(current)
+                if (!fnode.isLeaf) {
+                    fnode.indeterminate = true
+                    fnode.checked = true
+                }
+            },
+            reset() {
+                this.$refs.tree.setCheckedKeys([])
+            },
+            save() {
+                let saveData = {
+                        'rules': [...new Set([...this.$refs.tree.getCheckedKeys(), ...this.$refs.tree.getHalfCheckedKeys()])].join(','),
+                        'role_id': this.getParam('role_id')
+                    },
+                    loadIndex = 0
+
+                $.ajax({
+                    type: 'post',
+                    url: '/admin/auth_tree/saveRole',
+                    data: saveData,
+                    beforeSend: function () {
+                        loadIndex = layer.msg('加载中', {icon: 16, scrollbar: false, shade: [0.02, '#000'], time: 0})
+                    },
+                    success: function (res) {
+                        if (res.code === 1) {
+                            layer.msg(res.msg, {icon: 1, time: 2000}, function () {
+                                let index = parent.layer.getFrameIndex(window.name)
+                                parent.layer.close(index);
+                            })
+                        }
+                    }
+                })
+            },
+            getParam(name) {
+                let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"),
+                    r = window.location.search.substr(1).match(reg);
+                if (r != null) return unescape(r[2]);
+                return null;
+            }
+        },
+        mounted() {
+            this.__init()
+        }
+    })
+</script>
+</html>

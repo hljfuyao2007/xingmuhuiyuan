@@ -1,0 +1,94 @@
+<form class="layui-form layuimini-form">
+    <div class="layui-form-item">
+        <label class="layui-form-label required">存储方式</label>
+        <div class="layui-input-block">
+            {foreach ['local'=>'本地存储','alioss'=>'阿里云oss'] as $key=>$val}
+            <input type="radio" v-model="upload_type" name="upload_type" lay-filter="upload_type" value="{$key}" title="{$val}" {if $key==sysconfig('upload','upload_type')}checked{/if}>
+            {/foreach}
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">允许类型</label>
+        <div class="layui-input-block">
+            <input type="text" name="upload_allow_ext" class="layui-input" lay-verify="required" lay-reqtext="请输入允许类型" placeholder="请输入允许类型" value="{:sysconfig('upload','upload_allow_ext')}">
+            <tip>英文逗号做分隔符。</tip>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">允许大小</label>
+        <div class="layui-input-block">
+            <input type="text" name="upload_allow_size" class="layui-input" lay-verify="required" lay-reqtext="请输入允许上传大小" placeholder="请输入允许上传大小" value="{:sysconfig('upload','upload_allow_size')}">
+            <tip>设置允许上传大小。</tip>
+        </div>
+    </div>
+
+    <div class="layui-form-item" v-if="upload_type == 'alioss'" v-cloak>
+        <label class="layui-form-label required">公钥信息</label>
+        <div class="layui-input-block">
+            <input type="text" name="alioss_access_key_id" class="layui-input" lay-verify="required" lay-reqtext="请输入公钥信息" placeholder="请输入公钥信息" value="{:sysconfig('upload','alioss_access_key_id')}">
+            <tip>例子：FSGGshu64642THSk</tip>
+        </div>
+    </div>
+
+    <div class="layui-form-item" v-if="upload_type == 'alioss'" v-cloak>
+        <label class="layui-form-label required">私钥信息</label>
+        <div class="layui-input-block">
+            <input type="text" name="alioss_access_key_secret" class="layui-input" lay-verify="required" lay-reqtext="请输入私钥信息" placeholder="请输入私钥信息" value="{:sysconfig('upload','alioss_access_key_secret')}">
+            <tip>例子：5fsfPReYKkFSGGshu64642THSkmTInaIm</tip>
+        </div>
+    </div>
+
+    <div class="layui-form-item" v-if="upload_type == 'alioss'" v-cloak>
+        <label class="layui-form-label required">数据中心</label>
+        <div class="layui-input-block">
+            <select class="layui-select" lay-verify="required" name="alioss_endpoint" lay-filter="alioss_endpoint">
+                <option value="" {eq name=":sysconfig('upload','alioss_endpoint')" value=""} selected {/eq}>请选择</option>
+                <option value="oss-cn-hangzhou.aliyuncs.com" {eq name=":sysconfig('upload','alioss_endpoint')" value="oss-cn-hangzhou.aliyuncs.com"} selected {/eq}>杭州 (华东 1)</option>
+                <option value="oss-cn-shanghai.aliyuncs.com" {eq name=":sysconfig('upload','alioss_endpoint')" value="oss-cn-shanghai.aliyuncs.com"} selected {/eq}>上海 (华东 2)</option>
+                <option value="oss-cn-qingdao.aliyuncs.com" {eq name=":sysconfig('upload','alioss_endpoint')" value="oss-cn-qingdao.aliyuncs.com"} selected {/eq}>青岛 (华北 1)</option>
+                <option value="oss-cn-beijing.aliyuncs.com" {eq name=":sysconfig('upload','alioss_endpoint')" value="oss-cn-beijing.aliyuncs.com"} selected {/eq}>北京 (华北 2)</option>
+                <option value="oss-cn-zhangjiakou.aliyuncs.com" {eq name=":sysconfig('upload','alioss_endpoint')" value="oss-cn-zhangjiakou.aliyuncs.com"} selected {/eq}>张家口 (华北 3)</option>
+                <option value="oss-cn-huhehaote.aliyuncs.com" {eq name=":sysconfig('upload','alioss_endpoint')" value="oss-cn-huhehaote.aliyuncs.com"} selected {/eq}>呼和浩特 (华北 5)</option>
+                <option value="oss-cn-shenzhen.aliyuncs.com" {eq name=":sysconfig('upload','alioss_endpoint')" value="oss-cn-shenzhen.aliyuncs.com"} selected {/eq}>深圳 (华南 1)</option>
+                <option value="oss-cn-chengdu.aliyuncs.com" {eq name=":sysconfig('upload','alioss_endpoint')" value="oss-cn-chengdu.aliyuncs.com"} selected {/eq}>成都 (西南 1)</option>
+                <option value="oss-cn-hongkong.aliyuncs.com" {eq name=":sysconfig('upload','alioss_endpoint')" value="oss-cn-hongkong.aliyuncs.com"} selected {/eq}>香港</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item" v-if="upload_type == 'alioss'" v-cloak>
+        <label class="layui-form-label required">空间名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="alioss_bucket" class="layui-input" lay-verify="required" lay-reqtext="请输入空间名称" placeholder="请输入空间名称" value="{:sysconfig('upload','alioss_bucket')}">
+            <tip>例子：tplv6</tip>
+        </div>
+    </div>
+
+    <div class="layui-form-item" v-if="upload_type == 'alioss'" v-cloak>
+        <label class="layui-form-label required">访问域名</label>
+        <div class="layui-input-block">
+            <input type="text" name="alioss_domain" class="layui-input" lay-verify="required" lay-reqtext="请输入访问域名" placeholder="请输入访问域名" value="{:sysconfig('upload','alioss_domain')}">
+            <tip>例子：https://tplv6.oss-cn-hangzhou.aliyuncs.com/</tip>
+        </div>
+    </div>
+
+    <div class="layui-form-item" v-if="upload_type == 'alioss'" v-cloak>
+        <label class="layui-form-label">样式</label>
+        <div class="layui-input-block">
+            <input type="text" name="alioss_style" class="layui-input" lay-reqtext="请输入访问域名" placeholder="请输入访问域名" value="{:sysconfig('upload','alioss_style')}">
+            <tip>例子：!zoom,!watermark (多个以英文逗号分割)</tip>
+        </div>
+    </div>
+
+    <div class="layui-form-item text-center">
+        <button type="submit" class="layui-btn layui-btn-normal layui-btn-sm" lay-submit
+                data-refresh="false">确认
+        </button>
+        <button type="reset" class="layui-btn layui-btn-primary layui-btn-sm">重置</button>
+    </div>
+</form>
+<script>
+    var upload_type = "{:sysconfig('upload','upload_type')}";
+</script>

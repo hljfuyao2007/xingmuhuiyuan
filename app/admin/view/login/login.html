@@ -1,0 +1,40 @@
+<link rel="stylesheet" href="__CSS__/login.css" media="all">
+<div class="main-body">
+    <div class="login-main">
+        <div class="login-top">
+            <span>{:sysconfig('site', 'site_title')}后台登录</span>
+            <span class="bg1"></span>
+            <span class="bg2"></span>
+        </div>
+        <form class="layui-form login-bottom">
+            <div class="center">
+                <div class="item">
+                    <span class="icon icon-2"></span>
+                    <input type="text" name="username" lay-verify="required" placeholder="请输入登录账号" maxlength="24"/>
+                </div>
+
+                <div class="item">
+                    <span class="icon icon-3"></span>
+                    <input type="password" name="password" lay-verify="required" placeholder="请输入密码" maxlength="20">
+                    <span class="bind-password icon icon-4"></span>
+                </div>
+
+                {if $is_captcha}
+                <div id="validatePanel" class="item" style="width: 137px;">
+                    <input type="text" name="captcha" placeholder="请输入验证码" maxlength="4">
+                    <img id="refreshCaptcha" class="validateImg" onclick="this.src=this.src+'?random='+Math.random()"
+                         src="/admin/login/captcha">
+                </div>
+                {/if}
+            </div>
+            <div class="tip">
+                <span class="icon-nocheck"></span>
+                <span class="login-tip">保持登录</span>
+                <a href="javascript:" class="forget-password">忘记密码？</a>
+            </div>
+            <div class="layui-form-item" style="text-align:center; width:100%; height:100%; margin:0;">
+                <button class="login-btn" lay-submit="login/login" lay-filter="login">立即登录</button>
+            </div>
+        </form>
+    </div>
+</div>

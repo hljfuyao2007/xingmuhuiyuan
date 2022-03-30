@@ -1,0 +1,14 @@
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <table id="currentTable" class="layui-table layui-hide"
+               data-auth-delete="{:auth('/admin/log/del')}"
+               lay-filter="currentTable">
+        </table>
+    </div>
+</div>
+
+<script>
+    function examine(elem) {
+        layer.alert($(elem).attr('data-content'), {closeBtn: 0, anim: 4, shade: false, title: '操作内容'})
+    }
+</script>

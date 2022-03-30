@@ -1,0 +1,18 @@
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <blockquote class="layui-elem-quote layui-text">
+            <div style="font-size: 15px; font-weight: bold;">
+                <i class="layui-icon" style="margin-right: 6px; color: #FFB800;">&#xe702;</i>操作提示
+            </div>
+            <ul>
+                <li><font color="red">请谨慎操作删除, 删除后关联的图片将不可用</font></li>
+            </ul>
+        </blockquote>
+
+        <table id="currentTable" class="layui-table layui-hide"
+               data-auth-add="{:auth('/admin/config/fileManageAdd')}"
+               data-auth-delete="{:auth('/admin/config/fileManageDel')}"
+               lay-filter="currentTable">
+        </table>
+    </div>
+</div>

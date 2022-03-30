@@ -1,0 +1,115 @@
+<form class="layui-form layuimini-form">
+    <div class="layui-form-item">
+        <label class="layui-form-label required">运营商</label>
+        <div class="layui-input-block">
+            {foreach ['alisms'=>'阿里云大于'] as $key=>$val}
+            <input type="radio" v-model="sms_type" name="sms_type" lay-filter="sms_type" value="{$key}" title="{$val}" {if $key==sysconfig('sms','sms_type')}checked{/if}>
+            {/foreach}
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">验证开关</label>
+        <input type="checkbox" name="sms_is_check" lay-skin="switch" value="on" lay-text="开|关" {eq name="$sms.sms_is_check" value="on"} checked {/eq}>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">缓存时间</label>
+        <div class="layui-input-block">
+            <input type="text" name="sms_expire_time" class="layui-input" lay-verify="required" lay-reqtext="请输入缓存时间" placeholder="请输入缓存时间" value="{$sms.sms_expire_time}">
+            <tip>短信验证码缓存时间(秒)</tip>
+        </div>
+    </div>
+
+    <div class="layui-form-item" v-if="sms_type == 'alisms'" v-cloak>
+        <label class="layui-form-label required">公钥信息</label>
+        <div class="layui-input-block">
+            <input type="text" name="alisms_access_key_id" class="layui-input" lay-verify="required" lay-reqtext="请输入公钥信息" placeholder="请输入公钥信息" value="{$sms.alisms_access_key_id}">
+            <tip>例子：FSGGshu64642THSk</tip>
+        </div>
+    </div>
+
+    <div class="layui-form-item" v-if="sms_type == 'alisms'" v-cloak>
+        <label class="layui-form-label required">私钥信息</label>
+        <div class="layui-input-block">
+            <input type="text" name="alisms_access_key_secret" class="layui-input" lay-verify="required" lay-reqtext="请输入私钥信息" placeholder="请输入私钥信息" value="{$sms.alisms_access_key_secret}">
+            <tip>例子：5fsfPReYKkFSGGshu64642THSkmTInaIm</tip>
+        </div>
+    </div>
+
+    <div class="layui-form-item" v-if="sms_type == 'alisms'" v-cloak>
+        <label class="layui-form-label required">短信签名</label>
+        <div class="layui-input-block">
+            <input type="text" name="alisms_sign" class="layui-input" lay-verify="required" lay-reqtext="请输入短信签名" placeholder="请输入短信签名" value="{$sms.alisms_sign}">
+            <tip>例子：tplv6</tip>
+        </div>
+    </div>
+
+    <div class="layui-form-item" v-if="sms_type == 'alisms'" v-cloak>
+        <label class="layui-form-label required">短信模板1</label>
+        <div class="layui-input-block">
+            <input type="text" name="alisms_template_id_0" class="layui-input" lay-verify="required" lay-reqtext="请输入短信模板" placeholder="请输入短信模板" value="{$alisms.alisms_template_id_0}">
+            <tip>阿里云短信模板(缺省场景)</tip>
+        </div>
+    </div>
+
+    <div class="layui-form-item" v-if="sms_type == 'alisms'" v-cloak>
+        <label class="layui-form-label">短信模板2</label>
+        <div class="layui-input-block">
+            <input type="text" name="alisms_template_id_1" class="layui-input" value="{$alisms.alisms_template_id_1}">
+            <tip>阿里云短信模板(注册)</tip>
+        </div>
+    </div>
+
+    <div class="layui-form-item" v-if="sms_type == 'alisms'" v-cloak>
+        <label class="layui-form-label">短信模板3</label>
+        <div class="layui-input-block">
+            <input type="text" name="alisms_template_id_2" class="layui-input" value="{$alisms.alisms_template_id_2}">
+            <tip>阿里云短信模板(忘记密码)</tip>
+        </div>
+    </div>
+
+    <div class="layui-form-item" v-if="sms_type == 'alisms'" v-cloak>
+        <label class="layui-form-label">短信模板4</label>
+        <div class="layui-input-block">
+            <input type="text" name="alisms_template_id_3" class="layui-input" value="{$alisms.alisms_template_id_3}">
+            <tip>阿里云短信模板(找回密码)</tip>
+        </div>
+    </div>
+
+    <div class="layui-form-item" v-if="sms_type == 'alisms'" v-cloak>
+        <label class="layui-form-label">短信模板5</label>
+        <div class="layui-input-block">
+            <input type="text" name="alisms_template_id_4" class="layui-input" value="{$alisms.alisms_template_id_4}">
+            <tip>阿里云短信模板(修改密码)</tip>
+        </div>
+    </div>
+
+    <div class="layui-form-item" v-if="sms_type == 'alisms'" v-cloak>
+        <label class="layui-form-label">短信模板6</label>
+        <div class="layui-input-block">
+            <input type="text" name="alisms_template_id_5" class="layui-input" value="{$alisms.alisms_template_id_5}">
+            <tip>阿里云短信模板(短信登入)</tip>
+        </div>
+    </div>
+
+    <div class="layui-form-item" v-if="sms_type == 'alisms'" v-cloak>
+        <label class="layui-form-label">短信模板7</label>
+        <div class="layui-input-block">
+            <input type="text" name="alisms_template_id_6" class="layui-input" value="{$alisms.alisms_template_id_6}">
+            <tip>阿里云短信模板(修改手机号)</tip>
+        </div>
+    </div>
+
+
+
+    <div class="layui-form-item text-center">
+        <button type="submit" class="layui-btn layui-btn-normal layui-btn-sm" lay-submit
+                data-refresh="false">确认
+        </button>
+        <button type="reset" class="layui-btn layui-btn-primary layui-btn-sm">重置</button>
+    </div>
+</form>
+<script>
+    var sms_type = "{:sysconfig('sms','sms_type')}";
+</script>

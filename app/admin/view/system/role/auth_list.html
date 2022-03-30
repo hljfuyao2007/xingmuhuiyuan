@@ -1,0 +1,26 @@
+<link rel="stylesheet" href="__PLUG__/lay-module/treetable-lay/treetable.css?v{$version}">
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <div style="float: left; padding: 10px 0;">
+            <button class="layui-btn layui-btn-sm layuimini-btn-primary" data-treetable-refresh>
+                <i class="fa fa-refresh"></i>
+            </button>
+            <button class="layui-btn layui-btn-sm layui-btn-normal" id="btn-add"><i class="layui-icon">&#xe654;</i>添加
+            </button>
+        </div>
+        <div style="float: right; padding: 10px 0;">
+            <button class="layui-btn layui-btn-sm" id="btn-expand">
+                <i class="layui-icon">&#xe61a;</i>
+            </button>
+            <button class="layui-btn layui-btn-sm" id="btn-fold">
+                <i class="layui-icon">&#xe619;</i>
+            </button>
+        </div>
+        <table id="currentTable" class="layui-table"
+               data-auth-add="{:auth('/admin/role/auth_add')}"
+               data-auth-edit="{:auth('/admin/role/auth_edit')}"
+               data-auth-delete="{:auth('/admin/role/auth_del')}"
+               lay-filter="currentTable">
+        </table>
+    </div>
+</div>

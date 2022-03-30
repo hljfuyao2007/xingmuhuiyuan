@@ -1,0 +1,49 @@
+<div class="layuimini-container">
+    <blockquote class="layui-elem-quote layui-text">
+        <div style="font-size: 15px; font-weight: bold;">
+            <i class="layui-icon" style="margin-right: 6px; color: #FFB800;">&#xe702;</i>操作提示
+        </div>
+        <ul>
+            <li>标注<font color="red">*</font>的为必填项。</li>
+        </ul>
+    </blockquote>
+
+    <form id="app-form" class="layui-form layuimini-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label required">手机号</label>
+            <div class="layui-input-block">
+                <input type="text" name="phone" lay-verify="required|phone" class="layui-input" lay-reqtext="请输入手机号"
+                       placeholder="请输入手机号" value="">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">邮箱</label>
+            <div class="layui-input-block">
+                <input type="text" name="email" lay-verify="email" class="layui-input" lay-reqtext="请输入用户邮箱"
+                       placeholder="请输入邮箱" value="">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label required">密码</label>
+            <div class="layui-input-block">
+                <input type="password" name="password" lay-verify="required" class="layui-input" lay-reqtext="请输入密码"
+                       placeholder="请输入密码" value="">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label required">状态</label>
+            <div class="layui-input-block">
+                <input type="radio" name="status" value="1" title="开启" checked>
+                <input type="radio" name="status" value="0" title="禁用">
+            </div>
+        </div>
+
+        <div class="layui-form-item text-center">
+            <button type="submit" class="layui-btn layui-btn-normal layui-btn-sm" lay-submit>确认</button>
+            <button type="reset" class="layui-btn layui-btn-primary layui-btn-sm">重置</button>
+        </div>
+    </form>
+</div>

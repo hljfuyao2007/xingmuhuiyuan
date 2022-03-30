@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>编辑权限</title>
+    <link rel="stylesheet" href="__PLUG__/tree/css/bootstrapStyle/bootstrapStyle.css" type="text/css" media="all"/>
+    <link rel="stylesheet" href="__CSS__/public.css">
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <blockquote class="layui-elem-quote layui-text">
+            <div style="font-size: 15px; font-weight: bold;">
+                <i class="layui-icon" style="margin-right: 6px; color: #FFB800;">&#xe702;</i>操作提示
+            </div>
+            <ul>
+                <li>权限组权限管理, 请谨慎操作</li>
+            </ul>
+        </blockquote>
+
+        <div class="layui-form">
+            <div id="zTree"></div>
+            <div class="layui-form-item text-center">
+                <button type="button" class="layui-btn layui-btn-normal layui-btn-sm" onclick="saveAuth()">保存设置</button>
+                <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" onclick="parent.layer.closeAll()">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/javascript" src="__PLUG__/jquery-3.4.1/jquery-3.4.1.min.js"></script>
+<script type="text/javascript" src="__PLUG__/tree/js/jquery.ztree.core.js"></script>
+<script type="text/javascript" src="__PLUG__/tree/js/jquery.ztree.excheck.js"></script>
+<script type="text/javascript" src="__PLUG__/layui-v2.5.6/layui.all.js"></script>
+<script>
+    var setting = {
+            view: {selectedMulti: false, showIcon: false},
+            check: {enable: true, chkboxType: {"Y": "ps", "N": "s"}},
+            data: {simpleData: {enable: true, idKey: 'id', pIdKey: 'pid'}, key: {name: 'title'}}
+        },
+        ids = []
+    $(function () {
+        var loadIndex = 0
+        $.ajax({
+            type: 'post',
+            url: '/admin/auth_tree/tree',
+            async: false,
+            data: {role_id: getParam('role_id')},
+            beforeSend: function () {
+                loadIndex = layer.msg('加载中...', {icon: 16, scrollbar: false, shade: [0.02, '#000'], time: 0})
+            },
+            success: function (res) {
+                var zNodes = res.data,
+                    _zNodes = []
+                if (zNodes.length > 0) {
+                    for (var i = 0; i <= zNodes.length; i++) {
+                        if ((zNodes.length == i) || (zNodes[i].pid === 0 && i != 0)) {
+                            if (_zNodes.length > 0) {
+                                var html = '<fieldset class="layui-elem-field" style="width: 32%; margin-right: 1%; float: left; min-height: 240px">' +
+                                    '<legend>' + _zNodes[0].title + '</legend>' +
+                                    '<div class="layui-field-box">' +
+                                    '<ul id="' + i + '" class="ztree"></ul>' +
+                                    '</div></fieldset>';
+                                $('#zTree').append(html);
+                                $.fn.zTree.init($("#" + i), setting, _zNodes);
+                                ids.push(i);
+                            }
+                            _zNodes = [];
+                        }
+                        if (zNodes.length != i) _zNodes.push(zNodes[i]);
+                    }
+
+                }
+            },
+            complete: function () {
+                layer.close(loadIndex)
+            }
+        })
+    })
+
+    function getParam(name) {
+        let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"),
+            r = window.location.search.substr(1).match(reg);
+        if (r != null) return unescape(r[2]);
+        return null;
+    }
+
+    function saveAuth() {
+        var checked = [],
+            loadIndex = 0
+        if (ids.length > 0) {
+            for (var i = 0; i < ids.length; i++) {
+                var treeObj = $.fn.zTree.getZTreeObj(ids[i]),
+                    nodes = treeObj.getCheckedNodes(true)
+                for (var k = 0; k < nodes.length; k++) {
+                    checked.push(nodes[k].id)
+                }
+            }
+        }
+        checked = [...new Set(checked)].join(',')
+        $.ajax({
+            type: 'post',
+            url: '/admin/auth_tree/saveRole',
+            data: {rules: checked, role_id: getParam('role_id')},
+            beforeSend: function () {
+                loadIndex = layer.msg('加载中...', {icon: 16, scrollbar: false, shade: [0.02, '#000'], time: 0})
+            },
+            success: function (res) {
+                if (res.code === 1) {
+                    layer.msg(res.msg, {icon: 1, time: 2000}, function () {
+                        let index = parent.layer.getFrameIndex(window.name)
+                        parent.layer.close(index)
+                    })
+                    return
+                }
+                layer.msg(res.msg, {icon: 2, time: 2000})
+            }
+        })
+    }
+</script>
+</html>

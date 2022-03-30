@@ -1,0 +1,79 @@
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <blockquote class="layui-elem-quote layui-text" style="margin-bottom: 40px;">
+            <div style="font-size: 15px; font-weight: bold;">
+                <i class="layui-icon" style="margin-right: 6px; color: #FFB800;">&#xe702;</i>操作提示
+            </div>
+            <ul>
+                <li>标注<font color="red">*</font>的为必填项。</li>
+            </ul>
+        </blockquote>
+
+        <form id="app-form" class="layui-form layuimini-form">
+            <div class="layui-form-item">
+                <label class="layui-form-label required">名称</label>
+                <div class="layui-input-block">
+                    <input type="text" name="title" lay-verify="required" autocomplete="off" placeholder="请输入名称"
+                           class="layui-input" value="{$item.title|default=''}">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">父级</label>
+                <div class="layui-input-block">
+                    <select name="pid" lay-verify="required">
+                        <option value="0">-- 请选择 --</option>
+                        {volist name="$parent_select" id="parent"}
+                        <option value="{$parent.id}" {eq name="$parent.id" value="$item.pid|default=''"} selected {/eq}>{$parent.title}</option>
+                        {/volist}
+                    </select>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">图标</label>
+                <div class="layui-input-block">
+                    <input type="text" name="icon" id="iconPicker" lay-filter="iconPicker" class="hide">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">链接</label>
+                <div class="layui-input-block">
+                    <input type="text" name="href" autocomplete="off" placeholder="请输入链接"
+                           class="layui-input" value="{$item.href|default=''}">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">类型</label>
+                <div class="layui-input-block">
+                    <select name="deep">
+                        <option value="">-- 请选择 --</option>
+                        <option value="1" {eq name="$item.deep|default=''" value="1"} selected {/eq}>目录</option>
+                        <option value="2" {eq name="$item.deep|default=''" value="2"} selected {/eq}>菜单1级</option>
+                        <option value="3" {eq name="$item.deep|default=''" value="3"} selected {/eq}>菜单2级</option>
+                        <option value="4" {eq name="$item.deep|default=''" value="4"} selected {/eq}>按钮</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label"><span class="required">*</span>排序</label>
+                <div class="layui-input-block">
+                    <input type="text" name="sort" autocomplete="off" placeholder="请输入排序"
+                           class="layui-input" value="{$item.sort|default='1'}">
+                </div>
+            </div>
+
+            <div class="layui-form-item text-center">
+                <input type="hidden" name="id" value="{$item.id|default=''}">
+                <button type="submit" class="layui-btn layui-btn-normal layui-btn-sm" lay-submit>确认</button>
+                <button type="reset" class="layui-btn layui-btn-primary layui-btn-sm">重置</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    var icon = '{$item.icon|default=""}'
+</script>
