@@ -34,12 +34,11 @@ class Member extends BasicModel
     {
         parent::onBeforeInsert($model);
 
-        $sole = uniqid(env('admin.salt', 'tpl'));
         if (!isset($model->username) || !$model->username) {
-            $model->username = $sole;
+            $model->username = memberCode();
         }
         if (!isset($model->nickname) || !$model->nickname) {
-            $model->nickname = $sole;
+            $model->nickname = uniqid(env('admin.salt', 'tpl'));
         }
         // 初始用户信息
         $model->register_time = time();

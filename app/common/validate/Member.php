@@ -21,7 +21,7 @@ class Member extends Validate
         'password|密码'     => 'require|length:6,18|check_password',
         'status|状态'       => 'require',
         'sms_code|验证码'    => 'require',
-        'code'            => 'require',
+        'code|code'       => 'require',
         'nickname|昵称'     => 'require',
         'avatar|头像'       => 'require',
         'invite_code|邀请码' => 'max:6'
@@ -31,7 +31,8 @@ class Member extends Validate
         'member'      => ['phone', 'password', 'status'],
         'view'        => ['phone', 'email', 'status'],
         'wx_login'    => ['code', 'nickname', 'avatar'],
-        'union_login' => ['phone', 'sms_code', 'password', 'invite_code']
+        'union_login' => ['phone', 'sms_code', 'password', 'invite_code'],
+        'register'    => ['nickname', 'phone', 'sms_code', 'password', 'invite_code']
     ];
 
     // 验证密码是否为数字字母组合
@@ -47,6 +48,27 @@ class Member extends Validate
     public function sceneSmsLogin(): Member
     {
         return $this->only(['phone', 'sms_code'])
+            ->remove('phone', 'unique');
+    }
+
+    /**
+     * 账号登录
+     * @return Member
+     */
+    public function sceneAccountLogin(): Member
+    {
+        return $this->only(['phone', 'password'])
+            ->remove('phone', 'unique')
+            ->remove('password', 'check_password');
+    }
+
+    /**
+     * 忘记密码
+     * @return Member
+     */
+    public function sceneForgetPwd(): Member
+    {
+        return $this->only(['phone', 'password', 'sms_code'])
             ->remove('phone', 'unique');
     }
 }

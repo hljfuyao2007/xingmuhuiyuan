@@ -19,5 +19,16 @@ Route::group('v1.0', function () {
         Route::post('wx_login', 'wx_login');
         // 联合登录
         Route::post('union_login', 'union_login');
+        // 账号登录
+        Route::post('account_login', 'account_login');
+        // 注册
+        Route::post('register', 'register');
+        // 忘记密码
+        Route::post('forgetPwd', 'forgetPwd');
     })->prefix('api/access.Login/');
+    /***************************************我的************************************************/
+    Route::group('my', function () {
+        // 我的
+        Route::get('my', 'my');
+    })->prefix('api/my.My/');
 });

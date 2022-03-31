@@ -15,21 +15,20 @@ define(['jquery', 'utils'], function ($, utils) {
                 init: init,
                 toolbar: ['refresh', 'add'],
                 cols: [[
-                    {field: 'member_id', maxWidth: 60, search: false, title: '会员ID'},
-                    {field: 'nickname', minWidth: 100, title: '昵称'},
-                    {field: 'phone', minWidth: 100, title: '手机号'},
-                    {field: 'invite_code', minWidth: 100, title: '邀请码'},
-                    {field: 'email', minWidth: 100, title: '邮箱'},
-                    {field: 'avatar', maxWidth: 60, title: '头像', search: false, templet: utils.table.image},
+                    { field: 'member_id', maxWidth: 60, search: false, title: '会员ID' },
+                    { field: 'nickname', minWidth: 100, title: '昵称' },
+                    { field: 'phone', minWidth: 100, title: '手机号' },
+                    { field: 'invite_code', minWidth: 100, title: '邀请码' },
+                    { field: 'avatar', maxWidth: 60, title: '头像', search: false, templet: utils.table.image },
                     {
                         field: 'status',
                         title: '状态',
                         width: 90,
                         search: 'select',
-                        selectList: {0: '禁用', 1: '开启'},
+                        selectList: { 0: '禁用', 1: '开启' },
                         templet: utils.table.switch
                     },
-                    {field: 'register_time', minWidth: 120, search: 'range', title: '注册时间'},
+                    { field: 'register_time', minWidth: 120, search: 'range', title: '注册时间' },
                     {
                         width: 100,
                         title: '操作',

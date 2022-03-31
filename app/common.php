@@ -510,3 +510,30 @@ if (!function_exists('generateInviteCode')) {
         return $code;
     }
 }
+
+if (!function_exists('uuid')) {
+    /**
+     * 生成uuid
+     * @return string
+     */
+    function uuid(): string
+    {
+        $chars = md5(uniqid(mt_rand(), true));
+        return substr($chars, 0, 8) . '-'
+            . substr($chars, 8, 4) . '-'
+            . substr($chars, 12, 4) . '-'
+            . substr($chars, 16, 4) . '-'
+            . substr($chars, 20, 12);
+    }
+}
+
+if (!function_exists('memberCode')) {
+    /**
+     * 生成会员号
+     * @return string
+     */
+    function memberCode(): string
+    {
+        return substr(time(), 0, -6) . substr(implode(null, array_map('ord', str_split(substr(uniqid(), 7, 13), 1))), 0, 8) . rand(1000, 9999);
+    }
+}
