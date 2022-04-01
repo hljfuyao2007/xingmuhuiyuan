@@ -30,5 +30,11 @@ Route::group('v1.0', function () {
     Route::group('my', function () {
         // 我的
         Route::get('my', 'my');
+        // 选择平台
+        Route::get('choose_platform', 'choose_platform');
+        // 平台介绍
+        Route::get('platform_introduce', 'platform_introduce');
+        // 代理须知
+        Route::get('agency_notice', 'agency_notice');
     })->prefix('api/my.My/');
 });
