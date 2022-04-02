@@ -36,5 +36,11 @@ Route::group('v1.0', function () {
         Route::get('platform_introduce', 'platform_introduce');
         // 代理须知
         Route::get('agency_notice', 'agency_notice');
+        // 根据身份证获取年龄
+        Route::get('getAge', 'getAge');
+        // 个人信息
+        Route::get('info', 'info');
+        // 认证
+        Route::post('authentication', 'authentication');
     })->prefix('api/my.My/');
 });

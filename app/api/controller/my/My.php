@@ -89,4 +89,59 @@ class My extends ApiController
     {
         return apiShow(['content' => sysconfig('site', 'agency_notice')]);
     }
+
+    /**
+     * 根据身份证获取年龄
+     * @return array|\think\response\Json|void
+     */
+    public function getAge()
+    {
+        $idCard = $this->request->get('idCard');
+        $reg = '/^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}([0-9]|X)$/';
+        if (!preg_match($reg, $idCard)) {
+            abort(-1, '身份证号码不正确');
+        }
+        return apiShow(['age' => getAgeByIdCard($idCard)]);
+    }
+
+    /**
+     * 个人信息
+     * @return array|\think\response\Json
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function info()
+    {
+        $mid = $this->deToken(0)->mid;
+
+        $data = Member
+            ::where('member_id', $mid)
+            ->field('nickname,name,avatar,phone,alipay_account,id_card,platform_id,register_time,is_identity')
+            ->find();
+        $data['age'] = getAgeByIdCard($data['id_card']);
+
+        return apiShow($data);
+    }
+
+    /**
+     * 提现信息认证
+     * @param Member $member
+     * @return array|\think\response\Json
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function authentication(Member $member)
+    {
+        $post = $this->request->post();
+        $post['member_id'] = $this->deToken(0)->mid;
+        $post['is_identity'] = 1;
+
+        $member->valid($post, 'authentication');
+
+        $member::update($post);
+
+        return apiShow([], '操作成功', 1);
+    }
 }

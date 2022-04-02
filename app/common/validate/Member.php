@@ -16,23 +16,29 @@ use think\Validate;
 class Member extends Validate
 {
     protected $rule = [
-        'phone|手机号'       => 'require|mobile|unique:member',
-        'email|邮箱'        => 'email',
-        'password|密码'     => 'require|length:6,18|check_password',
-        'status|状态'       => 'require',
-        'sms_code|验证码'    => 'require',
-        'code|code'       => 'require',
-        'nickname|昵称'     => 'require',
-        'avatar|头像'       => 'require',
-        'invite_code|邀请码' => 'max:6'
+        'member_id|会员ID'       => 'require',
+        'phone|手机号'            => 'require|mobile|unique:member',
+        'email|邮箱'             => 'email',
+        'password|密码'          => 'require|length:6,18|check_password',
+        'status|状态'            => 'require',
+        'sms_code|验证码'         => 'require',
+        'code|code'            => 'require',
+        'nickname|昵称'          => 'require',
+        'avatar|头像'            => 'require',
+        'invite_code|邀请码'      => 'max:6',
+        'name|姓名'              => 'require|max:5',
+        'id_card|身份证号'         => 'require|idCard',
+        'sex|性别'               => 'require|in:0,1',
+        'alipay_account|支付宝账号' => 'require'
     ];
 
     protected $scene = [
-        'member'      => ['phone', 'password', 'status'],
-        'view'        => ['phone', 'email', 'status'],
-        'wx_login'    => ['code', 'nickname', 'avatar'],
-        'union_login' => ['phone', 'sms_code', 'password', 'invite_code'],
-        'register'    => ['nickname', 'phone', 'sms_code', 'password', 'invite_code']
+        'member'         => ['phone', 'password', 'status'],
+        'view'           => ['phone', 'email', 'status'],
+        'wx_login'       => ['code', 'nickname', 'avatar'],
+        'union_login'    => ['phone', 'sms_code', 'password', 'invite_code'],
+        'register'       => ['nickname', 'phone', 'sms_code', 'password', 'invite_code'],
+        'authentication' => ['name', 'id_card', 'sex', 'alipay_account']
     ];
 
     // 验证密码是否为数字字母组合

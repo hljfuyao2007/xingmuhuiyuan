@@ -537,3 +537,18 @@ if (!function_exists('memberCode')) {
         return substr(time(), 0, -6) . substr(implode(null, array_map('ord', str_split(substr(uniqid(), 7, 13), 1))), 0, 8) . rand(1000, 9999);
     }
 }
+
+if (!function_exists('getAgeByIdCard')) {
+    /**
+     * 根据身份证识别年龄
+     * @param $idCard
+     * @return int
+     */
+    function getAgeByIdCard($idCard): int
+    {
+        $idCard = strtoupper($idCard);
+        $date = substr($idCard, 6, 8);
+        $birthday = substr($date, 0, 4) . '-' . substr($date, 4, 2) . '-' . substr($date, 6, 2);
+        return date('Y') - substr($birthday, 0, 4);
+    }
+}
