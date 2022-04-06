@@ -42,5 +42,7 @@ Route::group('v1.0', function () {
         Route::get('info', 'info');
         // 认证
         Route::post('authentication', 'authentication');
+        // 成为代理
+        Route::get('become_agent', 'become_agent');
     })->prefix('api/my.My/');
 });

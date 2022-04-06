@@ -144,4 +144,28 @@ class My extends ApiController
 
         return apiShow([], '操作成功', 1);
     }
+
+    /**
+     * 成为代理
+     * @return array|\think\response\Json
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function become_agent()
+    {
+        $mid = $this->deToken(0)->mid;
+
+        $member = Member::find($mid);
+        if ($member['is_agency'] == 1) {
+            abort(-1, '您已经是代理了');
+        }
+
+        $site = sysconfig('site');
+
+        return apiShow([
+            'agency_money'          => $site['agency_money'],
+            'agency_service_charge' => $site['agency_service_charge']
+        ]);
+    }
 }
