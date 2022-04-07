@@ -37,6 +37,12 @@ class Config extends AdminController
                 // 生成ico图标
                 make_ico($param['site_logo']);
             }
+            if (isset($param['agency_money']) && $param['agency_money']) {
+                $param['agency_money'] = fmtPrice($param['agency_money']);
+            }
+            if (isset($param['agency_service_charge']) && $param['agency_service_charge']) {
+                $param['agency_service_charge'] = fmtPrice($param['agency_service_charge']);
+            }
             foreach ($param as $key => $item) {
                 SystemConfig::update(['value' => $item], ['name' => $key]);
             }

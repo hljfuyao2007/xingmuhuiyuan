@@ -9,10 +9,13 @@
 
 namespace app\api\controller\my;
 
+use app\api\model\AgentOrder;
 use app\api\model\Member;
 use app\api\model\MemberPlatform;
 use app\api\model\Platform;
 use app\common\controller\ApiController;
+use app\common\service\EasyWechat;
+use think\facade\Request;
 
 class My extends ApiController
 {
@@ -166,6 +169,64 @@ class My extends ApiController
         return apiShow([
             'agency_money'          => $site['agency_money'],
             'agency_service_charge' => $site['agency_service_charge']
+        ]);
+    }
+
+    /**
+     * 成为代理支付
+     * @param AgentOrder $agentOrder
+     * @return array|\think\response\Json
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function agent_pay(AgentOrder $agentOrder)
+    {
+        $post = $this->request->post();
+        $post['member_id'] = $this->deToken(0)->mid;
+
+        // 生成订单
+        $site = sysconfig('site');
+
+        // 查询订单根据会员id
+        $order = $agentOrder
+            ->where([
+                ['member_id', '=', $post['member_id']],
+                ['status', '=', 0]
+            ])
+            ->withoutField('update_time,delete_time')
+            ->find();
+        if ($order) {
+            $order->order_number = generateOrderNo();
+            if ($order['total_fee'] != $site['agency_money'] + $site['agency_service_charge']) {
+                $order->agency_money = $site['agency_money'];
+                $order->service_charge = $site['agency_service_charge'];
+                $order->total_fee = $site['agency_service_charge'] + $site['agency_money'];
+            }
+            $order->save();
+        } else {
+            $order = $agentOrder::create([
+                'member_id'      => $post['member_id'],
+                'agency_money'   => $site['agency_money'],
+                'service_charge' => $site['agency_service_charge'],
+                'total_fee'      => $site['agency_money'] + $site['agency_service_charge']
+            ]);
+        }
+
+        $args = [];
+        $args['notify_url'] = Request::domain() . '/api/v1.0/pay/wxNotify';
+        $args['trade_type'] = 'MWEB';
+        $args['total_fee'] = intval($order['total_fee'] * 100);
+        $args['out_trade_no'] = $order['order_number'];
+        $args['body'] = '成为代理';
+        $args['attach'] = "agent|{$post['member_id']}|{$order['order_id']}";
+
+        $config = (new EasyWechat('payment', 'MWEB'))->pre_order($args, $order);
+
+        return apiShow([
+            'config'       => $config,
+            'order_number' => $order['order_number'],
+            'total_fee'    => $order['total_fee']
         ]);
     }
 }

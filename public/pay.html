@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <button onclick="pay()">支付12312312</button>
+</body>
+<script src="//res.wx.qq.com/open/js/jweixin-1.6.0.js" charset="utf-8"></script>
+<script>
+    // window.onLoad = () => {
+    //
+    // }
+
+    const pay = () => {
+        const config = wx.config({
+            debug: false,
+            appId: 'wxb189139c8708aa0d',
+            timestamp: '1649312857',
+            nonceStr: '624e8459071ad',
+            signature: '',
+            jsApiList: [
+                'chooseWXPay'
+            ]
+        })
+
+
+        wx.ready(function (res) {
+            wx.chooseWXPay({
+                'timestamp': '1649311575',
+                'nonceStr': '624e7f57bafac',
+                'package': 'prepay_id=wx071427368931831743a1edf3d582a80000',
+                'signType': 'MD5',
+                'paySign': '6CD139034EC0398F4C9E4D4DF08A5F9E',
+                success: function (res) {
+                    // 支付成功后的回调函数
+                    alert('支付成功');
+                }
+            })
+        })
+    }
+</script>
+
+</html>

@@ -44,5 +44,12 @@ Route::group('v1.0', function () {
         Route::post('authentication', 'authentication');
         // 成为代理
         Route::get('become_agent', 'become_agent');
+        // 成为代理下单
+        Route::post('agent_pay', 'agent_pay');
     })->prefix('api/my.My/');
+    /*************************************支付回调**********************************************/
+    Route::group('pay', function () {
+        // 微信回调
+        Route::any('wxNotify', 'wxNotify');
+    })->prefix('api/pay.Notify/');
 });

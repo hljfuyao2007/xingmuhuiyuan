@@ -552,3 +552,46 @@ if (!function_exists('getAgeByIdCard')) {
         return date('Y') - substr($birthday, 0, 4);
     }
 }
+
+if (!function_exists('generateOrderNo')) {
+    /**
+     * 生成不重复的订单号
+     * @return string
+     */
+    function generateOrderNo(): string
+    {
+        return date('Ymd') . substr(implode(null, array_map('ord', str_split(substr(uniqid(), 7, 13), 1))), 0, 8);
+    }
+}
+
+if (!function_exists('fmtPrice')) {
+    /**
+     * 格式化金额
+     * @param $num
+     * @return string
+     */
+    function fmtPrice($num): string
+    {
+        if ($num == 0) {
+            return '0.00';
+        }
+        return number_format($num, 2, '.', '');
+    }
+}
+
+if (!function_exists('writeLog')) {
+    /**
+     * 写日志
+     * @param $text
+     * @param $dirName
+     */
+    function writeLog($text, $dirName)
+    {
+        $dir_base = runtime_path() . $dirName . '/' . date('Y-m');
+        if (!is_dir($dir_base)) {
+            @mkdir($dir_base, 0755, true);
+        }
+        $log_file = $dir_base . DIRECTORY_SEPARATOR . date('d') . '.log';
+        file_put_contents($log_file, $text, FILE_APPEND | LOCK_EX);
+    }
+}

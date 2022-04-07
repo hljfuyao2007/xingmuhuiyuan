@@ -22,7 +22,7 @@ class EasyWechat
     public function __construct(string $type, string $extra = '')
     {
         $this->config = config('wechat');
-        $m = ["JSAPI" => "miniProgram", 'APP' => 'officialAccount'];
+        $m = ["JSAPI" => "miniProgram", 'APP' => 'officialAccount', 'MWEB' => 'officialAccount'];
         $method = $m[$type] ?? $type;
         self::$instance = Factory::$method($extra ? array_merge($this->config[$type], $this->config[$extra]) : $this->config[$type]);
     }
@@ -89,7 +89,7 @@ class EasyWechat
         $res = self::$instance->order->unify($param);
         if ($res['return_code'] === 'SUCCESS' && $res['result_code'] === 'SUCCESS') {
             $order_info->prepayment_info = $res['prepay_id'];
-            if ($order_info->trade_type == 'JSAPI') {   // 小程序
+            if ($param['trade_type'] == 'JSAPI' || $param['trade_type'] == 'MWEB') {   // 小程序
                 return self::$instance->jssdk->bridgeConfig($order_info->prepayment_info, false);
             } else { // app
                 return self::$instance->jssdk->appConfig($order_info->prepayment_info);
