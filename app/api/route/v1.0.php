@@ -47,6 +47,17 @@ Route::group('v1.0', function () {
         // 成为代理下单
         Route::post('agent_pay', 'agent_pay');
     })->prefix('api/my.My/');
+    /***************************************首页************************************************/
+    Route::group('index', function () {
+        // 提现详情
+        Route::get('withdrawInfo', 'withdrawInfo');
+        // 提现申请
+        Route::post('withdraw', 'withdraw');
+        // 我的下级
+        Route::get('subordinate', 'subordinate');
+        // 本月新增
+        Route::get('monthly_new', 'monthly_new');
+    })->prefix('api/home.Index/');
     /*************************************支付回调**********************************************/
     Route::group('pay', function () {
         // 微信回调

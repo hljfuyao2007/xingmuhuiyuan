@@ -8,6 +8,13 @@ use app\common\controller\ApiController;
 
 class Notify extends ApiController
 {
+    /**
+     * 微信支付回调
+     * @return bool
+     * @throws \EasyWeChat\Kernel\Exceptions\Exception
+     * @throws \EasyWeChat\Kernel\Exceptions\InvalidArgumentException
+     * @throws \EasyWeChat\Kernel\Exceptions\InvalidConfigException
+     */
     public function wxNotify()
     {
         $argsXml = file_get_contents('php://input');

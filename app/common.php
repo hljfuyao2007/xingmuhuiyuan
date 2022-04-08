@@ -595,3 +595,21 @@ if (!function_exists('writeLog')) {
         file_put_contents($log_file, $text, FILE_APPEND | LOCK_EX);
     }
 }
+
+if (!function_exists('getMonth')) {
+
+    /**
+     * 通过日期获取月的日期
+     * @param string $date
+     * @param bool $is_timestamp
+     * @return array
+     */
+    function getMonth(string $date, bool $is_timestamp = true): array
+    {
+        $firstDay = date("Y-m-01 0:00:00", strtotime($date));
+        $lastDay = date("Y-m-d 23:59:59", strtotime("$firstDay +1 month -1 day"));
+        $is_timestamp && $firstDay = strtotime($firstDay);
+        $is_timestamp && $lastDay = strtotime($lastDay);
+        return [$firstDay, $lastDay];
+    }
+}
