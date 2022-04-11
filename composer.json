@@ -35,7 +35,8 @@
         "overtrue/wechat": "~4.0",
         "ext-json": "*",
         "guzzlehttp/guzzle": "^7.3",
-        "ext-gd": "*"
+        "ext-gd": "*",
+        "phpoffice/phpspreadsheet": "^1.22"
     },
     "require-dev": {
         "symfony/var-dumper": "^4.2",
@@ -50,7 +51,10 @@
         }
     },
     "config": {
-        "preferred-install": "dist"
+        "preferred-install": "dist",
+        "allow-plugins": {
+            "easywechat-composer/easywechat-composer": true
+        }
     },
     "scripts": {
         "post-autoload-dump": [

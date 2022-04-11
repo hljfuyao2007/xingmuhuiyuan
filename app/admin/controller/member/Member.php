@@ -108,6 +108,35 @@ class Member extends AdminController
     }
 
     /**
+     * 审核
+     * @param MemberModel $member
+     * @return array|false|mixed|\think\response\Json|\think\response\View
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function check(MemberModel $member)
+    {
+        if ($this->request->isPost()) {
+            $post = $this->request->post();
+
+            $member::update($post);
+
+            return $this->success([], '操作成功', 1);
+        }
+
+        $data = $member
+            ->where('member_id', $this->request->get('member_id'))
+            ->field('member_id,name,sex,id_card,alipay_account,is_identity')
+            ->find();
+        $data['age'] = getAgeByIdCard($data['id_card'] ?: 0);
+
+        return $this->fetch('', [
+            'item' => $data
+        ]);
+    }
+
+    /**
      * 属性修改
      * @param MemberModel $member
      * @return array|false|mixed|\think\response\Json|\think\response\View

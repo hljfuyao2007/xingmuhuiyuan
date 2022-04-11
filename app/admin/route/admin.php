@@ -69,6 +69,8 @@ Route::group('member', function () {
     Route::any('view', 'view');
     // 属性修改
     Route::post('modify', 'modify');
+    // 审核
+    Route::any('check', 'check');
 })->prefix('admin/member.Member/');
 /***************************************操作日志************************************************/
 Route::group('log', function () {

@@ -140,6 +140,7 @@ class Index extends ApiController
             ->withJoin([
                 'member' => ['name', 'nickname', 'avatar', 'platform_id', 'phone', 'register_time', 'sex', 'member_id']
             ])
+            ->order('create_time desc')
             ->paginate(10)
             ->each(function ($val) use ($memberTree) {
                 // 手机号中间四位用*代替

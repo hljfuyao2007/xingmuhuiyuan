@@ -7,6 +7,7 @@ define(['jquery', 'utils'], function ($, utils) {
         add_url: 'member/add',
         view_url: 'member/view',
         modify_url: 'member/modify',
+        check_url: 'member/check',
     }
 
     return {
@@ -19,33 +20,53 @@ define(['jquery', 'utils'], function ($, utils) {
                     { field: 'nickname', minWidth: 100, title: '昵称' },
                     { field: 'phone', minWidth: 100, title: '手机号' },
                     { field: 'invite_code', minWidth: 100, title: '邀请码' },
-                    { field: 'avatar', maxWidth: 60, title: '头像', search: false, templet: utils.table.image },
+                    { field: 'avatar', minWidth: 60, title: '头像', search: false, templet: utils.table.image },
+                    { field: 'is_agency', minWidth: 100, title: '代理', selectList: { 0: '否', 1: '是' } },
+                    {
+                        field: 'is_identity',
+                        minWidth: 60,
+                        title: '认证状态',
+                        selectList: { 0: '未认证', 1: '待审核', 2: '通过', 3: '拒绝' }
+                    },
                     {
                         field: 'status',
                         title: '状态',
-                        width: 90,
+                        width: 150,
                         search: 'select',
                         selectList: { 0: '禁用', 1: '开启' },
                         templet: utils.table.switch
                     },
                     { field: 'register_time', minWidth: 120, search: 'range', title: '注册时间' },
                     {
-                        width: 100,
+                        minWidth: 100,
                         title: '操作',
                         templet: utils.table.tool,
                         operat: [
                             [{
                                 text: '查看',
                                 url: init.view_url,
-                                icon: 'fa fa-eye',
                                 method: 'open',
                                 auth: 'view',
                                 field: 'member_id',
-                                class: 'layui-btn layui-btn-primary layui-btn-xs',
+                                class: 'layui-btn layui-btn-success layui-btn-xs',
+                            }, {
+                                text: '审核',
+                                url: init.check_url,
+                                method: 'open',
+                                auth: 'check',
+                                field: 'member_id',
+                                class: 'layui-btn layui-btn-normal layui-btn-xs',
                             }]
                         ]
                     }
-                ]]
+                ]],
+                done: function (data) {
+                    $.each(data.data, function (index, item) {
+                        if (item.is_identity === 0) {
+                            $(`[data-open='member/check?member_id=${item.member_id}']`).remove();
+                        }
+                    });
+                }
             })
             utils.listen()
         },
@@ -53,6 +74,20 @@ define(['jquery', 'utils'], function ($, utils) {
             utils.listen()
         },
         view: function () {
+            utils.listen()
+        },
+        check: function () {
+            const reason = $('.reason'),
+                status = +$('[name="is_identity"]:checked').val()
+
+            $(function () {
+                status === 3 && reason.show()
+            })
+
+            layui.form.on('radio(is_identity)', function (data) {
+                data = +data.value
+                data === 3 ? reason.show() : reason.hide()
+            })
             utils.listen()
         }
     }
