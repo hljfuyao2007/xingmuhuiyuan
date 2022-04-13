@@ -18,6 +18,7 @@ define(['jquery', 'utils'], function ($, utils) {
                 cols: [[
                     { field: 'member_id', maxWidth: 60, search: false, title: '会员ID' },
                     { field: 'nickname', minWidth: 100, title: '昵称' },
+                    { field: 'sex', minWidth: 100, title: '性别', selectList: { 0: '女', 1: '男' } },
                     { field: 'phone', minWidth: 100, title: '手机号' },
                     { field: 'invite_code', minWidth: 100, title: '邀请码' },
                     { field: 'avatar', minWidth: 60, title: '头像', search: false, templet: utils.table.image },
@@ -38,7 +39,7 @@ define(['jquery', 'utils'], function ($, utils) {
                     },
                     { field: 'register_time', minWidth: 120, search: 'range', title: '注册时间' },
                     {
-                        minWidth: 100,
+                        minWidth: 120,
                         title: '操作',
                         templet: utils.table.tool,
                         operat: [

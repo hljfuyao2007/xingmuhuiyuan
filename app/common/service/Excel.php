@@ -24,7 +24,7 @@ class Excel
     {
         $file = Request::file('excel');
         $ext = $file->extension();
-        $dirname = public_path() . "excel/" . date('Ymd');
+        $dirname = public_path() . "media/excel/" . date('Ymd');
         $fileName = md5(microtime(true)) . ".$ext";
         $file->move($dirname, $fileName);
 

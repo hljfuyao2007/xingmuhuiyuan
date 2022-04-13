@@ -2,12 +2,12 @@
 
 namespace app\common\model;
 
-class MemberWithdraw extends BasicModel
+class MemberData extends BasicModel
 {
-    protected $pk = 'withdraw_id';
+    protected $pk = 'data_id';
 
     /**
-     * 获取与昵称
+     * 用户称昵称
      * @param $value
      * @param $data
      * @return mixed

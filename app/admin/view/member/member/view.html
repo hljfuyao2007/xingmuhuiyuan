@@ -39,6 +39,14 @@
         </div>
 
         <div class="layui-form-item">
+            <label class="layui-form-label required">性别</label>
+            <div class="layui-input-block">
+                <input type="radio" name="sex" value="1" title="男" {eq name="$item.sex|default=1" value="1"} checked {/eq}>
+                <input type="radio" name="sex" value="0" title="女" {eq name="$item.sex|default=1" value="0"} checked {/eq}>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
             <label class="layui-form-label required">状态</label>
             <div class="layui-input-block">
                 <input type="radio" name="status" value="1" title="开通" {eq name="$item.status|default=1" value="1"} checked {/eq}>

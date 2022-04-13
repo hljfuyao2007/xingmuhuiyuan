@@ -25,14 +25,16 @@ class Member extends AdminController
     public function index(MemberModel $member)
     {
         if ($this->request->isAjax()) {
-            list($limit, $where) = $this->buildTableParam($member);
+            [$limit, $where] = $this->buildTableParam($member);
 
             $data = $member
                 ->where($where)
                 ->withoutField('update_time,delete_time')
                 ->order('member_id', 'desc')
                 ->paginate($limit)
-                ->toArray();
+                ->each(function ($item) {
+                    $item->sex = $item->sex == 1 ? '男' : '女';
+                });
 
             return $this->success($data);
         }
@@ -99,7 +101,7 @@ class Member extends AdminController
 
         $data = $member
             ->where('member_id', $this->request->get('member_id'))
-            ->field('member_id,nickname,phone,email,avatar,status')
+            ->withoutField('update_time,delete_time')
             ->find();
 
         return $this->fetch('', [

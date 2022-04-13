@@ -14,6 +14,7 @@ define(['jquery', 'utils'], function ($, utils) {
         index: function() {
             utils.table.render({
                 init: init,
+                toolbar: ['refresh', 'add'],
                 cols: [[]]
             })
             utils.listen()

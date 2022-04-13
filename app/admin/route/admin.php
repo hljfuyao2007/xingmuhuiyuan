@@ -79,3 +79,30 @@ Route::group('log', function () {
     // 删除
     Route::post('del', 'del');
 })->prefix('admin/system.Log/');
+/***************************************会员提现************************************************/
+Route::group('withdraw', function () {
+    // 列表
+    Route::get('index', 'index');
+    // 审核
+    Route::any('edit', 'edit');
+})->prefix('admin/member.Withdraw/');
+/***************************************平台管理************************************************/
+Route::group('platform', function () {
+    // 列表
+    Route::get('index', 'index');
+    // 添加
+    Route::any('add', 'add');
+    // 编辑
+    Route::any('edit', 'edit');
+    // 删除
+    Route::post('del', 'del');
+    // 属性修改
+    Route::post('modify', 'modify');
+})->prefix('admin/content.Platform/');
+/***************************************业绩管理************************************************/
+Route::group('enterprise', function () {
+    // 列表
+    Route::get('index', 'index');
+    // 导入
+    Route::any('inc', 'inc');
+})->prefix('admin/content.Enterprise/');
