@@ -33,8 +33,13 @@ class My extends ApiController
 
         $data = $member
             ->where('member_id', $member_id)
-            ->field('avatar,nickname,phone,platform_id,register_time')
+            ->field('avatar,nickname,phone,username,register_time,sex')
             ->find();
+        $data['platform'] = Platform
+            ::where('is_show', 1)
+            ->field('platform_id,name')
+            ->order(['sort' => 'asc'])
+            ->select();
 
         return apiShow($data);
     }

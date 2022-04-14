@@ -1,0 +1,67 @@
+{extend name='layout/layout' /}
+{block name='css'}
+{__block__}
+{/block}
+{block name='body'}
+{__block__}
+<div class="xzpt_a">
+    <div class="a1">
+        <div class="b1"><img :src="infoData.avatar" alt=""></div>
+        <div class="b2">{{ infoData.nickname }} <span><img src="__IMG__/icon/a6.png"></span></div>
+        <div class="b3">{{ infoData.phone }}</div>
+        <div class="b4"><span><img src="__IMG__/icon/a8.png" alt=""></span> 绑定团队</div>
+    </div>
+    <div class="a2">ID:{{ infoData.username }} | {{ infoData.register_time }}</div>
+</div>
+<div class="xzpt_b">
+    <div class="list">
+        <template v-for="(item, index) in infoData.platform">
+            <a class="item" href="javascript:;" @click="to_platform(item.platform_id)">
+                <h6>{{ item.name }}</h6>
+                <p>立即登录查看</p>
+                <span>go</span>
+                <img :src="platformImg[index]">
+            </a>
+        </template>
+    </div>
+    <a href="" class="a1">
+        <img src="__IMG__/a2.png" alt="">
+    </a>
+</div>
+{/block}
+{block name='js'}
+{__block__}
+<script>
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                infoData: {},
+                platformImg: [
+                    '__IMG__/icon/c1.png',
+                    '__IMG__/icon/c2.png',
+                    '__IMG__/icon/c3.png'
+                ]
+            }
+        },
+        created() {
+            this.init()
+        },
+        methods: {
+            init() {
+                utils.get({
+                    url: '/my/my'
+                }, res => {
+                    const data = res.data
+                    data.phone = data.phone.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2')
+                    data.register_time = utils.date('Y-m-d', utils.strtotime(data.register_time))
+                    this.infoData = data
+                })
+            },
+            to_platform(platform_id) {
+                window.location.href = '/mobile/home?platform_id=' + platform_id
+            }
+        }
+    })
+</script>
+{/block}

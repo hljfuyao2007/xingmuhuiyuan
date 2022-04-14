@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <title>{block name='title'}{:sysconfig('site', 'site_title')}{/block}</title>
+    {block name='css'}
+    <link rel="icon" href="__STATIC__/admin/images/favicon.ico">
+    <link rel="stylesheet" href="__CSS__/normalize.css">
+    <link rel="stylesheet" href="__CSS__/index.css">
+    <link rel="stylesheet" href="__JS__/layui/css/layui.css">
+    <link rel="stylesheet" href="__JS__/swiper/swiper-bundle.min.css">
+    {/block}
+</head>
+<body>
+<div id="app">
+    {block name="body"} {/block}
+</div>
+</body>
+{block name='js'}
+<script src="__JS__/jquery-1.10.1.min.js"></script>
+<script src="__JS__/layui/layui.js"></script>
+<script src="__JS__/swiper/swiper-bundle.min.js"></script>
+<script src="__JS__/rem.js"></script>
+<script src="__JS__/vue.js"></script>
+<script src="__JS__/utils.js"></script>
+<script>
+    const utils = new Utils();
+    const root_url = window.location.protocol + document.domain + '/mobile/index'
+</script>
+{/block}
+</html>

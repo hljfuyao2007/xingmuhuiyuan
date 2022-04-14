@@ -34,6 +34,8 @@ class RouteMiddleware
                 $newToken = self::backend($request, $baseUrl);
                 $newToken && header('token:' . $newToken);
                 break;
+            case stripos($baseUrl, '/mobile/') === 0:
+                break;
             default:
                 $html404 = file_get_contents(app_path() . 'common/tpl/404.html');
                 Response::create($html404)->send();
@@ -171,5 +173,15 @@ class RouteMiddleware
             $request->manage_id = $tokenArr['data']->manage_id;
         }
         return $newToken;
+    }
+
+    /**
+     * 手机接口区
+     * @param $request
+     * @param $baseUrl
+     * @return void
+     */
+    public function mobile($request, $baseUrl)
+    {
     }
 }

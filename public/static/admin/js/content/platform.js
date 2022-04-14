@@ -14,6 +14,7 @@ define(['jquery', 'utils'], function ($, utils) {
         index: function () {
             utils.table.render({
                 init: init,
+                toolbar: ['refresh'],
                 cols: [[
                     { field: 'platform_id', maxWidth: 60, search: false, title: 'ID' },
                     { field: 'name', minWidth: 100, title: '平台名' },
@@ -26,7 +27,7 @@ define(['jquery', 'utils'], function ($, utils) {
                         templet: utils.table.switch,
                         tips: '显示|隐藏'
                     },
-                    { minWidth: 100, title: '操作', templet: utils.table.tool }
+                    { minWidth: 100, title: '操作', templet: utils.table.tool, operat: ['edit'] }
                 ]]
             })
             utils.listen()
