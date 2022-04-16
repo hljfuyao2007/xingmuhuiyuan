@@ -5,56 +5,58 @@
 {block name='body'}
 {__block__}
 <div class="header_a">
-    <div class="a1">
+    <div class="a1" @click="goBack">
         <a href="javascript:;" @click="goBack"><img src="__IMG__/icon/a11.png"></a>
         个人中心
     </div>
 </div>
 <div class="content">
     <div class="grzx_a">
-        <div class="a1" @click="goBack">
-            <img src="__IMG__/a1.png" alt="">
+        <div class="a1">
+            <img :src="info.avatar" alt="">
         </div>
         <div class="a2">
             <div class="b1">
                 <!-- calss空为男 .on为女 -->
-                我是用户名
-                <span class="on">
+                {{ info.nickname }}
+                <span :class="[info.sex === 0 && 'on rotate180']">
                     <img src="__IMG__/icon/a6.png" alt="">
                 </span>
             </div>
             <!-- calss空为已认证 .on为未认证 -->
-            <div class="b2"><span>已认证</span><span class="on">未认证</span></div>
+            <div class="b2">
+                <span :class="[info.is_identity != 2 && 'on']">{{ info.is_identity == 2 ? '已认证' : '未认证' }}</span>
+            </div>
         </div>
     </div>
     <div class="grzx_b">
         <a href="#" class="item">
             <span>姓名</span>
-            <em>白开水</em>
+            <em>{{ info.name }}</em>
         </a>
         <a href="#" class="item">
             <span>身份证号</span>
-            <em>230103********1123</em>
+            <em>{{ info.id_card }}</em>
         </a>
         <a href="#" class="item">
             <span>年龄</span>
-            <em>26岁</em>
+            <em>{{ info.age }}岁</em>
         </a>
         <a href="#" class="item">
             <span>账号</span>
-            <em>130****0000</em>
+            <em>{{ info.username }}</em>
         </a>
         <a href="#" class="item">
             <span>平台ID</span>
-            <em>A00001</em>
+            <em>{{ info.platform_id }}</em>
         </a>
         <a href="#" class="item">
             <span>注册时间</span>
-            <em>2022-03-02</em>
+            <em>{{ info.register_time }}</em>
         </a>
         <a href="#" class="item">
             <span>支付宝账号</span>
-            <em>130****0000</em>
+            <em>{{ info.alipay_account }}</em>
         </a>
     </div>
 </div>
@@ -65,11 +67,23 @@
     new Vue({
         el: '#app',
         data() {
-            return {}
+            return {
+                info: {}
+            }
+        },
+        created() {
+            this.init()
         },
         methods: {
             goBack() {
                 window.history.go(-1);
+            },
+            init() {
+                utils.get({
+                    url: '/my/info'
+                }, res => {
+                    this.info = res.data
+                })
             }
         }
     })

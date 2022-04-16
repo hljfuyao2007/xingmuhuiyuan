@@ -135,7 +135,8 @@ class My extends ApiController
 
         $data = Member
             ::where('member_id', $mid)
-            ->field('nickname,name,avatar,phone,alipay_account,id_card,platform_id,register_time,is_identity')
+            ->field('nickname,name,avatar,phone,alipay_account,id_card,platform_id,register_time,is_identity,sex,
+            username')
             ->find();
         $data['age'] = getAgeByIdCard($data['id_card']);
 
