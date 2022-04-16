@@ -35,6 +35,7 @@ class My extends ApiController
             ->where('member_id', $member_id)
             ->field('avatar,nickname,phone,username,register_time,sex')
             ->find();
+        $data['service_code'] = filePathJoin(sysconfig('site', 'service_wx'));
         $data['platform'] = Platform
             ::where('is_show', 1)
             ->field('platform_id,name')
@@ -96,6 +97,15 @@ class My extends ApiController
     public function agency_notice()
     {
         return apiShow(['content' => sysconfig('site', 'agency_notice')]);
+    }
+
+    /**
+     * 用户须知
+     * @return array|\think\response\Json
+     */
+    public function user_notice()
+    {
+        return apiShow(['content' => sysconfig('site', 'user_notice')]);
     }
 
     /**

@@ -11,3 +11,6 @@ use think\facade\Route;
 
 Route::get('index', 'index');
 Route::get('home', 'home');
+Route::get('my', 'my');
+Route::get('user_notice', 'user_notice');
+Route::get('info', 'info');

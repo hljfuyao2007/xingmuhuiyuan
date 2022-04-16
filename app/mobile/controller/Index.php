@@ -30,4 +30,31 @@ class Index extends MobileController
     {
         return $this->fetch('home/index');
     }
+
+    /**
+     * 我的
+     * @return mixed
+     */
+    public function my()
+    {
+        return $this->fetch('home/my');
+    }
+
+    /**
+     * 用户须知
+     * @return mixed
+     */
+    public function user_notice()
+    {
+        return $this->fetch('home/user_notice');
+    }
+
+    /**
+     * 个人信息
+     * @return mixed
+     */
+    public function info()
+    {
+        return $this->fetch('home/info');
+    }
 }

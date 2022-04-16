@@ -442,6 +442,7 @@
 .my_a .a1 .b2 span {
   width: 0.4rem;
   height: 0.4rem;
+  line-height: 0;
   margin-left: 0.1rem;
   background-color: rgba(255, 255, 255, 0.2);
   border-radius: 0.2rem;
@@ -907,6 +908,7 @@
 .grzx_a .a2 .b1 span {
   width: 0.28rem;
   height: 0.28rem;
+  line-height: 0;
   background: #0088FF;
   border-radius: 50%;
   overflow: hidden;
@@ -1197,4 +1199,8 @@
 .yjmx_a .a2 .item em {
   font-size: 0.3rem;
   color: #000000;
+}
+
+.rotate180 {
+  transform: rotate(180deg);
 }

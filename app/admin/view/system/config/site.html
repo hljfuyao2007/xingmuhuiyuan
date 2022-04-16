@@ -20,6 +20,18 @@
     </div>
 
     <div class="layui-form-item">
+        <label class="layui-form-label">客服微信</label>
+        <div class="layui-input-block layuimini-upload">
+            <input class="layui-input layui-col-xs6 service_wx" lay-verify="required" readonly placeholder="请上传客服微信" value="{:filePathJoin($site.service_wx)}">
+            <input type="hidden" name="service_wx" value="{$site.service_wx}">
+            <div class="layuimini-upload-btn">
+                <span><a class="layui-btn" data-upload="service_wx" data-upload-type="qrcode" data-upload-number="one" data-upload-exts="png|jpg|jpeg"><i class="fa fa-upload"></i> 上传</a></span>
+                <span><a class="layui-btn layui-btn-normal" id="select_service_wx" data-upload-select="site_qrcode" data-upload-number="one"><i class="fa fa-list"></i> 选择</a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
         <label class="layui-form-label">平台所在地</label>
         <div class="layui-input-inline">
             <select name="site_location_province" class="province" lay-verify="required" lay-filter="province">
@@ -73,14 +85,6 @@
     </div>
 
     <div class="layui-form-item">
-        <label class="layui-form-label required">代理须知</label>
-        <div class="layui-input-block">
-            <textarea class="layui-textarea editor" name="agency_notice" id="" cols="30" rows="10"
-            >{:sysconfig('site', 'agency_notice')}</textarea>
-        </div>
-    </div>
-
-    <div class="layui-form-item">
         <label class="layui-form-label">成为代理费用</label>
         <div class="layui-input-block">
             <input type="number" name="agency_money" lay-verify="required" autocomplete="off"
@@ -104,6 +108,22 @@
             <input type="number" name="withdraw_rate" lay-verify="required" autocomplete="off"
                    placeholder="请输入提现手续费率"
                    class="layui-input" value="{:sysconfig('site', 'withdraw_rate')}">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">代理须知</label>
+        <div class="layui-input-block">
+            <textarea class="layui-textarea editor" name="agency_notice" cols="30" rows="10"
+            >{:sysconfig('site', 'agency_notice')}</textarea>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">用户须知</label>
+        <div class="layui-input-block">
+            <textarea class="layui-textarea editor" name="user_notice" cols="30" rows="10"
+            >{$site.user_notice}</textarea>
         </div>
     </div>
 

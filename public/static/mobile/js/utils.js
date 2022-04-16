@@ -419,4 +419,12 @@ class Utils {
     strtotime(date) {
         return new Date(date).getTime() / 1000;
     }
+
+    /**
+     * 跳转对应链接
+     * @param url
+     */
+    to(url) {
+        location.href = url
+    }
 }

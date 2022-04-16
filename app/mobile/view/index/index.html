@@ -7,7 +7,7 @@
 <div class="xzpt_a">
     <div class="a1">
         <div class="b1"><img :src="infoData.avatar" alt=""></div>
-        <div class="b2">{{ infoData.nickname }} <span><img src="__IMG__/icon/a6.png"></span></div>
+        <div class="b2">{{ infoData.nickname }} <span><img src="__IMG__/icon/a6.png" :class="[!infoData.sex && 'rotate180']" alt=""></span></div>
         <div class="b3">{{ infoData.phone }}</div>
         <div class="b4"><span><img src="__IMG__/icon/a8.png" alt=""></span> 绑定团队</div>
     </div>

@@ -36,6 +36,8 @@ Route::group('v1.0', function () {
         Route::get('platform_introduce', 'platform_introduce');
         // 代理须知
         Route::get('agency_notice', 'agency_notice');
+        // 用户须知
+        Route::get('user_notice', 'user_notice');
         // 根据身份证获取年龄
         Route::get('getAge', 'getAge');
         // 个人信息

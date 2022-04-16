@@ -1,0 +1,42 @@
+{extend name='layout/layout' /}
+{block name='css'}
+{__block__}
+{/block}
+{block name='body'}
+{__block__}
+<div class="header_a">
+    <div class="a1">
+        <a href="javascript:;" @click="goBack"><img src="__IMG__/icon/a11.png"></a>
+        用户须知
+    </div>
+</div>
+<div class="dlxz_a" v-html="content"></div>
+{/block}
+{block name='js'}
+{__block__}
+<script>
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                content: ''
+            }
+        },
+        created() {
+            this.init();
+        },
+        methods: {
+            init() {
+                utils.get({
+                    url: '/my/user_notice'
+                }, res => {
+                    this.content = res.data.content
+                })
+            },
+            goBack() {
+                window.history.go(-1);
+            }
+        }
+    })
+</script>
+{/block}

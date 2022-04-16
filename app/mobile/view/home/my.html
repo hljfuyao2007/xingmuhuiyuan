@@ -1,0 +1,104 @@
+{extend name='layout/layout' /}
+{block name='css'}
+{__block__}
+{/block}
+{block name='body'}
+{__block__}
+<div class="my_a">
+    <div class="a1">
+        <div class="b1"><img :src="info.avatar" alt=""></div>
+        <div class="b2">
+            {{ info.nickname }}
+            <span>
+                <img src="__IMG__/icon/a6.png" :class="[!info.sex && 'rotate180']"
+                     alt="">
+            </span>
+        </div>
+        <div class="b3">{{ info.phone }}</div>
+        <a href="javascript:;" class="b4" @click="toInfo"><img src="__IMG__/icon/a10.png" alt=""></a>
+    </div>
+    <div class="a2">ID:{{ info.username }} | {{ info.register_time }}</div>
+</div>
+<div class="my_b">
+    <a href="javascript:;" class="item" @click="contact_us_open">
+        <span><img src="__IMG__/icon/c4.png" alt=""></span>
+        <em>联系我们</em>
+        <i><img src="__IMG__/icon/c8.png" alt=""></i>
+    </a>
+    <a href="javascript:;" class="item" @click="user_notice">
+        <span><img src="__IMG__/icon/c5.png" alt=""></span>
+        <em>用户须知</em>
+        <i><img src="__IMG__/icon/c8.png" alt=""></i>
+    </a>
+    <a href="javascript:;" class="item">
+        <span><img src="__IMG__/icon/c6.png" alt=""></span>
+        <em>邀请海报</em>
+        <i><img src="__IMG__/icon/c8.png" alt=""></i>
+    </a>
+    <a href="javascript:;" class="item">
+        <span><img src="__IMG__/icon/c7.png" alt=""></span>
+        <em>提现信息</em>
+        <i><img src="__IMG__/icon/c8.png" alt=""></i>
+    </a>
+</div>
+<!--<div class="my_c">-->
+<!--    <a href="#">-->
+<!--        <em><img src="__IMG__/icon/d1.png"><img src="__IMG__/icon/d2.png"></em>-->
+<!--        <span>首页</span>-->
+<!--    </a>-->
+<!--    <a href="#" class="select">-->
+<!--        <em><img src="__IMG__/icon/d3.png"><img src="__IMG__/icon/d4.png"></em>-->
+<!--        <span>我的</span>-->
+<!--    </a>-->
+<!--</div>-->
+<div class="alert_a" style="display: none;">
+    <div class="box" style="padding-top: 1.17rem;">
+        <div class="b1"><img src="__IMG__/ktzh_a1.png" alt=""></div>
+        <div class="b5" @click="contact_us_close"><img src="__IMG__/icon/a17.png" alt=""></div>
+        <div class="b6">
+            <img :src="info.service_code" alt="">
+            <span>请添加客服微信</span>
+        </div>
+    </div>
+</div>
+{/block}
+{block name='js'}
+{__block__}
+<script>
+    new Vue({
+        el: '#app',
+        data() {
+            return {
+                info: {}
+            }
+        },
+        created() {
+            this.init()
+        },
+        methods: {
+            init() {
+                utils.get({
+                    url: '/my/my'
+                }, res => {
+                    const data = res.data
+                    data.phone = data.phone.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2')
+                    data.register_time = utils.date('Y-m-d', utils.strtotime(data.register_time))
+                    this.info = data
+                })
+            },
+            contact_us_open() {
+                $('.alert_a').show()
+            },
+            contact_us_close() {
+                $('.alert_a').hide()
+            },
+            user_notice() {
+                utils.to('/mobile/user_notice')
+            },
+            toInfo() {
+                utils.to('/mobile/info')
+            }
+        }
+    })
+</script>
+{/block}

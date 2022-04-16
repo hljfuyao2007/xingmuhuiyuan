@@ -5,8 +5,8 @@
 {block name='body'}
 {__block__}
 <div class="ind_a">
-    <div class="a1">
-        <span><img src="__IMG__/a1.png"></span>
+    <div class="a1" @click="toMy">
+        <span><img src="__IMG__/a1.png" alt=""></span>
         ID:12345678
     </div>
     <div class="a2">
@@ -75,6 +75,16 @@
 {block name='js'}
 {__block__}
 <script>
-
+    new Vue({
+        el: '#app',
+        data() {
+            return {}
+        },
+        methods: {
+            toMy() {
+                utils.to('/mobile/my')
+            }
+        }
+    })
 </script>
 {/block}
