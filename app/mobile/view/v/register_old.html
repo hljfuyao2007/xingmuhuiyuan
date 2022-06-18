@@ -1,0 +1,180 @@
+﻿{extend name='layout/layout' /}
+{block name='css'}
+{__block__}
+{/block}
+{block name='body'}
+{__block__}
+    
+    <div class="content">
+        <div class="list_a">
+
+        {if $wx}
+             <input type="hidden" name="open_id" id="open_id" value="{$wx.open_id}">
+             <input type="hidden" name="avatar" id="avatar" value="{$wx.avatar}">
+        {/if}
+            <div class="item">
+                <input type="text" name="username" id="username" placeholder="请输入账号/手机号">
+            </div>
+            <div class="item">
+                <input type="text" name="sms" id="sms" placeholder="请输入验证码">
+            </div>
+
+
+            <div class="item">
+                <input type="button" onclick="sms_fa()" name="sms_b" id="sms_b" value="发送短信验证码">
+            </div>
+             <div class="item">
+                <input type="text" name="name" id="name" placeholder="请输入昵称" {if $wx} value="{$wx.nickname}"{/if}>
+            </div>
+            <div class="item">
+                <input type="password" name="password" id="password" placeholder="请输入密码">
+            </div>
+            <div class="item">
+                <input type="password" name="password2" id="password2" placeholder="请再次输入密码">
+            </div>
+    
+            <div class="item">
+                <input type="text" name="invite_code" id="invite_code" placeholder="请填写邀请码">
+            </div>
+            
+
+            <div class="item">
+                <input type="submit" onclick="sub()" value="提交">
+            </div>
+        </div>
+    </div>
+    
+
+    <script>
+
+        var s=0;
+        var id_sms_send=false;
+        function sub(){
+            if(s==1)return;
+            // alert("1");
+            var username=$("#username").val();
+            var password=$("#password").val();
+            var password2=$("#password2").val();
+            var name=$("#name").val();
+            var sms=$("#sms").val();
+            var invite_code=$("#invite_code").val();
+
+            if(username== ""){
+                alert("账号/手机号不能为空");
+                $("#username").focus();
+                return;
+            }else if(password==""  ){
+                alert("密码不能为空");
+                $("#password").focus();
+                return;
+            }else if(password!=password2  ){
+                alert(password+"两次密码不一致"+password2);
+                //alert("两次密码不一致");
+                $("#password").focus();
+                return;
+            }else if(name==""  ){
+                alert("请输入昵称");
+                $("#name").focus();
+                return;
+            }else if(!id_sms_send  ){
+                alert("请点击发送验证码");
+                $("#sms_b").focus();
+                return;
+            }else if(sms==""  ){
+                alert("验证码不能为空");
+                $("#password").focus();
+                return;
+            }
+            s=1;
+            $.ajax({
+                type : "POST", //提交方式
+                url:"/api/v1.0/access/register",
+                data : { 
+                  "phone" : username,
+                  "password" : password,
+                  "sms_code" : sms,
+                  "nickname" : name,
+                  "invite_code":invite_code,
+                   {if $wx}
+                       "open_id":$("#open_id").val(),
+                       "avatar":$("#avatar").val(),
+                        // var open_id=$("#open_id").val();
+                        // var avatar=$("#avatar").val();
+                    {/if}
+                 },//数据，这里使用的是Json格式进行传输 
+                success:function(result){
+                    //console.log(result);
+                    s=0;
+                    if(result.code == 0){
+                        alert(result.msg);
+                        result.data.type="login";
+                        //goToUrl("/mobile/login","post");
+                        window.location.replace("/mobile/login");
+                    }else{
+                        alert(result.msg);
+                    }
+                   
+                },
+                error:function(err){
+                    s=0;
+                }
+            });
+
+        }
+
+        function sms_fa(){
+            id_sms_send=true;
+            s=0;
+            var username=$("#username").val();
+            $.ajax({
+                type : "POST", //提交方式
+                url:"/api/common/send_sms",
+                data : { 
+                  "phone" : username,
+                  "type" : 1,
+                 },//数据，这里使用的是Json格式进行传输 
+                success:function(result){
+                    //console.log(result);
+                    s=0;
+                    if(result.code == 0){
+                        alert(result.msg);
+                        // result.data.type="login";
+                        // goToUrl("/mobile/index","post",result.data);
+                        //window.location.replace(window.location.href);
+                    }else{
+                        alert(result.msg);
+                    }
+                },
+                error:function(err){
+                    s=0;
+                }
+            });
+        }
+
+        /*
+        * url:跳转链接
+        * method:跳转方式
+        * params:传递参数   {name:"test" ,age:"123"}]
+        * */
+        function goToUrl(url,method,params){
+            // 创建form元素
+            var temp_form = document.createElement("form");
+            // 设置form属性
+            temp_form .action = url;
+            temp_form .method = method;
+            temp_form .style.display = "none";
+            // 处理需要传递的参数
+            for (var x in params) {
+                var opt = document.createElement("textarea");
+                opt.name = x;
+                opt.value = params[x];
+                temp_form .appendChild(opt);
+            }
+            document.body.appendChild(temp_form);
+            // 提交表单
+            temp_form.submit();
+            return temp_form;
+        }   
+
+    </script>
+{/block}

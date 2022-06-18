@@ -1,0 +1,100 @@
+﻿{extend name='layout/layout' /}
+{block name='css'}
+{__block__}
+{/block}
+{block name='body'}
+{__block__}
+    <div class="header_a">
+        <div class="a1">
+            <a href="javascript:void(0);" onclick="window.history.go(-1);"><img src="__STATIC__/mobile/images/icon/a11.png"></a>
+            提现
+        </div>
+    </div>
+    <div class="content">
+        <div class="tx_a">
+            <span>可提现金额</span><i>¥</i>{$tree.money}
+        </div>
+        <div class="tx_b">
+            <span><img src="{if $user.avatar==""}__STATIC__/mobile/images/icon/a12.png {else} {$user.avatar} {/if}"></span>
+            <!-- 姓名156****0000 -->
+            {$user.name}{$user.phone}
+
+        </div>
+        <div class="tx_c">
+            <div class="a1">
+                <span>¥</span>
+                <div><input type="number" id="money_input" placeholder="输入提现金额" onchange="true_change();"></div>
+                <em onclick="all_in();">全部提现</em>
+            </div>
+            <div class="a2">手续费0.1%，实际到账¥<span id="true_money" style="width: 100px;">0</span></div>
+            <div class="a3" onclick="do_withdraw();">提现</div>
+        </div>
+        <a href="javascript:void(0);" class="tx_d">
+            <img src="__STATIC__/mobile/img/a3.jpg">
+        </a>
+    </div>
+
+<script>
+
+function all_in(){
+    $("#money_input").val({$tree.money});
+    true_change();
+    $("#money_input").focus();
+
+}
+
+function do_withdraw(){
+
+    var money=$("#money_input").val();
+    if(money<=0){
+        return;
+    }
+    if(money<50){
+        alert("提现金额需大于50元");
+        return;
+    }
+    if(!confirm("确定提现"+money+"元")){
+        return;
+    }
+    var platform_id={$tree.platform_id};
+    var member_id={$user.member_id};
+    $.ajax({
+        type : "POST", //提交方式
+        url:"/api/v1.0/index/withdraw",
+        data : { 
+          "money" : money,
+          "platform_id" : platform_id,
+          "member_id" : member_id,
+          "name" : "{$user.name}",
+          "account" : "{$user.alipay_account}",
+
+         },//数据，这里使用的是Json格式进行传输 
+        success:function(result){
+
+            // s=0;
+            if(result.code == 1){
+                alert(result.msg);
+       
+                window.location.replace("/mobile/home");
+            }else{
+                alert(result.msg);
+            }
+           
+        },
+        error:function(err){
+            s=0;
+        }
+    });
+
+
+}
+function true_change(){
+    var t=document.getElementById("true_money");
+     var money=$("#money_input").val();
+    var t_m=money*0.999;
+    t_m=Math.floor(t_m,2);
+    //$("#true_money").val(t_m);
+    t.innerHTML=t_m;
+}
+</script>
+{/block}

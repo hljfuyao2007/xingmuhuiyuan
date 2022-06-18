@@ -18,6 +18,14 @@
         </div>
 
         <div class="layui-form-item">
+            <label class="layui-form-label required">昵称</label>
+            <div class="layui-input-block">
+                <input type="text" name="nickname" lay-verify="required|nickname" class="layui-input" lay-reqtext="请输入昵称"
+                       placeholder="请输入昵称" value="">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
             <label class="layui-form-label required">密码</label>
             <div class="layui-input-block">
                 <input type="password" name="password" lay-verify="required" class="layui-input" lay-reqtext="请输入密码"

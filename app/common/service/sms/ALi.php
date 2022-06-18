@@ -62,6 +62,7 @@ class ALi
             "accessKeyId"     => self::$appId,
             "accessKeySecret" => self::$appKey
         ]);
+
         $config->endpoint = 'dysmsapi.aliyuncs.com';
         self::$instance = new Dysmsapi($config);
     }

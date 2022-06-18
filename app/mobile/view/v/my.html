@@ -1,0 +1,137 @@
+﻿{extend name='layout/layout' /}
+{block name='css'}
+{__block__}
+{/block}
+{block name='body'}
+{__block__}
+    <div class="my_a">
+        <div class="a1" onclick="to_personal()">
+            <div class="b1"><img src="{$user.avatar==""?"__IMG__/../img/a1.png":$user.avatar}"></div>
+            <div class="b2">{$user.nickname} 
+
+                <span {$user.sex==1?'':'style="background: #F76592;"'}>
+                <img src="__STATIC__/mobile/images/icon/a{$user.sex==1?6:15}.png">
+                </span>
+
+            </div>
+            <div class="b3">{$phone}</div>
+            <a href="#" class="b4"><img src="__STATIC__/mobile/images/icon/a10.png"></a>
+        </div>
+        <div class="a2">ID:{$user.show_id} | {$user.create_time|date="Y-m-d"}</div>
+    </div>
+    <div class="my_b">
+        <a href="javascript:void(0)" onclick="show_kf();" class="item">
+            <span><img src="__STATIC__/mobile/images/icon/c4.png"></span>
+            <em>联系我们</em>
+            <i><img src="__STATIC__/mobile/images/icon/c8.png"></i>
+        </a>
+        <a href="javascript:void(0)" onclick="to_url('tx_log');" class="item">
+            <span><img src="__STATIC__/mobile/images/icon/c7.png"></span>
+            <em>提现记录</em>
+            <i><img src="__STATIC__/mobile/images/icon/c8.png"></i>
+        </a>
+        <a href="javascript:void(0)" onclick="to_url('khxz');" class="item">
+            <span><img src="__STATIC__/mobile/images/icon/c5.png"></span>
+            <em>用户须知</em>
+            <i><img src="__STATIC__/mobile/images/icon/c8.png"></i>
+        </a>
+        <a href="javascript:void(0)" onclick="show_hb();" class="item">
+            <span><img src="__STATIC__/mobile/images/icon/c6.png" ></span>
+            <em>邀请海报</em>
+            <i><img src="__STATIC__/mobile/images/icon/c8.png"></i>
+        </a>
+        <a href="javascript:void(0)" onclick="to_url('txrz');" class="item">
+            <span><img src="__STATIC__/mobile/images/icon/c7.png"></span>
+            <em>提现信息</em>
+            <i><img src="__STATIC__/mobile/images/icon/c8.png"></i>
+        </a>
+
+     
+
+        <a href="javascript:void(0)" onclick="window.location.href='logout'" class="item">
+            <span><img src="__STATIC__/mobile/images/icon/c7.png"></span>
+            <em>退出登录</em>
+            <i><img src="__STATIC__/mobile/images/icon/c8.png"></i>
+        </a>
+    </div>
+
+    <div class="my_c">
+        <a href="javascript:void(0);" onclick="to_foot(1)"  >
+            <em><img src="__STATIC__/mobile/images/icon/d1.png"><img src="__STATIC__/mobile/images/icon/d2.png"></em>
+            <span>首页</span>
+        </a>
+        <a href="javascript:void(0);" onclick="to_foot(2)" class="select" >
+            <em><img src="__STATIC__/mobile/images/icon/d3.png"><img src="__STATIC__/mobile/images/icon/d4.png"></em>
+            <span>我的</span>
+        </a>
+    </div>
+
+
+    <div class="alert_a" style="display:none;" id="lxkf"  onclick="$('#lxkf').hide()">
+        <div class="box" style="background: 0;padding: 0">
+            <img src="" alt="" id="qr">
+        </div>
+    </div>
+
+
+    <div class="alert_a" style="display:none;" id="lxkf1"  onclick="$('#lxkf1').hide()">
+        <div class="box" style="padding: 0">
+            <div class="b1" ><img src="__IMG__/kf.png"></div>
+            <!-- <div class="b1" ><img src="__IMG__/ktzh_a1.png"></div>
+            <div class="b2">联系客服</div>
+            <div class="b3">您暂未开通<span id="pt"></span>账号,请联系工作人员为您开通。</div>
+            <div class="b4" onclick="window.location.href='tel:11111111111'">联系客服</div>
+            <div class="b5" onclick="closelxkf();"><img src="__IMG__/icon/a17.png"></div> -->
+        </div>
+    </div>
+    <script>
+    function show_kf(){
+        $("#lxkf1").show();
+    }
+    function show_hb(){
+        $.ajax({
+            type:'POST',
+            url:'/api/common/haibao',
+            dataType:'json',
+            data:{"qr":"http://{$url}","member_id":{$user.member_id}},
+            success:function(r){
+                //alert(JSON.stringify(r));
+                    $("#qr").attr("src",r);
+                    $("#lxkf").show();
+                    
+            },
+            error:function(jqXHR){
+                // var j=JSON.stringify(jqXHR);
+                // document.getElementById("t").innerHTML=j;
+                alert(jqXHR.msg);
+
+                //window.location.href="wxlogin.php";
+                // for(let ii in jqXHR){
+                //   $("#ceshi").append(ii+"-------"+jqXHR[ii]+"<br>"); 
+                // }
+            }
+        });
+    }
+    function to_foot(id) {
+        if(id==2){
+            window.location.href = '/mobile/my';
+        }else{
+            window.location.href = '/mobile/index';
+        }
+       
+      }
+
+      function to_personal(id) {
+       
+            window.location.href = '/mobile/personal';
+        
+       
+      }
+      function to_url(name) {
+       
+            window.location.href = '/mobile/'+name;
+        
+       
+      }
+    </script>
+{/block}

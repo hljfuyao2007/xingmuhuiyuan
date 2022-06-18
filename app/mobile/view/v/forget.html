@@ -1,0 +1,130 @@
+﻿{extend name='layout/layout' /}
+{block name='css'}
+{__block__}
+{/block}
+{block name='body'}
+{__block__}
+    <div class="box_a">
+        <div class="a1">
+            <div class="b1"><img src="__IMG__/logo_1.png"></div>
+            <div class="b2 on">
+                <div class="item">
+                    <span>手机号</span>
+                    <input placeholder="请输入手机号" id="username"  type="text" name="" >
+                </div>
+                <div class="item on">
+                    <span>验证码</span>
+                    <input placeholder="请输入验证码" id="sms"  type="text" name="" >
+                    <em onclick="sms_fa()" id="sms_b">获取验证码</em>
+                </div>
+                <div class="item">
+                    <span>设置密码</span>
+                    <input placeholder="请输入秘密" id="password"  type="text" name="" >
+                </div>
+                <div class="item">
+                    <span>确认密码</span>
+                    <input placeholder="请输入秘密" id="password2" type="text" name="" >
+                </div>
+            </div>
+            <div class="b3" onclick="sub_sms();">确定</div>
+            <div class="b4">
+                <a href="javascript:void(0)" onclick="window.location.href='login'">已有账号登录</a>
+            </div>
+            <div class="b5"><em><input type="checkbox" id="check"></em> 同意服务条款及隐私协议</div>
+        </div>
+    </div>
+
+<script>
+    var s=0;
+     function sub_sms(){
+
+            if(s==1)return;
+            if(!$("#check").prop("checked")){
+                alert("需要同意服务条款及隐私协议");return;
+            }
+            var username=$("#username").val();
+            var sms=$("#sms").val();
+            var password=$("#password").val();
+            var password2=$("#password2").val();
+            if(username== ""){
+                alert("手机号不能为空");
+                $("#username").focus();
+                return;
+            }else if(sms==""  ){
+                alert("验证码不能为空");
+                $("#sms").focus();
+                return;
+            }
+            if(password!=password2  ){
+                alert(password+"两次密码不一致"+password2);
+                $("#password").focus();
+                return;
+            }
+            s=1;
+            $.ajax({
+                type : "POST", //提交方式
+                url:"/api/v1.0/access/forgetPwd",
+                data : { 
+                  "phone" : username,
+                  "sms_code" : sms,
+                  "password" : password,
+                 },//数据，这里使用的是Json格式进行传输 
+                success:function(result){
+                    s=0;
+                    // alert(result.msg);
+                    // window.location.replace("login");
+                    if(result.code == 1){
+                        window.location.replace("login");
+                    }else{
+                        alert(result.msg);
+                    }
+                   
+                },
+                error:function(err){
+                    s=0;
+                }
+            });
+
+        }
+         var f=true;
+        function sms_fa(){
+            if(!f){return;}
+            s=0;
+            var username=$("#username").val();
+
+            count_down(60);
+            f=false;
+            $.ajax({
+                type : "POST", //提交方式
+                url:"/api/common/send_sms",
+                data : { 
+                  "phone" : username,
+                  "type" : 2,
+                 },//数据，这里使用的是Json格式进行传输 
+                success:function(result){
+                    //console.log(result);
+                    s=0;
+                    if(result.code == 0){
+                        alert(result.msg);
+                    }else{
+                        alert(result.msg);
+                    }
+                   
+                },
+                error:function(err){
+                    s=0;
+                }
+            });
+        }
+    function  count_down(num){
+        if(num<=0){
+            f=true;
+            $("#sms_b").html("获取验证码");
+        }else{
+            $("#sms_b").html(num+"秒后可重新发送");
+            setTimeout("count_down("+(--num)+");", 1000);
+        }
+        
+    } 
+</script>
+{/block}

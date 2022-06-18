@@ -1,0 +1,278 @@
+﻿{extend name='layout/layout' /}
+{block name='css'}
+{__block__}
+{/block}
+{block name='body'}
+{__block__}
+    
+    <div class="content">
+        
+        <div class="list_a">
+            <div class="item" id="t">
+               
+            </div>
+            <div class="item">
+                <input type="text" name="username" id="username" placeholder="请输入账号/手机号">
+            </div>
+            <div class="item">
+                <input type="password" name="password" id="password" placeholder="请输入密码">
+            </div>
+
+            <div class="item">
+                <input type="text" name="sms" id="sms" placeholder="请输入验证码">
+            </div>
+            <div class="item">
+                <input type="button" onclick="sms_fa()" name="sms_b" id="sms_b" value="发送短信验证码">
+            </div>
+
+            <div class="item">
+                <input type="submit" onclick="sub()" value="提交">
+            </div>
+
+
+            <div class="item">
+                <input type="submit" onclick="register()" value="注册">
+            </div>
+
+            <div class="item">
+                <input type="submit" onclick="get_wxurl()" value="微信">
+            </div>
+        </div>
+    </div>
+    
+
+    <script>
+    if(getQueryString("code")){
+         var json={'code':getQueryString("code")};
+         
+        $.ajax({
+            type:'POST',
+            url:'/api/v1.0/access/wx_login',
+            dataType:'json',
+            data:json,
+            success:function(r){
+                var j=JSON.stringify(r);
+                alert(j);
+                if(r["code"] == "0" ){
+                    
+                    if(r["msg"]=="用户不存在"){
+                        //window.location.href="/mobile/register?";
+                        if(confirm("是否绑定已有账号/新注册账号")){
+                            r.data.type="wx_bd";
+                            goToUrl("/mobile/wx_bd","post",r["data"]);
+                        }else{
+                            r.data.type="wx_register";
+                            goToUrl("/mobile/register","post",r["data"]);
+                        }
+                        
+                    }else{
+
+                        r.data.type="login";
+                        goToUrl("/mobile/index","post",r.data);
+                    }
+                  //  alert(0);
+                    //sessionStorage.setItem("st_user",JSON.stringify(r.data.user)); 
+                    // var u=sessionStorage.getItem("return_url"); 
+                    // if(!u || u=="wxlogin.php"){
+                    //     u="index.php";
+                    // }
+                    //alert(r["msg"]);
+                    //window.location.href=u;
+                }else{
+
+                    alert(r["msg"]);
+                    // sessionStorage.setItem("st_user",JSON.stringify(r.data.user)); 
+                    // window.location.href=r.data.url;
+                }
+            },
+            error:function(jqXHR){
+                // var j=JSON.stringify(jqXHR);
+                // document.getElementById("t").innerHTML=j;
+                alert(jqXHR.msg);
+
+                //window.location.href="wxlogin.php";
+                // for(let ii in jqXHR){
+                //   $("#ceshi").append(ii+"-------"+jqXHR[ii]+"<br>"); 
+                // }
+            }
+        });
+    }
+
+        var s=0;
+        function sub(){
+            if(s==1)return;
+            // alert("1");
+            var username=$("#username").val();
+            var password=$("#password").val();
+
+            if(username== ""){
+                alert("账号/手机号不能为空");
+                $("#username").focus();
+                return;
+            }else if(password==""  ){
+                alert("密码不能为空");
+                $("#password").focus();
+                return;
+            }
+            s=1;
+            $.ajax({
+                type : "POST", //提交方式
+                url:"/api/v1.0/access/account_login",
+                data : { 
+                  "phone" : username,
+                  "password" : password,
+                 },//数据，这里使用的是Json格式进行传输 
+                success:function(result){
+                    //console.log(result);
+                    s=0;
+                    if(result.code == 0){
+                        alert(result.msg);
+                        result.data.type="login";
+                        goToUrl("/mobile/index","post",result.data);
+                        //window.location.replace(window.location.href);
+                    }else{
+                        alert(result.msg);
+                    }
+                   
+                },
+                error:function(err){
+                    s=0;
+                }
+            });
+
+        }
+
+
+        function sub_sms(){
+            if(s==1)return;
+            // alert("1");
+            var username=$("#username").val();
+            var sms=$("#sms").val();
+
+            if(username== ""){
+                alert("账号/手机号不能为空");
+                $("#username").focus();
+                return;
+            }else if(sms==""  ){
+                alert("验证码不能为空");
+                $("#sms").focus();
+                return;
+            }
+            s=1;
+            $.ajax({
+                type : "POST", //提交方式
+                url:"/api/v1.0/access/sms_login",
+                data : { 
+                  "phone" : username,
+                  "sms_code" : sms,
+                 },//数据，这里使用的是Json格式进行传输 
+                success:function(result){
+                    //console.log(result);
+                    s=0;
+                    if(result.code == 0){
+                        alert(result.msg);
+                        result.data.type="login";
+                        goToUrl("/mobile/index","post",result.data);
+                        //window.location.replace(window.location.href);
+                    }else{
+                        alert(result.msg);
+                    }
+                   
+                },
+                error:function(err){
+                    s=0;
+                }
+            });
+
+        }
+        function sms_fa(){
+            s=0;
+            var username=$("#username").val();
+            $.ajax({
+                type : "POST", //提交方式
+                url:"/api/common/send_sms",
+                data : { 
+                  "phone" : username,
+                  "type" : 5,
+                 },//数据，这里使用的是Json格式进行传输 
+                success:function(result){
+                    //console.log(result);
+                    s=0;
+                    if(result.code == 0){
+                        alert(result.msg);
+                        // result.data.type="login";
+                        // goToUrl("/mobile/index","post",result.data);
+                        //window.location.replace(window.location.href);
+                    }else{
+                        alert(result.msg);
+                    }
+                   
+                },
+                error:function(err){
+                    s=0;
+                }
+            });
+        }
+
+        /*
+        * url:跳转链接
+        * method:跳转方式
+        * params:传递参数   {name:"test" ,age:"123"}]
+        * */
+        function goToUrl(url,method,params){
+            // 创建form元素
+            var temp_form = document.createElement("form");
+            // 设置form属性
+            temp_form .action = url;
+            temp_form .method = method;
+            temp_form .style.display = "none";
+            // 处理需要传递的参数
+            for (var x in params) {
+                var opt = document.createElement("textarea");
+                opt.name = x;
+                opt.value = params[x];
+                temp_form .appendChild(opt);
+            }
+            document.body.appendChild(temp_form);
+            // 提交表单
+            temp_form.submit();
+            return temp_form;
+        }   
+
+        function register(){
+            window.location.href="/mobile/register"
+        }
+
+        function get_wxurl(){
+            var baseUrl=encodeURI("http://"+window.location.host+window.location.pathname);    
+            $.ajax({
+                type : "POST", //提交方式
+                url:"/api/v1.0/access/return_oauth2",
+                data : { 
+                  "baseUrl" : baseUrl,
+                  //"type" : 5,
+                 },//数据，这里使用的是Json格式进行传输 
+                success:function(result){
+                    console.log(result);
+                    // s=0;
+                    if(result.code == 0){
+                        window.location.replace(result.data.url);
+                    }else{
+                        alert(result.msg);
+                    }
+                   
+                },
+                error:function(err){
+                    s=0;
+                }
+            });
+        }
+function getQueryString(name) {
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+    var r = window.location.search.substr(1).match(reg);
+    if (r != null) return decodeURI(r[2]);
+    return null;
+}
+
+    </script>
+{/block}

@@ -1,0 +1,212 @@
+﻿{extend name='layout/layout' /}
+{block name='css'}
+{__block__}
+{/block}
+{block name='body'}
+{__block__}
+    <div class="box_a">
+        <div class="a1">
+            <div class="b1"><img src="__IMG__/logo_1.png"></div>
+
+             {if $wx!=1}
+                 <input type="hidden" name="open_id" id="open_id" value="{$wx.open_id}">
+                 <input type="hidden" name="avatar" id="avatar" value="{$wx.avatar}">
+            {/if}
+            <div class="b2 on">
+                <div class="item">
+                    <span>昵称</span>
+                    <input placeholder="请输入您的昵称" type="text" id="name" {if $wx!=1} value="{$wx.nickname}"{/if} >
+                </div>
+                <div class="item">
+                    <span>手机号</span>
+                    <input placeholder="请输入手机号"  id="username" type="text" name="" id="">
+                </div>
+                <div class="item on">
+                    <span>验证码</span>
+                    <input placeholder="请输入验证码" id="sms"  type="text" name="" id="">
+                    <em  onclick="sms_fa()" name="sms_b" id="sms_b">获取验证码</em>
+                </div>
+                <div class="item">
+                    <span>设置密码</span>
+                    <input placeholder="请输入密码" id="password"  type="text" name="" id="">
+                </div>
+                <div class="item">
+                    <span>确认密码</span>
+                    <input placeholder="请输入密码" id="password2" type="text" name="" id="">
+                </div>
+                <div class="item">
+                    <span>邀请人</span>
+                    <input placeholder="请填写邀请人昵称" id="invite_code" {if $invite_code!==0} value="{$invite_code}" disabled {/if}  type="text">
+                </div>
+
+            </div>
+            <div class="b3" onclick="sub()">注册</div>
+            {if $invite_code!==0}
+                <div class="b4">
+                    <a href="javascript:void(0);" onclick="window.location.href='login'">账号登录</a>|
+                    <a href="javascript:void(0);" onclick="window.location.href='forget'">忘记密码</a>|
+                    <a href="javascript:void(0);">注册账号</a>
+                </div>
+            {/if}
+            <div class="b5"><em><input type="checkbox" id="check"></em> 同意服务条款及隐私协议</div>
+        </div>
+    </div>
+
+    <script>
+
+        var s=0;
+        var id_sms_send=false;
+        function sub(){
+            if(s==1)return;
+
+            if(!$("#check").prop("checked")){
+                alert("需要同意服务条款及隐私协议");return;
+            }
+            // alert("1");
+            var username=$("#username").val();
+            var password=$("#password").val();
+            var password2=$("#password2").val();
+            var name=$("#name").val();
+            var sms=$("#sms").val();
+            var invite_code=$("#invite_code").val();
+
+            if(username== ""){
+                alert("账号/手机号不能为空");
+                $("#username").focus();
+                return;
+            }else if(password==""  ){
+                alert("密码不能为空");
+                $("#password").focus();
+                return;
+            }else if(password!=password2  ){
+                alert("两次密码不一致");
+                //alert("两次密码不一致");
+                $("#password").focus();
+                return;
+            }else if(name==""  ){
+                alert("请输入昵称");
+                $("#name").focus();
+                return;
+            }else if(!id_sms_send  ){
+                alert("请点击发送验证码");
+                $("#sms_b").focus();
+                return;
+            }else if(sms==""  ){
+                alert("验证码不能为空");
+                $("#password").focus();
+                return;
+            }
+            s=1;
+            $.ajax({
+                type : "POST", //提交方式
+                url:"/api/v1.0/access/register",
+                data : { 
+                  "phone" : username,
+                  "password" : password,
+                  "sms_code" : sms,
+                  "nickname" : name,
+                  "invite_code":invite_code,
+                   {if $wx}
+                       "open_id":$("#open_id").val(),
+                       "avatar":$("#avatar").val(),
+                        // var open_id=$("#open_id").val();
+                        // var avatar=$("#avatar").val();
+                    {/if}
+                 },//数据，这里使用的是Json格式进行传输 
+                success:function(result){
+                    //console.log(result);
+                    s=0;
+                    
+                    if(result.code == 1){
+                       // alert(result.code);
+                        alert(result.msg);
+                        window.location.href="/mobile/login";
+
+                        // result.data['type']="login";
+                        // goToUrl("/mobile/index","post",result.data);
+                        //window.location.replace("/mobile/login");
+                    }else{
+                        alert(result.msg);
+                    }
+                   
+                },
+                error:function(err){
+                    s=0;
+                }
+            });
+
+        }
+
+        function sms_fa(){
+            id_sms_send=true;
+            s=0;
+            var username=$("#username").val();
+            count_down(60);
+            $.ajax({
+                type : "POST", //提交方式
+                url:"/api/common/send_sms",
+                data : { 
+                  "phone" : username,
+                  "type" : 1,
+                 },//数据，这里使用的是Json格式进行传输 
+                success:function(result){
+                    //console.log(result);
+                    s=0;
+
+                    if(result.code == 0){
+                        alert(result.msg);
+                        // result.data.type="login";
+                        // goToUrl("/mobile/index","post",result.data);
+                        //window.location.replace(window.location.href);
+                    }else{
+                        alert(result.msg);
+                    }
+                },
+                error:function(err){
+                    s=0;
+                }
+            });
+        }
+
+
+        var f=true;
+       
+       
+        function  count_down(num){
+            if(num<=0){
+                f=true;
+                $("#sms_b").html("获取验证码");
+            }else{
+                $("#sms_b").html(num+"秒后可重新发送");
+                setTimeout("count_down("+(--num)+");", 1000);
+            }
+            
+        } 
+
+        /*
+        * url:跳转链接
+        * method:跳转方式
+        * params:传递参数   {name:"test" ,age:"123"}]
+        * */
+        function goToUrl(url,method,params){
+            // 创建form元素
+            var temp_form = document.createElement("form");
+            // 设置form属性
+            temp_form .action = url;
+            temp_form .method = method;
+            temp_form .style.display = "none";
+            // 处理需要传递的参数
+            for (var x in params) {
+                var opt = document.createElement("textarea");
+                opt.name = x;
+                opt.value = params[x];
+                temp_form .appendChild(opt);
+            }
+            document.body.appendChild(temp_form);
+            // 提交表单
+            temp_form.submit();
+            return temp_form;
+        }   
+
+    </script>
+{/block}

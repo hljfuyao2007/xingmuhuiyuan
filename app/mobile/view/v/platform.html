@@ -1,0 +1,155 @@
+﻿{extend name='layout/layout' /}
+{block name='css'}
+{__block__}
+{/block}
+{block name='body'}
+{__block__}
+
+<style>
+#is_agency{
+    width: 0.78rem;
+    line-height: 0.3rem;
+    background: #4C4B5D;
+    border: 0.02rem solid #FBDDA5;
+    border-radius: 0.17rem;
+    text-align: center;
+    font-size: 0.24rem;
+    color: #FBDDA5;
+    margin-left: 0.2rem;
+}
+
+</style>
+    <div class="xzpt_a">
+        <div class="a1">
+            <div class="b1"><img src="{$user.avatar==""?"__IMG__/../img/a1.png":$user.avatar}"></div>
+            <div class="b2">
+                {$user.nickname} 
+                <span {$user.sex==1?'':'style="background: #F76592;"'}>
+                    <img src="__IMG__/icon/a{$user.sex==1?6:15}.png">
+                </span>
+               <!--  <span style="{$user.is_agency==0?'display:none':''}">推广</span> -->
+               <em id="is_agency">{$user.is_agency==0?"会员":"推广"}</em>
+            </div>
+            <div class="b3">{$user.phone}</div>
+            <div class="b4"><span><img src="__IMG__/icon/a8.png"></span> 绑定团队</div>
+        </div>
+        <div class="a2"><!-- ID:{$user.show_id} | --> 注册时间:{$user.create_time|date="Y-m-d"}</div>
+    </div>
+    <div class="xzpt_b">
+        <div class="list">
+        {foreach $p as $k=>$vo}
+            <a href="javascript:;" onclick="to_platform({$vo.platform_id},{$vo.open},'{$vo.name}')" class="item">
+                <h6>{$vo.name}</h6>
+                <p>立即登录查看</p>
+                <span>go</span>
+                <img src="__IMG__/icon/c1.png">
+            </a>
+        {/foreach}
+        </div>
+        <a href="javascript:void(0)" class="a1" onclick="show_hb();" >
+            <img src="__IMG__/aa1.jpg">
+        </a>
+    </div>
+
+<div class="alert_a" style="display:none;" id="lxkf"  onclick="$('#lxkf').hide()" >
+    <div class="box" style="background: 0">
+        <div class="b1" ><img src="__IMG__/kf.png"></div>
+        <!-- <div class="b1" ><img src="__IMG__/ktzh_a1.png"></div>
+        <div class="b2">联系客服</div>
+        <div class="b3">您暂未开通<span id="pt"></span>账号,请联系工作人员为您开通。</div>
+        <div class="b4" onclick="window.location.href='tel:11111111111'">联系客服</div>
+        <div class="b5" onclick="closelxkf();"><img src="__IMG__/icon/a17.png"></div> -->
+    </div>
+</div>
+
+    <div class="alert_a" style="display:none;" id="lxkf_qr"  onclick="$('#lxkf_qr').hide()">
+         <div class="box" style="padding: 0">
+            <img src="" alt="" id="qr">
+        </div> 
+    </div>
+
+    <div class="my_c">
+        <a href="javascript:void(0);" onclick="to_foot(1)" class="select" >
+            <em><img src="__STATIC__/mobile/images/icon/d1.png"><img src="__STATIC__/mobile/images/icon/d2.png"></em>
+            <span>首页</span>
+        </a>
+        <a href="javascript:void(0);" onclick="to_foot(2)" >
+            <em><img src="__STATIC__/mobile/images/icon/d3.png"><img src="__STATIC__/mobile/images/icon/d4.png"></em>
+            <span>我的</span>
+        </a>
+    </div>
+    <script>
+        function show_hb(){
+        $.ajax({
+            type:'POST',
+            url:'/api/common/haibao',
+            dataType:'json',
+            data:{"qr":"http://{$url}","member_id":{$user.member_id} },
+            success:function(r){
+                //alert(JSON.stringify(r));
+                    $("#qr").attr("src",r);
+                    $("#lxkf_qr").show();
+                    
+            },
+            error:function(jqXHR){
+                // var j=JSON.stringify(jqXHR);
+                // document.getElementById("t").innerHTML=j;
+                alert(jqXHR.msg);
+
+                //window.location.href="wxlogin.php";
+                // for(let ii in jqXHR){
+                //   $("#ceshi").append(ii+"-------"+jqXHR[ii]+"<br>"); 
+                // }
+            }
+        });
+    }
+        function to_platform(id,i,name) {
+            $("#pt").html(name);
+            if(i==1){
+               window.location.href = '/mobile/home?platform_id='+id; 
+           }else{
+                $("#lxkf").show();
+           }
+                   
+        }
+        function closelxkf() {
+            $("#lxkf").hide();
+                   
+        }
+        function to_foot(id) {
+            if(id==2){
+                window.location.href = '/mobile/my';
+            }else{
+                window.location.href = '/mobile/index';
+            }
+        }
+// function getWXcode() {
+    
+//     // 公众号的惟一标识，找公众号管理员提供
+//     var APPID = '公众号的appid';
+    
+//     // 受权后重定向的回调链接地址，要应用encodeURIComponent()对其进行编码解决
+//     // !!!留神回调的域名必须先让公众号管理员增加到平安域名中，否则无奈实现跳转
+//     var REDIRECT_URI = encodeURIComponent('受权后跳转回的页面');
+    
+//     // 常量，返回类型，填写code即可
+//     var RESPONSE_TYPE = 'code';
+    
+//     // 常量，利用受权作用域
+//     // snsapi_userinfo （弹出受权页面，可通过openid拿到昵称、性别、所在地。并且， 即便在未关注的状况下，只有用户受权，也能获取其信息 ）
+//     // snsapi_base （不弹出受权页面，间接跳转，只能获取用户openid）
+//     var SCOPE = 'snsapi_userinfo' || 'snsapi_base';
+    
+//     // 重定向后会带上state参数，开发者能够填写a-zA-Z0-9的参数值，最多128字节
+//     // 除了此项是非必须参数，其余都是必须要带的参数
+//     // 留神！！！该参数通常用于判断跳转回来之前的接口是什么作用，比方用于判断是第一次微信登录还是受权过的疾速微信登录
+//     var STATE = '能够自定义的返回参数';
+    
+//     // 无论间接关上还是做页面302重定向时候，必须带'#wechat_redirect'参数
+//     // 因为受权操作安全等级较高，所以在发动受权申请时，微信会对受权链接做正则强匹配校验，如果链接的参数程序不对，受权页面将无奈失常拜访
+//     location.href =
+//         'https://open.weixin.qq.com/connect/oauth2/authorize?appid=${APPID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}&scope=${SCOPE}&state=STATE#wechat_redirect';
+
+// }
+    </script>
+{/block}

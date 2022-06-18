@@ -1,0 +1,71 @@
+<div class="layuimini-container">
+    <form id="app-form" class="layui-form layuimini-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label">会员昵称</label>
+            <div class="layui-form-mid">
+                {$item.nickname}
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">姓名</label>
+            <div class="layui-form-mid">
+                {$item.name}
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">提现账户</label>
+            <div class="layui-form-mid">
+                {$item.account}
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">提现金额</label>
+            <div class="layui-form-mid">
+                {$item.money}
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">手续费率</label>
+            <div class="layui-form-mid">
+                {$item.rate}
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">实际到账金额</label>
+            <div class="layui-form-mid">
+                {$item.income_money}
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">提现时间</label>
+            <div class="layui-form-mid">
+                {$item.create_time}
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">提现状态</label>
+            <div class="layui-input-block">
+                <input disabled type="radio" name="status" value="0" title="待审核" {eq name="item.status|default=0" value="0"} checked {/eq}>
+                <input {in name="item.status" value="1,2"} disabled {/in} type="radio" name="status" value="1" title="已打款" {eq name="item.status|default=0" value="1"} checked {/eq}>
+                <input {in name="item.status" value="1,2"} disabled {/in} type="radio" name="status" value="2" title="已拒绝" {eq name="item.status|default=0" value="2"} checked {/eq}>
+            </div>
+        </div>
+
+        <div class="layui-form-item text-center">
+            <input type="hidden" name="withdraw_id" value="{$item.withdraw_id|default=''}">
+            <input type="hidden" name="money" value="{$item.money|default=''}">
+            <input type="hidden" name="member_id" value="{$item.member_id|default=''}">
+            {eq name="item.status" value="0"}
+            <button type="submit" class="layui-btn layui-btn-normal layui-btn-sm" lay-submit>确认</button>
+            {/eq}
+            <button type="button" class="layui-btn layui-btn-primary layui-btn-sm" onclick="parent.layer.closeAll()">关闭</button>
+        </div>
+    </form>
+</div>

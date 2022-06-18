@@ -13,6 +13,8 @@ use think\facade\Route;
 Route::group('v1.0', function () {
     /***************************************登录or注册************************************************/
     Route::group('access', function () {
+        // 测试
+        Route::get('ceshi', 'ceshi');
         // 短信登录
         Route::post('sms_login', 'sms_login');
         // 微信登录
@@ -25,6 +27,10 @@ Route::group('v1.0', function () {
         Route::post('register', 'register');
         // 忘记密码
         Route::post('forgetPwd', 'forgetPwd');
+        Route::any('return_oauth2', 'return_oauth2');
+        Route::any('wx_sms_login', 'wx_sms_login');
+
+
     })->prefix('api/access.Login/');
     /***************************************我的************************************************/
     Route::group('my', function () {
@@ -48,6 +54,9 @@ Route::group('v1.0', function () {
         Route::get('become_agent', 'become_agent');
         // 成为代理下单
         Route::post('agent_pay', 'agent_pay');
+
+
+        Route::any('checkIdcard', 'checkIdcard');
     })->prefix('api/my.My/');
     /***************************************首页************************************************/
     Route::group('index', function () {
@@ -59,10 +68,16 @@ Route::group('v1.0', function () {
         Route::get('subordinate', 'subordinate');
         // 本月新增
         Route::get('monthly_new', 'monthly_new');
+
+        //计划任务文件
+        Route::any('plan_task', 'plan_task');
+
     })->prefix('api/home.Index/');
     /*************************************支付回调**********************************************/
     Route::group('pay', function () {
         // 微信回调
         Route::any('wxNotify', 'wxNotify');
+        Route::any('add', 'add');
+
     })->prefix('api/pay.Notify/');
 });

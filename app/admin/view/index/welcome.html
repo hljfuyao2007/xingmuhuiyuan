@@ -1,9 +1,14 @@
 <link rel="stylesheet" href="__CSS__/welcome.css?v={$version}" media="all">
 <div class="layuimini-container">
     <div class="layuimini-main">
+
+
+<input class="layui-input" id="test1" type="text" placeholder="yyyy-MM-dd"  value="{$date[1]??''}{$date[0]==1?' - ':''}{$date[2]??''}">
+
         <div class="layui-row layui-col-space15">
-            <div class="layui-col-md8">
+            <div class="alayui-col-md8">
                 <div class="layui-row layui-col-space15">
+  
                     <div class="layui-col-md6">
                         <div class="layui-card">
                             <div class="layui-card-header"><i class="fa fa-warning icon"></i>数据统计</div>
@@ -13,13 +18,28 @@
                                         <div class="layui-col-xs6">
                                             <div class="panel layui-bg-number">
                                                 <div class="panel-body">
+             
                                                     <div class="panel-title">
                                                         <span class="label pull-right layui-bg-blue">实时</span>
-                                                        <h5>用户统计</h5>
+                                                        <h5>平台总业绩</h5>
                                                     </div>
                                                     <div class="panel-content">
-                                                        <h1 class="no-margins">1234</h1>
-                                                        <small>当前分类总记录数</small>
+                                                        <h1 class="no-margins">{$all.yeji}</h1>
+                                                        <small>业绩总记录数</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="layui-col-xs6">
+                                            <div class="panel layui-bg-number">
+                                                <div class="panel-body">
+                                                    <div class="panel-title">
+                                                        <span class="label pull-right layui-bg-blue">实时</span>
+                                                        <h5>会员总数</h5>
+                                                    </div>
+                                                    <div class="panel-content">
+                                                        <h1 class="no-margins">{$all.zong_num}</h1>
+                                                        <small>平台总体的会员数量</small>
                                                     </div>
                                                 </div>
                                             </div>
@@ -29,11 +49,11 @@
                                                 <div class="panel-body">
                                                     <div class="panel-title">
                                                         <span class="label pull-right layui-bg-cyan">实时</span>
-                                                        <h5>商品统计</h5>
+                                                        <h5>昨日新增</h5>
                                                     </div>
                                                     <div class="panel-content">
-                                                        <h1 class="no-margins">1234</h1>
-                                                        <small>当前分类总记录数</small>
+                                                        <h1 class="no-margins">{$all.yestoday_member}</h1>
+                                                        <small>昨天新注册的会员数量</small>
                                                     </div>
                                                 </div>
                                             </div>
@@ -42,96 +62,104 @@
                                             <div class="panel layui-bg-number">
                                                 <div class="panel-body">
                                                     <div class="panel-title">
-                                                        <span class="label pull-right layui-bg-orange">实时</span>
-                                                        <h5>浏览统计</h5>
+                                                        <span class="label pull-right layui-bg-cyan">实时</span>
+                                                        <h5>新增有效会员</h5>
                                                     </div>
                                                     <div class="panel-content">
-                                                        <h1 class="no-margins">1234</h1>
-                                                        <small>当前分类总记录数</small>
+                                                        <h1 class="no-margins">{$all.good_member}</h1>
+                                                        <small>本月报新增有效会员数量</small>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="layui-col-xs6">
-                                            <div class="panel layui-bg-number">
-                                                <div class="panel-body">
-                                                    <div class="panel-title">
-                                                        <span class="label pull-right layui-bg-green">实时</span>
-                                                        <h5>订单统计</h5>
-                                                    </div>
-                                                    <div class="panel-content">
-                                                        <h1 class="no-margins">1234</h1>
-                                                        <small>当前分类总记录数</small>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                       
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="layui-col-md6">
+
+
+
+
+
+
+{volist name="$p" id="v"}
+                <div class="layui-col-md6">
                         <div class="layui-card">
-                            <div class="layui-card-header"><i class="fa fa-credit-card icon icon-blue"></i>快捷入口</div>
+                            <div class="layui-card-header"><i class="fa fa-warning icon"></i>{$v.name}&nbsp;平台数据统计</div>
                             <div class="layui-card-body">
                                 <div class="welcome-module">
-                                    <div class="layui-row layui-col-space10 layuimini-qiuck">
-
-                                        <div class="layui-col-xs3 layuimini-qiuck-module">
-                                            <a href="javascript:;" layuimini-content-href="page/menu.html" data-title="菜单管理" data-icon="fa fa-window-maximize">
-                                                <i class="fa fa-window-maximize"></i>
-                                                <cite>菜单管理</cite>
-                                            </a>
+                                    <div class="layui-row layui-col-space10">
+                                        <div class="layui-col-xs6">
+                                            <div class="panel layui-bg-number">
+                                                <div class="panel-body">
+             
+                                                    <div class="panel-title">
+                                                        <span class="label pull-right layui-bg-blue">实时</span>
+                                                        <h5>平台总业绩</h5>
+                                                    </div>
+                                                    <div class="panel-content">
+                                                        <h1 class="no-margins">{$v.yeji_zong}</h1>
+                                                        <small>业绩总记录数</small>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="layui-col-xs3 layuimini-qiuck-module">
-                                            <a href="javascript:;" layuimini-content-href="page/setting.html" data-title="系统设置" data-icon="fa fa-gears">
-                                                <i class="fa fa-gears"></i>
-                                                <cite>系统设置</cite>
-                                            </a>
+                                        <div class="layui-col-xs6">
+                                            <div class="panel layui-bg-number">
+                                                <div class="panel-body">
+                                                    <div class="panel-title">
+                                                        <span class="label pull-right layui-bg-blue">实时</span>
+                                                        <h5>会员总数</h5>
+                                                    </div>
+                                                    <div class="panel-content">
+                                                        <h1 class="no-margins">{$v.zong_num}</h1>
+                                                        <small>绑定平台的会员数量</small>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="layui-col-xs3 layuimini-qiuck-module">
-                                            <a href="javascript:;" layuimini-content-href="page/table.html" data-title="表格示例" data-icon="fa fa-file-text">
-                                                <i class="fa fa-file-text"></i>
-                                                <cite>表格示例</cite>
-                                            </a>
+                                        <div class="layui-col-xs6">
+                                            <div class="panel layui-bg-number">
+                                                <div class="panel-body">
+                                                    <div class="panel-title">
+                                                        <span class="label pull-right layui-bg-cyan">实时</span>
+                                                        <h5>昨日新增</h5>
+                                                    </div>
+                                                    <div class="panel-content">
+                                                        <h1 class="no-margins">{$v.yestoday_new_tree}</h1>
+                                                        <small>昨天新增绑定平台的会员数量</small>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="layui-col-xs3 layuimini-qiuck-module">
-                                            <a href="javascript:;" layuimini-content-href="page/icon.html" data-title="图标列表" data-icon="fa fa-dot-circle-o">
-                                                <i class="fa fa-dot-circle-o"></i>
-                                                <cite>图标列表</cite>
-                                            </a>
+                                        <div class="layui-col-xs6">
+                                            <div class="panel layui-bg-number">
+                                                <div class="panel-body">
+                                                    <div class="panel-title">
+                                                        <span class="label pull-right layui-bg-cyan">实时</span>
+                                                        <h5>新增有效会员</h5>
+                                                    </div>
+                                                    <div class="panel-content">
+                                                        <h1 class="no-margins">{$v.good_member}</h1>
+                                                        <small>本月报新增有效会员数量</small>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="layui-col-xs3 layuimini-qiuck-module">
-                                            <a href="javascript:;" layuimini-content-href="page/form.html" data-title="表单示例" data-icon="fa fa-calendar">
-                                                <i class="fa fa-calendar"></i>
-                                                <cite>表单示例</cite>
-                                            </a>
-                                        </div>
-                                        <div class="layui-col-xs3 layuimini-qiuck-module">
-                                            <a href="javascript:;" layuimini-content-href="page/404.html" data-title="404页面" data-icon="fa fa-hourglass-end">
-                                                <i class="fa fa-hourglass-end"></i>
-                                                <cite>404页面</cite>
-                                            </a>
-                                        </div>
-                                        <div class="layui-col-xs3 layuimini-qiuck-module">
-                                            <a href="javascript:;" layuimini-content-href="page/button.html" data-title="按钮示例" data-icon="fa fa-snowflake-o">
-                                                <i class="fa fa-snowflake-o"></i>
-                                                <cite>按钮示例</cite>
-                                            </a>
-                                        </div>
-                                        <div class="layui-col-xs3 layuimini-qiuck-module">
-                                            <a href="javascript:;" layuimini-content-href="https://www.baidu.com" data-title="百度搜索" data-icon="fa fa-search">
-                                                <i class="fa fa-search"></i>
-                                                <cite>百度搜索</cite>
-                                            </a>
-                                        </div>
+                         
+                         
                                     </div>
                                 </div>
                             </div>
                         </div>
-
                     </div>
+
+{/volist}
+
+
+
                     <div class="layui-col-md12">
                         <div class="layui-card">
                             <div class="layui-card-header"><i class="fa fa-line-chart icon"></i>报表统计</div>
@@ -145,97 +173,9 @@
 
             <div class="layui-col-md4">
 
-                <div class="layui-card">
-                    <div class="layui-card-header"><i class="fa fa-bullhorn icon icon-tip"></i>系统公告</div>
-                    <div class="layui-card-body layui-text">
-                        <div class="layuimini-notice">
-                            <div class="layuimini-notice-title">修改选项卡样式</div>
-                            <div class="layuimini-notice-extra">2019-07-11 23:06</div>
-                            <div class="layuimini-notice-content layui-hide">
-                                界面足够简洁清爽。<br>
-                                一个接口几行代码而已直接初始化整个框架，无需复杂操作。<br>
-                                支持多tab，可以打开多窗口。<br>
-                                支持无限级菜单和对font-awesome图标库的完美支持。<br>
-                                失效以及报错菜单无法直接打开，并给出弹出层提示完美的线上用户体验。<br>
-                                url地址hash定位，可以清楚看到当前tab的地址信息。<br>
-                                刷新页面会保留当前的窗口，并且会定位当前窗口对应左侧菜单栏。<br>
-                                移动端的友好支持。<br>
-                            </div>
-                        </div>
-                        <div class="layuimini-notice">
-                            <div class="layuimini-notice-title">新增系统404模板</div>
-                            <div class="layuimini-notice-extra">2019-07-11 12:57</div>
-                            <div class="layuimini-notice-content layui-hide">
-                                界面足够简洁清爽。<br>
-                                一个接口几行代码而已直接初始化整个框架，无需复杂操作。<br>
-                                支持多tab，可以打开多窗口。<br>
-                                支持无限级菜单和对font-awesome图标库的完美支持。<br>
-                                失效以及报错菜单无法直接打开，并给出弹出层提示完美的线上用户体验。<br>
-                                url地址hash定位，可以清楚看到当前tab的地址信息。<br>
-                                刷新页面会保留当前的窗口，并且会定位当前窗口对应左侧菜单栏。<br>
-                                移动端的友好支持。<br>
-                            </div>
-                        </div>
-                        <div class="layuimini-notice">
-                            <div class="layuimini-notice-title">新增treetable插件和菜单管理样式</div>
-                            <div class="layuimini-notice-extra">2019-07-05 14:28</div>
-                            <div class="layuimini-notice-content layui-hide">
-                                界面足够简洁清爽。<br>
-                                一个接口几行代码而已直接初始化整个框架，无需复杂操作。<br>
-                                支持多tab，可以打开多窗口。<br>
-                                支持无限级菜单和对font-awesome图标库的完美支持。<br>
-                                失效以及报错菜单无法直接打开，并给出弹出层提示完美的线上用户体验。<br>
-                                url地址hash定位，可以清楚看到当前tab的地址信息。<br>
-                                刷新页面会保留当前的窗口，并且会定位当前窗口对应左侧菜单栏。<br>
-                                移动端的友好支持。<br>
-                            </div>
-                        </div>
-                        <div class="layuimini-notice">
-                            <div class="layuimini-notice-title">修改logo缩放问题</div>
-                            <div class="layuimini-notice-extra">2019-07-04 11:02</div>
-                            <div class="layuimini-notice-content layui-hide">
-                                界面足够简洁清爽。<br>
-                                一个接口几行代码而已直接初始化整个框架，无需复杂操作。<br>
-                                支持多tab，可以打开多窗口。<br>
-                                支持无限级菜单和对font-awesome图标库的完美支持。<br>
-                                失效以及报错菜单无法直接打开，并给出弹出层提示完美的线上用户体验。<br>
-                                url地址hash定位，可以清楚看到当前tab的地址信息。<br>
-                                刷新页面会保留当前的窗口，并且会定位当前窗口对应左侧菜单栏。<br>
-                                移动端的友好支持。<br>
-                            </div>
-                        </div>
-                        <div class="layuimini-notice">
-                            <div class="layuimini-notice-title">修复左侧菜单缩放tab无法移动</div>
-                            <div class="layuimini-notice-extra">2019-06-17 11:55</div>
-                            <div class="layuimini-notice-content layui-hide">
-                                界面足够简洁清爽。<br>
-                                一个接口几行代码而已直接初始化整个框架，无需复杂操作。<br>
-                                支持多tab，可以打开多窗口。<br>
-                                支持无限级菜单和对font-awesome图标库的完美支持。<br>
-                                失效以及报错菜单无法直接打开，并给出弹出层提示完美的线上用户体验。<br>
-                                url地址hash定位，可以清楚看到当前tab的地址信息。<br>
-                                刷新页面会保留当前的窗口，并且会定位当前窗口对应左侧菜单栏。<br>
-                                移动端的友好支持。<br>
-                            </div>
-                        </div>
-                        <div class="layuimini-notice">
-                            <div class="layuimini-notice-title">修复多模块菜单栏展开有问题</div>
-                            <div class="layuimini-notice-extra">2019-06-13 14:53</div>
-                            <div class="layuimini-notice-content layui-hide">
-                                界面足够简洁清爽。<br>
-                                一个接口几行代码而已直接初始化整个框架，无需复杂操作。<br>
-                                支持多tab，可以打开多窗口。<br>
-                                支持无限级菜单和对font-awesome图标库的完美支持。<br>
-                                失效以及报错菜单无法直接打开，并给出弹出层提示完美的线上用户体验。<br>
-                                url地址hash定位，可以清楚看到当前tab的地址信息。<br>
-                                刷新页面会保留当前的窗口，并且会定位当前窗口对应左侧菜单栏。<br>
-                                移动端的友好支持。<br>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+              
 
-                <div class="layui-card">
+                <div class="layui-card" style="display: none">
                     <div class="layui-card-header"><i class="fa fa-fire icon"></i>版本信息</div>
                     <div class="layui-card-body layui-text">
                         <table class="layui-table">
@@ -281,17 +221,183 @@
                     </div>
                 </div>
 
-                <div class="layui-card">
-                    <div class="layui-card-header"><i class="fa fa-paper-plane-o icon"></i>作者心语</div>
-                    <div class="layui-card-body layui-text layadmin-text">
-                        <p>本模板基于layui2.5.4以及font-awesome-4.7.0进行实现。layui开发文档地址：<a class="layui-btn layui-btn-xs layui-btn-danger" target="_blank" href="http://www.layui.com/doc">layui文档</a></p>
-                        <p>技术交流QQ群：<a target="_blank" href="https://jq.qq.com/?_wv=1027&k=5JRGVfe"><img border="0" src="//pub.idqqimg.com/wpa/images/group.png" alt="layuimini" title="layuimini"></a>（加群请备注来源：如gitee、github、官网等）</p>
-                        <p>喜欢此后台模板的可以给我的GitHub和Gitee加个Star支持一下</p>
-                        <p class="layui-red">备注：此后台框架永久开源，但请勿进行出售或者上传到任何素材网站，否则将追究相应的责任。</p>
-                    </div>
-                </div>
+
+    
 
             </div>
         </div>
     </div>
 </div>
+
+
+<script>
+
+// var optionRecords = {
+//     title: {
+//         text: '用户统计'
+//     },
+//     tooltip: {
+//         trigger: 'axis'
+//     },
+//     legend: {
+//         data: ['会员总数', '昨日新增', '新增有效会员']
+//     },
+//     grid: {
+//         left: '3%',
+//         right: '4%',
+//         bottom: '3%',
+//         containLabel: true
+//     },
+
+//     xAxis: {
+//         type: 'category',
+//         boundaryGap: false,
+//         data: [
+//             {volist name="$p" id="v"}
+//             "{$v.name}",
+//             {/volist}
+//             '总计'
+//             ]
+//     },
+//     yAxis: {
+//         type: 'value'
+//     },
+//     series: [
+//         {
+//             name: '会员总数',
+//             type: 'line',
+//             stack: '总量',
+//             data: [
+//             {volist name="$p" id="v"}
+//                 {$v.zong_num},
+//             {/volist}
+//                 {$all.zong_num}
+//             ]
+//         },
+//         {
+//             name: '昨日新增',
+//             type: 'line',
+//             stack: '总量',
+//             data: [
+                
+//                 {volist name="$p" id="v"}
+//                 {$v.yestoday_new_tree},
+//                 {/volist}
+//                 {$all.yestoday_member}
+//             ]
+//         },
+//         {
+//             name: '新增有效会员',
+//             type: 'line',
+//             stack: '总量',
+//             data: [
+//             {volist name="$p" id="v"}
+//                 {$v.good_member},
+//             {/volist}
+//                 {$all.good_member}
+//             ]
+//         }
+//     ]
+// };
+
+var optionRecords = {
+    title: {
+        text: '用户统计'
+    },
+    tooltip: {
+        trigger: 'axis'
+    },
+    legend: {
+        data:[{volist name="$p" id="v"}
+                "{$v.name}",
+                {/volist}
+                "总计"
+                ] //['会员总数', '昨日新增', '新增有效会员']
+    },
+    grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+    },
+
+    xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: 
+            ['会员总数', '昨日新增', '新增有效会员','业绩']
+    },
+    yAxis: {
+        type: 'value'
+    },
+    series: [
+    {volist name="$p" id="v"}
+        {
+            name: '{$v.name}',
+            type: 'line',
+            stack: '总量',
+            data: [
+            
+                {$v.zong_num},
+                {$v.yestoday_new_tree},
+                {$v.good_member},
+                {$v.yeji_zong},
+            ]
+        },
+     {/volist}
+        {
+            name: '总计',
+            type: 'line',
+            stack: '总量',
+            data: [
+                
+               {$all.zong_num},
+                {$all.yestoday_member},
+                {$all.good_member},
+                {$all.yeji},
+            ]
+        }
+    ]
+};
+
+// define(['echarts'], function (echarts) {
+//             /**
+//              * 报表功能
+//              */
+//             var echartsRecords = echarts.init(document.getElementById('echarts-records'), 'walden');
+            
+//             echartsRecords.setOption(optionRecords);
+
+
+//             console.log(optionRecords);
+//             window.addEventListener("resize", function () {
+//                 echartsRecords.resize();
+//             });
+// })
+
+
+
+
+layui.use('laydate', function(){
+  var laydate = layui.laydate;
+  // laydate.render({
+  //   elem: '#test1'
+  // });
+  //日期范围，指定绑定的DOM元素
+    laydate.render({
+        elem: '#test1'
+        ,range: true
+        ,trigger: 'click'
+        ,show: false
+        ,done:function(value,date,enddate){
+            console.log(enddate);
+             //year: 2022, month: 6, date: 23,
+             var start_date=date.year+"-"+date.month+"-"+date.date;
+             var end_date=enddate.year+"-"+enddate.month+"-"+enddate.date;
+             window.location.replace("/admin/index/welcome?start_date="+start_date+"&end_date="+end_date)
+        }
+    });
+});
+
+
+</script>

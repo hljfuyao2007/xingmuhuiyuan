@@ -187,6 +187,37 @@ img {
 input {
     font-family: ‘Microsoft YaHei’;
 }
+input::-webkit-input-placeholder {
+    color: #999999;
+}
+
+input::-moz-placeholder {
+    color: #999999;
+}
+
+input:-moz-placeholder {
+    color: #999999;
+}
+
+input:-ms-input-placeholder {
+    color: #999999;
+}
+
+textarea::-webkit-input-placeholder {
+    color: #999999;
+}
+
+textarea::-moz-placeholder {
+    color: #999999;
+}
+
+textarea:-moz-placeholder {
+    color: #999999;
+}
+
+textarea:-ms-input-placeholder {
+    color: rgba(0, 0, 0, 0.4);
+}
 .tc_1 {
     overflow: hidden;
     white-space: nowrap;

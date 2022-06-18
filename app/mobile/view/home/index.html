@@ -6,71 +6,102 @@
 {__block__}
 <div class="ind_a">
     <div class="a1" @click="toMy">
-        <span><img src="__IMG__/a1.png" alt=""></span>
-        ID:12345678
+    <!-- <a href="javascript:void(0);" onclick="window.history.go(-1);" ><img src="__STATIC__/mobile/images/icon/a11.png"></a> -->
+        <span><img src="{$user.avatar==""?"__IMG__/../img/a1.png":$user.avatar}" alt=""></span>
+        ID:{$tree.uid}
     </div>
-    <div class="a2">
-        <div class="b1">总平台业绩（元）</div>
-        <div class="b2">32,806.00</div>
+    <div class="a2" onclick="to_ach();">
+        <div class="b1" >总平台业绩（元）</div>
+        <div class="b2">{$yeji}</div>
     </div>
-    <a href="" class="a3">开通代理</a>
-</div>
+
+    {if $user.is_agency==1}
+        <a href="/mobile/dlxz" class="a3" >推广须知</a>
+    {else}
+        <a href="/mobile/tobeagent" class="a3" >开通推广</a>
+    {/if}
+   
+    </div>
 <div class="ind_b">
     <div class="tit">团队业绩</div>
     <div class="list">
-        <div class="item">
+        <div class="item" onclick="to_achievement(1);">
             <div class="b1"><span><img src="__IMG__/icon/a2.png"></span>一级业绩</div>
-            <div class="b2">¥5,433.00</div>
+            <div class="b2">¥{$son_yeji}</div>
         </div>
-        <div class="item">
-            <div class="b1"><span><img src="__IMG__/icon/a3.png"></span>一级佣金</div>
-            <div class="b2">¥3,168.00</div>
+        <div class="item" onclick="to_commission(1);">
+            <div class="b1" ><span><img src="__IMG__/icon/a3.png"></span>一级佣金</div>
+            <div class="b2">¥{$son_yongjin}</div>
         </div>
-        <div class="item">
-            <div class="b1"><span><img src="__IMG__/icon/a4.png"></span>二级业绩</div>
-            <div class="b2">¥5,433.00</div>
+        <div class="item" onclick="to_achievement(2);">
+            <div class="b1" ><span><img src="__IMG__/icon/a4.png"></span>二级业绩</div>
+            <div class="b2">¥{$son2_yeji}</div>
         </div>
-        <div class="item">
-            <div class="b1"><span><img src="__IMG__/icon/a5.png"></span>二级佣金</div>
-            <div class="b2">¥3,168.00</div>
+        <div class="item" onclick="to_commission(2);">
+            <div class="b1" ><span><img src="__IMG__/icon/a5.png"></span>二级佣金</div>
+            <div class="b2">¥{$son2_yongjin}</div>
         </div>
     </div>
 </div>
 <div class="ind_c">
     <div class="tit">团队管理</div>
     <div class="list">
-        <div class="item">
+        <div class="item" onclick="to_first_team(1);">
             <div class="b1"><img src="__IMG__/icon/b1.png"></div>
-            <div class="b2 tc_1">一级人数</div>
-            <div class="b3 tc_1">42</div>
+            <div class="b2 tc_1">一级推广</div>
+            <div class="b3 tc_1">{$son_num}</div>
         </div>
-        <div class="item">
+        <div class="item" {if $user.is_2==1} onclick="to_team(2);" {else} onclick="alert('请联系客服开通二级权限');" {/if}>
             <div class="b1"><img src="__IMG__/icon/b2.png"></div>
-            <div class="b2 tc_1">二级人数</div>
-            <div class="b3 tc_1">100</div>
+            <div class="b2 tc_1">二级推广</div>
+            <div class="b3 tc_1">{$son2_num}</div>
         </div>
-        <div class="item">
+        <div class="item" onclick="to_team(4);">
             <div class="b1"><img src="__IMG__/icon/b3.png"></div>
             <div class="b2 tc_1">本月新注册</div>
-            <div class="b3 tc_1">142</div>
+            <div class="b3 tc_1">{$new_all_num}</div>
         </div>
-        <div class="item">
+        <div class="item" onclick="to_team(5);">
             <div class="b1"><img src="__IMG__/icon/b4.png"></div>
             <div class="b2 tc_1">本月有效新增</div>
-            <div class="b3 tc_1">42</div>
+            <div class="b3 tc_1">{$new_num}</div>
         </div>
-        <div class="item">
+        <!-- <div class="item" onclick="to_team(3);"> -->
+        <div class="item" onclick="to_all_team(3);">
+        
             <div class="b1"><img src="__IMG__/icon/b5.png"></div>
             <div class="b2 tc_1">总人数</div>
-            <div class="b3 tc_1">142</div>
+            <div class="b3 tc_1">{$all_num}</div>
         </div>
-        <div class="item">
+        <div class="item" onclick="to_money();">
             <div class="b1"><img src="__IMG__/icon/b6.png"></div>
             <div class="b2 tc_1">可提现金额</div>
-            <div class="b3 tc_1">100</div>
+            <div class="b3 tc_1">{$money}</div>
         </div>
     </div>
 </div>
+
+    <div style="width: 100%; height: 60px;"></div>
+   <div class="my_c">
+        <a href="javascript:void(0);" onclick="to_foot(1)" class="select" >
+            <em><img src="__STATIC__/mobile/images/icon/d1.png"><img src="__STATIC__/mobile/images/icon/d2.png"></em>
+            <span>首页</span>
+        </a>
+        <a href="javascript:void(0);" onclick="to_foot(2)" >
+            <em><img src="__STATIC__/mobile/images/icon/d3.png"><img src="__STATIC__/mobile/images/icon/d4.png"></em>
+            <span>我的</span>
+        </a>
+    </div>
+<script>
+
+function to_foot(id) {
+    if(id==2){
+        window.location.href = '/mobile/my';
+    }else{
+        window.location.href = '/mobile/index';
+    }
+}
+</script>
 {/block}
 {block name='js'}
 {__block__}
@@ -86,5 +117,49 @@
             }
         }
     })
+
+
+
+
+    function to_ach(type) {
+        window.location.href = '/mobile/achievement'
+    }
+    function to_achievement(type) {
+       // window.location.href = '/mobile/achievement?type=' + type
+    }
+    function to_commission(type) {
+       // window.location.href = '/mobile/commission?type=' + type
+    }
+    function to_money() {
+        window.location.href = '/mobile/withdrawal'
+    }
+    function to_team(type) {
+        if(type>3){
+            var eff=0;
+            if(type==5){
+                eff=1;
+            }
+            window.location.href = '/mobile/newteam?type=' + eff
+        }else if(type==2){
+            window.location.href = '/mobile/team?type=' + type +'&agent=1';
+        }else{
+            window.location.href = '/mobile/team?type=' + type;
+
+        }
+        
+    }
+    function to_first_team(type) {
+
+
+        window.location.href = '/mobile/first_team?type=1' 
+        
+    }
+
+    function to_all_team(type) {
+
+
+        window.location.href = '/mobile/team_all' 
+        
+    }
 </script>
 {/block}

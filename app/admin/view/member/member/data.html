@@ -1,0 +1,146 @@
+<div class="layuimini-container">
+
+<button onclick="history.back(-1);" class="layui-btn">返回</button>
+
+<!-- 日期选择 (月份选择)-->
+ <!-- <select name="mon" id="mon"></select>  -->
+  <input type="text" id="mon" class="layui-input" >
+    <table id="currentTable" class="layui-table">
+        <tr>
+            <td>id</td>
+            <td>会员昵称</td>
+            <td>平台ID</td>
+            <td>平台</td>
+            <td>日期</td>
+            <td>业绩</td>
+        </tr>
+        {foreach $item as $k=>$vo }
+            <tr>
+                <td>{$vo.data_id}</td>
+                <td>{$vo.nickname}</td>
+                <td>{$vo.uid}</td>
+
+                <td>{$vo.platform}</td>
+                <td>{$vo.date}</td>
+                <td>{$vo.enterprise}</td>
+                <!-- <td>{if $vo.uid==0} <button class="layui-btn layui-btn-success layui-btn-xs" onclick="kt({$k},'{$vo.name}');">开通</button> {else} <button class="layui-btn layui-btn-success layui-btn-xs" onclick="kt({$k},'{$vo.name}');">关闭</button> {/if}</td> -->
+            </tr>
+        {/foreach}
+
+         <tr>
+                <td colspan="99" align="right"> 总计： {$zong}元</td>
+                
+            </tr>
+
+    </table>
+
+    
+</div>
+
+<script>
+
+function yj(mon){
+    var url="/admin/member/data?platform_id="+getQueryString("platform_id");
+    {if $member_id}
+        url+="&member_id={$member_id}";
+    {/if}
+    if(mon!=""){
+        url+="&mon="+mon;
+    }
+    window.location.href=url;
+    // window.location.replace(url);
+}
+
+var m=new Date().getMonth()+1;
+if(m<10){
+    m=0+""+m;
+}
+var mon=new Date().getFullYear()+""+m;
+
+
+window.onload=function(){
+    if(getQueryString("mon")){
+         mon=getQueryString("mon");
+    }
+    layui.use("laydate",function(){
+        layui.laydate.render({
+            elem:'#mon', // 绑定id为test3的元素
+            type: 'month', // 年月选择器
+            format:"yyyyMM",
+            max:"now",
+            value:mon,
+            done:function(value,date){
+                    var url="/admin/member/data?platform_id="+getQueryString("platform_id");
+                    {if $member_id}
+                        url+="&member_id={$member_id}";
+                    {/if}
+                    url+="&mon="+value;
+                    window.location.replace(url);
+            }
+        });
+    })
+    
+}
+
+// function yj(id){
+//     var url="/admin/member/data?platform_id="+id;
+//     {if $member_id}
+//         url+="&member_id={$member_id}";
+//     {/if}
+//     if(mon!=""){
+//         url+="&mon="+mon;
+//     }
+//     window.location.replace(url);
+// }
+
+function getQueryString(name) {
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+    var r = window.location.search.substr(1).match(reg);
+    if (r != null) return decodeURI(r[2]);
+    return null;
+}
+/*
+function kt(id,name){
+
+    //if(confirm("确认为用户开通平台"+name)){
+        var str=prompt("请输入用户uid");
+        if(str){
+            var d={
+                "platform_id":id,
+                "member_id":{$member_id},
+                "uid":str,
+            };
+            goToUrl("/admin/member/open","post",d);
+        }
+        
+        // window.location.replace(window.location.href);
+   // }
+
+}
+* */
+/*
+* url:跳转链接
+* method:跳转方式
+* params:传递参数   {name:"test" ,age:"123"}]
+* */
+function goToUrl(url,method,params){
+    // 创建form元素
+    var temp_form = document.createElement("form");
+    // 设置form属性
+    temp_form .action = url;
+    temp_form .method = method;
+    temp_form .style.display = "none";
+    // 处理需要传递的参数
+    for (var x in params) {
+        var opt = document.createElement("textarea");
+        opt.name = x;
+        opt.value = params[x];
+        temp_form .appendChild(opt);
+    }
+    document.body.appendChild(temp_form);
+    // 提交表单
+    temp_form.submit();
+    return temp_form;
+        }   
+
+</script>

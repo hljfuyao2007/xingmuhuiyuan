@@ -29,14 +29,18 @@ class Config extends AdminController
     public function basic(Districts $districts)
     {
         if ($this->request->isPost()) {
+
+
+
             $param = $this->request->post();
             isset($param['sms_type']) && $param['sms_type'] &&
             $param['sms_is_check'] = isset($param['sms_is_check']) ? 'on' : 'off';
-
             if (isset($param['site_logo']) && $param['site_logo']) {
                 // 生成ico图标
-                make_ico($param['site_logo']);
+               // make_ico($param['site_logo']);
             }
+
+
             if (isset($param['agency_money']) && $param['agency_money']) {
                 $param['agency_money'] = fmtPrice($param['agency_money']);
             }

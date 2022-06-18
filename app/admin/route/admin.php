@@ -51,6 +51,9 @@ Route::group('role', function () {
     Route::any('auth_edit', 'auth_edit');
     // 删除权限路由
     Route::post('auth_del', 'auth_del');
+
+    Route::post('auth_del', 'auth_del');
+
 })->prefix('admin/system.Role/');
 /***************************************权限树************************************************/
 Route::group('auth_tree', function () {
@@ -71,6 +74,19 @@ Route::group('member', function () {
     Route::post('modify', 'modify');
     // 审核
     Route::any('check', 'check');
+    // 平台
+    Route::any('open', 'open');
+    // 业绩
+    Route::any('data', 'data');
+    // 团队
+    Route::any('team', 'team');
+    Route::any('money', 'money');
+     // 团队
+    Route::any('statistics', 'statistics');
+    Route::any('mon', 'mon');
+    Route::any('platform_createtime', 'platform_createtime');
+    
+
 })->prefix('admin/member.Member/');
 /***************************************操作日志************************************************/
 Route::group('log', function () {
@@ -85,7 +101,23 @@ Route::group('withdraw', function () {
     Route::get('index', 'index');
     // 审核
     Route::any('edit', 'edit');
+    Route::any('export', 'export');
+    Route::any('edit_all', 'edit_all');
 })->prefix('admin/member.Withdraw/');
+/***************************************算法************************************************/
+Route::group('dian', function () {
+    // 列表
+    Route::any('index', 'index');
+    // 新增
+    Route::any('add', 'add');
+    // 新增
+    Route::any('del', 'del');
+    // shanchu
+    Route::any('delete', 'delete');
+    // 审核
+    Route::any('edit', 'edit');
+    
+})->prefix('admin/member.Dian/');
 /***************************************平台管理************************************************/
 Route::group('platform', function () {
     // 列表
@@ -103,6 +135,25 @@ Route::group('platform', function () {
 Route::group('enterprise', function () {
     // 列表
     Route::get('index', 'index');
+    // 列表
+    Route::get('see', 'see');
     // 导入
     Route::any('inc', 'inc');
+    // 回退
+    Route::any('dec', 'dec');
+    // 结算
+    Route::any('set', 'set');
+    // 确认结算
+    Route::any('true_set', 'true_set');
+    // 账单
+    Route::any('commission', 'commission');
+
+    // excel
+    Route::any('excel_list', 'excel_list');
+    
+    Route::any('excel_del', 'excel_del');
+
+
+    Route::any('exportExcel', 'exportExcel');
+   
 })->prefix('admin/content.Enterprise/');

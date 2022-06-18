@@ -1,9 +1,14 @@
+<style>
+    input::-webkit-calendar-picker-indicator{ display: none; -webkit-appearance: none; }
+</style>
 <div class="layuimini-container">
-    <form id="app-form" class="layui-form layuimini-form">
+    <form id="app-form" class="layui-form">
         <div class="layui-form-item">
             <label class="layui-form-label">会员昵称</label>
             <div class="layui-form-mid">
-                {$item.nickname}
+                
+                <input type="text" name="nickname" autocomplete="off" placeholder="请输入会员昵称"
+                       class="layui-input" value="{$item.nickname|default=''}">
             </div>
         </div>
 
@@ -15,12 +20,44 @@
         </div>
 
         <div class="layui-form-item">
-            <label class="layui-form-label required">手机号</label>
+            <label class="layui-form-label">手机号</label>
             <div class="layui-input-block">
-                <input type="text" name="phone" readonly lay-verify="required|phone" autocomplete="off" placeholder="请输入手机号"
+                <input type="text"  readonly  autocomplete="off" placeholder="请输入手机号"
                        class="layui-input" value="{$item.phone|default=''}">
             </div>
         </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">推荐人</label>
+            <div class="layui-input-block">
+                <form>
+                    <input type="text" value="{$item.parent_name}" name="parent_name"   autocomplete="off" list="parent_name" lay-verify="userInput"  class="layui-input">
+                    <datalist id="parent_name">
+                        <option value="星木传媒">星木传媒</option>
+                        {volist name="select" id="i"}
+                                <option value="{$i.nickname}">{$i.nickname}</option>
+
+                        {/volist}  
+                    </datalist>
+                </form>
+            </div>
+            
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">管理员</label>
+            <div class="layui-input-block">
+                    <select name="manage_id" class="layui-select layui-input">
+                        <option value="0">不设置管理员</option>
+                        {volist name="adminer" id="i"}
+                                <option value="{$i.manage_id}" {$i.manage_id==$item.manage_id?"selected":""}>{$i.username}</option>
+
+                        {/volist}  
+                    </select>
+            </div>
+            
+        </div>
+
+
+
 
         <div class="layui-form-item">
             <label class="layui-form-label">新密码</label>
@@ -41,23 +78,120 @@
         <div class="layui-form-item">
             <label class="layui-form-label required">性别</label>
             <div class="layui-input-block">
-                <input type="radio" name="sex" value="1" title="男" {eq name="$item.sex|default=1" value="1"} checked {/eq}>
-                <input type="radio" name="sex" value="0" title="女" {eq name="$item.sex|default=1" value="0"} checked {/eq}>
+                <input type="radio" name="sex" value="1" title="男" {eq name="$item.sex|default=1" value="1"} checked {/eq}>男
+                <input type="radio" name="sex" value="0" title="女" {eq name="$item.sex|default=1" value="0"} checked {/eq}>女
             </div>
         </div>
 
         <div class="layui-form-item">
             <label class="layui-form-label required">状态</label>
             <div class="layui-input-block">
-                <input type="radio" name="status" value="1" title="开通" {eq name="$item.status|default=1" value="1"} checked {/eq}>
-                <input type="radio" name="status" value="0" title="禁用" {eq name="$item.status|default=1" value="0"} checked {/eq}>
+                <input type="radio" name="status" value="1" title="开通" {eq name="$item.status|default=1" value="1"} checked {/eq}>开通
+                <input type="radio" name="status" value="0" title="禁用" {eq name="$item.status|default=1" value="0"} checked {/eq}>禁用
+            </div>
+        </div>
+
+         <div class="layui-form-item">
+            <label class="layui-form-label required">代理</label>
+            <div class="layui-input-block">
+                <input type="radio" name="is_agency" value="1" title="是" {eq name="$item.is_agency|default=1" value="1"} checked {/eq}>是
+                <input type="radio" name="is_agency" value="0" title="否" {eq name="$item.is_agency|default=1" value="0"} checked {/eq}>否
+            </div>
+        </div>
+
+         <div class="layui-form-item">
+            <label class="layui-form-label required">二级团队</label>
+            <div class="layui-input-block">
+                <input type="radio" name="is_2" value="1" title="是" {eq name="$item.is_2|default=1" value="1"} checked {/eq}>是
+                <input type="radio" name="is_2" value="0" title="否" {eq name="$item.is_2|default=1" value="0"} checked {/eq}>否
             </div>
         </div>
 
         <div class="layui-form-item text-center">
             <input type="hidden" name="member_id" value="{$item.member_id|default=''}">
-            <button type="submit" class="layui-btn layui-btn-normal layui-btn-sm" lay-submit>确认</button>
-            <button type="reset" class="layui-btn layui-btn-primary layui-btn-sm">重置</button>
+            <button type="button" class="layui-btn layui-btn-normal "  onclick="s();">确认</button>
+            <!-- <button type="reset" class="layui-btn layui-btn-primary layui-btn-sm" onclick="$('#app-form').reset();">重置</button> -->
         </div>
     </form>
 </div>
+
+
+<script>
+function geTel(tel){
+    var reg = /^(\d{3})\d{4}(\d{4})$/;  
+    return tel.replace(reg, "$1****$2");
+}
+function s(){
+    var data={};
+    data.phone=$("input[name=phone]").val();
+    data.nickname=$("input[name=nickname]").val();
+    data.parent_name=$("input[name=parent_name]").val();
+    data.password=$("input[name=password]").val();
+    data.confirm_passowrd=$("input[name=confirm_passowrd]").val();
+    data.sex=$("input[name=sex]:checked").val();
+
+    data.manage_id=$("select[name=manage_id]").val();
+
+    data.status=$("input[name=status]:checked").val();
+    data.member_id=$("input[name=member_id]").val();
+
+    data.is_agency=$("input[name=is_agency]:checked").val();
+    data.is_2=$("input[name=is_2]:checked").val();
+    
+
+    console.log(data);
+    //goToUrl("view","post",data);
+
+    $.ajax({
+        method:"post",   //数据的提交方式：get和post
+        url:"view",   //数据的提交路劲
+        data:data,    //需要提交的数据
+        dataType:"Json",   //服务器返回数据的类型，例如xml,String,Json等
+        success:function(r){
+           // console.log(r);
+            alert(r.msg);
+            if(r.code==1){
+                window.location.href=r.url;
+            }
+            
+        } ,   //请求成功后的回调函数
+
+        error:function(x){alert(x.ms);}   //请求失败后的回调函数
+
+    });
+
+
+}
+
+        /*
+        * url:跳转链接
+        * method:跳转方式
+        * params:传递参数   {name:"test" ,age:"123"}]
+        * */
+        function goToUrl(url,method,params){
+            // 创建form元素
+            var temp_form = document.createElement("form");
+            // 设置form属性
+            temp_form .action = url;
+            temp_form .method = method;
+            temp_form .style.display = "none";
+            // 处理需要传递的参数
+            for (var x in params) {
+                var opt = document.createElement("textarea");
+                opt.name = x;
+                opt.value = params[x];
+                temp_form .appendChild(opt);
+            }
+            document.body.appendChild(temp_form);
+            // 提交表单
+            temp_form.submit();
+            return temp_form;
+        }   
+
+
+
+
+
+</script>
+
+

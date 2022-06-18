@@ -23,6 +23,9 @@ class Excel
     public function import(): array
     {
         $file = Request::file('excel');
+
+        //$file_name =$file->getInfo()['name'];
+        $file_name =$file->getOriginalName();
         $ext = $file->extension();
         $dirname = public_path() . "media/excel/" . date('Ymd');
         $fileName = md5(microtime(true)) . ".$ext";
@@ -35,7 +38,8 @@ class Excel
         // 删除第一个数组(标题)
         array_shift($data);
 
-        unlink($dirname . '/' . $fileName);
-        return $data;
+        //unlink($dirname . '/' . $fileName);
+        return ["data"=>$data,"name"=>$file_name,"newname"=>date('Ymd')."/".$fileName];
     }
 }
+

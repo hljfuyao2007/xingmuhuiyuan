@@ -1,0 +1,80 @@
+﻿{extend name='layout/layout' /}
+{block name='css'}
+{__block__}
+{/block}
+{block name='body'}
+{__block__}
+    <div class="header_a">
+        <div class="a1">
+            <a href="javascript:void(0);" onclick="window.history.go(-1);"><img src="__STATIC__/mobile/images/icon/a11.png"></a>
+           全部团队
+        </div>
+        <!-- <div class="a2">
+            <span><img src="__STATIC__/mobile/images/icon/a19.png"></span>
+            <div><input type="text" id=search_input placeholder="请搜索手机号.id.昵称" value="{$search??''}"></div>
+            <em onclick="search();">搜索</em>
+        </div> -->
+        
+     <!--     <div class="a3" >
+            <em id="timeBtn" style="width: 100px;"><span></span></em>
+      
+        </div> -->
+    </div>
+    <div class="content">
+        <div class="yjmx_a">
+            <div class="box">
+
+
+            <div class="a2">
+                <div class="item">
+                    <span >一级团队</span>
+                    <span >{$count[0]}人</span>
+                </div>
+         
+            </div>
+
+            <div class="a2">
+                <div class="item">
+                    <span >二级团队</span>
+                    <span >{$count[1]}人</span>
+                </div>
+         
+            </div>
+            <!--     <div class="img">
+                    <img src="img/a1.png">
+                </div> -->
+             
+           
+         <!--    <div class="item">
+                <div class="img">
+                    <img src="img/a1.png">
+                </div>
+                <div class="text">
+                    <div class="b1">我是用户名 <span>推广</span><em class="on"><img src="images/icon/a15.png"></em></div>
+                    <div class="b2">ID:94343412</div>
+                    <div class="b3">2021/8/24 16:23</div>
+                </div>
+                <div class="price">
+                    <span>+856.00</span>
+                </div>
+            </div> -->
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+      
+
+    })
+
+
+function getQueryString(name) {
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+    var r = window.location.search.substr(1).match(reg);
+    if (r != null) return decodeURI(r[2]);
+    return null;
+}
+
+
+</script>
+{/block}

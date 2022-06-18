@@ -10,8 +10,8 @@
 return [
     'cent'    => false,  // 一分钱支付
     'JSAPI'   => [
-        'app_id'        => 'wxb189139c8708aa0d',
-        'secret'        => '3829b11426ba4915ed894214d76cbf63',
+        'app_id'        => 'wx1ff8eea060120d9b',
+        'secret'        => '4582f9e15631b8e5708897e51fb6449e',
         'response_type' => 'array',
     ],
     'APP'     => [
@@ -20,13 +20,13 @@ return [
         'response_type' => 'array',
     ],
     'MWEB'      => [
-        'app_id'        => 'wxb189139c8708aa0d',
-        'secret'        => '',
+        'app_id'        => 'wx1ff8eea060120d9b',
+        'secret'        => '4582f9e15631b8e5708897e51fb6449e',
         'response_type' => 'array',
     ],
     'payment' => [
-        'mch_id'    => '1612885534',
-        'key'       => 'Ka124AFc030A4888Ka124AFc030A4888',
+        'mch_id'    => '1601655030',
+        'key'       => 'QGBcyOaGHEoxKywSyJJlQBbjT7imr5ir',
         'cert_path' => root_path() . 'cert/wechat/cert.pem',
         'key_path'  => root_path() . 'cert/wechat/key.pem',
     ]

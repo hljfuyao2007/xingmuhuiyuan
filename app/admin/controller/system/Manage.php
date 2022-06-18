@@ -103,6 +103,10 @@ class Manage extends AdminController
                 unset($param['password']);
                 unset($param['confirm_password']);
             }
+            if($manage->where("username",$param['username'])->where("manage_id","<>",$param['manage_id'])->find()){
+                return $this->error([], '用户名已存在', -1);
+            }
+           // $manage->is_exist($param['username'], '用户名已存在');
 
             $manage::update($param);
 

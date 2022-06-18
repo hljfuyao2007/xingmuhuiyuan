@@ -1,0 +1,16 @@
+﻿{extend name='layout/layout' /}
+{block name='css'}
+{__block__}
+{/block}
+{block name='body'}
+{__block__}
+    <div class="header_a">
+        <div class="a1">
+            <a href="javascript:void(0);" onclick="window.history.go(-1);"><img src="__STATIC__/mobile/images/icon/a11.png"></a>
+            代理须知
+        </div>
+    </div>
+    <div class="dlxz_a">
+        {$text|raw}
+    </div>
+{/block}

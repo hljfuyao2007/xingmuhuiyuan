@@ -1,0 +1,109 @@
+<style>
+    input::-webkit-calendar-picker-indicator{ display: none; -webkit-appearance: none; }
+</style>
+<div class="layuimini-container">
+    <form id="app-form" class="layui-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label">选择月份</label>
+            <div class="layui-form-mid">
+                
+                <input type="text" id="date" name="date" autocomplete="off" placeholder="请选择月份"
+                       class="layui-input" value="{$item.nickname|default=''}">
+            </div>
+        </div>
+
+
+      
+    </form>
+</div>
+
+
+<script>
+
+layui.use("laydate",function(){
+    var laydate = layui.laydate;
+    laydate.render({
+            elem:'#date', // 绑定id为test4的元素
+            type: 'month', // 日期选择器   
+          
+
+});
+
+function geTel(tel){
+    var reg = /^(\d{3})\d{4}(\d{4})$/;  
+    return tel.replace(reg, "$1****$2");
+}
+// function s(){
+//     var data={};
+//     data.phone=$("input[name=phone]").val();
+//     data.nickname=$("input[name=nickname]").val();
+//     data.parent_name=$("input[name=parent_name]").val();
+//     data.password=$("input[name=password]").val();
+//     data.confirm_passowrd=$("input[name=confirm_passowrd]").val();
+//     data.sex=$("input[name=sex]:checked").val();
+
+//     data.manage_id=$("select[name=manage_id]").val();
+
+//     data.status=$("input[name=status]:checked").val();
+//     data.member_id=$("input[name=member_id]").val();
+
+//     data.is_agency=$("input[name=is_agency]:checked").val();
+//     data.is_2=$("input[name=is_2]:checked").val();
+    
+
+//     console.log(data);
+//     //goToUrl("view","post",data);
+
+//     $.ajax({
+//         method:"post",   //数据的提交方式：get和post
+//         url:"view",   //数据的提交路劲
+//         data:data,    //需要提交的数据
+//         dataType:"Json",   //服务器返回数据的类型，例如xml,String,Json等
+//         success:function(r){
+//            // console.log(r);
+//             alert(r.msg);
+//             if(r.code==1){
+//                 window.location.href=r.url;
+//             }
+            
+//         } ,   //请求成功后的回调函数
+
+//         error:function(x){alert(x.ms);}   //请求失败后的回调函数
+
+//     });
+
+
+// }
+
+        /*
+        * url:跳转链接
+        * method:跳转方式
+        * params:传递参数   {name:"test" ,age:"123"}]
+        * */
+        function goToUrl(url,method,params){
+            // 创建form元素
+            var temp_form = document.createElement("form");
+            // 设置form属性
+            temp_form .action = url;
+            temp_form .method = method;
+            temp_form .style.display = "none";
+            // 处理需要传递的参数
+            for (var x in params) {
+                var opt = document.createElement("textarea");
+                opt.name = x;
+                opt.value = params[x];
+                temp_form .appendChild(opt);
+            }
+            document.body.appendChild(temp_form);
+            // 提交表单
+            temp_form.submit();
+            return temp_form;
+        }   
+
+
+
+
+
+</script>
+
+

@@ -1,0 +1,105 @@
+﻿{extend name='layout/layout' /}
+{block name='css'}
+{__block__}
+{/block}
+{block name='body'}
+{__block__}
+    <div class="header_a">
+        <div class="a1">
+            <a href="javascript:void(0);" onclick="window.history.go(-1);"><img src="__STATIC__/mobile/images/icon/a11.png"></a>
+            提现信息认证
+        </div>
+    </div>
+    <div class="tcxxzr_a">
+        <div class="item">
+            <span>姓名</span>
+            <div>
+                <input type="text" id="name_input" value="{$user.name}" placeholder="请输入你的真实姓名">
+            </div>
+        </div>
+
+        <div class="item">
+            <span>性别</span>
+            <div>
+                <input type="radio" name="sex" style="width: 20px; line-height: 42px;  float: left;" {$user.sex==0?"checked":""} value="0"> <div style="height: 42px; margin-left: 5px; line-height: 42px; width: 30px; float: left;">女</div>
+                <input type="radio" name="sex" style="width: 20px;  line-height: 42px; float: left;" {$user.sex==0?"":"checked"} value="1"><div style="height: 42px;  margin-left: 5px; width: 30px;line-height: 42px; float: left;">男</div>
+            </div>
+        </div>
+
+        <div class="item">
+            <span>身份证号</span>
+            <div>
+                <input type="text" id="id_input" value="{$user.id_card}" placeholder="请输入你的身份证号码">
+            </div>
+        </div>
+        <div class="item">
+            <span>支付宝账号</span>
+            <div>
+                <input type="text" id="alipay_input" value="{$user.alipay_account}" placeholder="请输入你的支付宝账号">
+            </div>
+        </div>
+    </div>
+    <div class="btn_a" onclick="sub()">
+        <a href="javascript:void(0);" >提交</a>
+    </div>
+
+
+<script>
+var s=0;
+function sub(){
+    if(s==1)return;
+    // alert("1");
+    var name=$("#name_input").val();
+    var id_card=$("#id_input").val();
+    var alipay_account=$("#alipay_input").val();
+    
+
+    //身份证正则表达式
+    //var isIDCard18=/^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$/;
+    var isIDCard18=/^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}([0-9]|X)$/;
+
+    if(name== ""){
+        alert("姓名不能为空");
+        $("#name_input").focus();
+        return;
+    }else if(!id_card.match(isIDCard18)  ){
+        alert("身份证格式不正确");
+        $("#id_input").focus();
+        return;
+    }else if(alipay_account==""  ){
+        alert("支付宝账号不能为空");
+        $("#alipay_input").focus();
+        return;
+    }
+    s=1;
+    $.ajax({
+        type : "POST", //提交方式
+        url:"/api/v1.0/my/authentication",
+        data : { 
+          "mid" : "{$user.member_id}",
+          "name" : name,
+          "sex" : $("input[name=sex]:checked").val(),
+          "id_card" : id_card,
+          "alipay_account" : alipay_account,
+         },//数据，这里使用的是Json格式进行传输 
+        success:function(result){
+            //console.log(result);
+            s=0;
+            if(result.code == 1){
+                alert("修改成功");
+                window.location.replace("/mobile/personal");
+            }else{
+                alert(result.msg);
+            }
+           
+        },
+        error:function(err){
+            s=0;
+        }
+    });
+
+}
+
+</script>
+
+{/block}

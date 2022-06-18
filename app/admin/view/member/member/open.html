@@ -1,0 +1,196 @@
+
+<div class="layuimini-container">
+
+
+
+{if $err!=""}
+    <div class="layui-form-item" style="text-align: center; color: red;">
+        {$err}
+    </div>
+{/if}
+    <table id="currentTable" class="layui-table">
+        <tr>
+            <td>平台名</td>
+            <td>uid</td>
+            <td>余额</td>
+            <td>开通时间</td>
+            <td>本月业绩</td>
+            <td>平台总业绩</td>
+            <td>操作</td>
+        </tr>
+        {foreach $item as $k=>$vo }
+            <tr>
+                <td>{$vo.name}</td>
+                <td>{if $vo.uid==''} <button class="layui-btn layui-btn-success layui-btn-xs" onclick="kt({$k},'{$vo.name}');">未开通</button> {else} {$vo.uid} {/if}</td>
+                <td>{$vo.money}</td>
+                <td>
+                {if $vo.create_time!=""}
+
+                    <input type="text"  id="date{$vo.uid}" class="layui-input" value="{$vo.create_time|date="Y-m-d H:i:s"}">
+                     <button class="layui-btn layui-btn-xs" onclick="change_create_time('date{$vo.uid}',{$k},'{$vo.uid}')">修改</button>
+                {/if}
+                </td>
+                <td>{$vo.enterprise}</td>
+                <td>{$vo.all_enterprise}</td>
+                <td> <button class="layui-btn layui-btn-success layui-btn-xs" onclick="yj({$k},'{$vo.name}');">查看业绩</button>
+
+                    {if $vo.uid == ""}
+                        <button class="layui-btn layui-btn-success layui-btn-xs" onclick="kt({$k},'{$vo.name}');">开通平台</button> 
+                    {else} 
+                        <button class="layui-btn layui-btn-success layui-btn-xs" onclick="edit_uid({$k},'{$vo.name}');">修改uid</button> 
+                         <button class="layui-btn layui-btn-success layui-btn-xs" onclick="del_uid({$k},'{$vo.name}');">删除ID</button> 
+                    {/if}
+                        
+                </td>
+                <!-- <td>{if $vo.uid==0} <button class="layui-btn layui-btn-success layui-btn-xs" onclick="kt({$k},'{$vo.name}');">开通</button> {else} <button class="layui-btn layui-btn-success layui-btn-xs" onclick="kt({$k},'{$vo.name}');">关闭</button> {/if}</td> -->
+            </tr>
+        {/foreach}
+
+    </table>
+    
+    
+</div>
+<script>
+layui.use("laydate",function(){
+    var laydate = layui.laydate;
+
+    {foreach $item as $k=>$vo }
+        {if $vo.create_time!=""}
+        laydate.render({
+            elem:'#date{$vo.uid}', // 绑定id为test4的元素
+            type: 'datetime', // 日期选择器   
+            // done:functon(value,date){
+
+            //     // $.ajax({
+            //     //     type:"post",
+            //     //     url: "/admin/member/platform_createtime",
+            //     //     data: {platform_id:{$k},member_id:{$vo.uid},value:value},
+            //     //     dataType: "json",
+            //     //     success: function(res){
+            //     //         window.location.href=window.location.href;
+            //     //     }
+            //     // });
+            // }
+        });
+        {/if}
+    {/foreach}
+});
+
+function change_create_time(date_id,platform_id,uid){
+    var value=$("#"+date_id).val();
+    $.ajax({
+        type:"post",
+        url: "/admin/member/platform_createtime",
+        data: {platform_id:platform_id,member_id:{$member_id},uid:uid,value:value},
+        dataType: "json",
+        success: function(res){
+            alert(res.msg);
+            window.location.href=window.location.href;
+        }
+    });
+}
+var mon="";
+function yj(id){
+    var url="/admin/member/data?platform_id="+id;
+    url+="&member_id={$member_id}";
+    if(mon!=""){
+        url+="&mon="+mon;
+    }
+    window.location.href=url;
+    //window.location.replace(url);
+}
+
+function kt(id,name){
+
+    //if(confirm("确认为用户开通平台"+name)){
+        var str=prompt("请输入用户uid");
+        if(isNaN(str)){
+            alert("仅允许输入纯数字");
+            return;
+        }
+
+        if(str){
+            var d={
+                "type":"add",
+                "platform_id":id,
+                "member_id":{$member_id},
+                "uid":str,
+            };
+            goToUrl("/admin/member/open","post",d);
+        }
+        
+        // window.location.replace(window.location.href);
+   // }
+
+}
+function edit_uid(id,name){
+
+    //if(confirm("确认为用户开通平台"+name)){
+         var str=prompt("请输入用户uid");
+        if(isNaN(str)){
+            alert("仅允许输入纯数字");
+            return;
+        }
+            
+        if(str){
+            var d={
+                "type":"edit",
+                "platform_id":id,
+                "member_id":{$member_id},
+                "uid":str,
+            };
+            goToUrl("/admin/member/open","post",d);
+        }
+
+}
+
+function del_uid(id){
+
+    //if(confirm("确认为用户开通平台"+name)){
+         //var str=commit("请确认");
+        if(!confirm("请确认")){
+            //alert("仅允许输入纯数字");
+            return;
+        }
+            
+       
+        var d={
+            "type":"del",
+            "platform_id":id,
+            "member_id":{$member_id},
+            "uid":'',
+        };
+        goToUrl("/admin/member/open","post",d);
+        
+
+}
+
+
+
+/*
+* url:跳转链接
+* method:跳转方式
+* params:传递参数   {name:"test" ,age:"123"}]
+* */
+function goToUrl(url,method,params){
+    // 创建form元素
+    var temp_form = document.createElement("form");
+    // 设置form属性
+    temp_form .action = url;
+    temp_form .method = method;
+    temp_form .style.display = "none";
+    // 处理需要传递的参数
+    for (var x in params) {
+        var opt = document.createElement("textarea");
+        opt.name = x;
+        opt.value = params[x];
+        temp_form .appendChild(opt);
+    }
+    document.body.appendChild(temp_form);
+    // 提交表单
+    temp_form.submit();
+    return temp_form;
+}   
+
+
+</script>

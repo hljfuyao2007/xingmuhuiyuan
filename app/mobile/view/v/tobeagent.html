@@ -1,0 +1,164 @@
+﻿{extend name='layout/layout' /}
+{block name='css'}
+{__block__}
+{/block}
+{block name='body'}
+{__block__}
+    <div class="header_a">
+        <div class="a1">
+            <a href="javascript:void(0);" onclick="window.history.go(-1);"><img src="__STATIC__/mobile/images/icon/a11.png"></a>
+            个人中心
+        </div>
+    </div>
+    <div class="cwdl_a">
+        <div class="a1">
+            <div class="item">
+                <span>支付金额</span>
+                <em>¥{$agency_money}</em>
+            </div>
+            <div class="item">
+                <span>手续费</span>
+                <em>¥{$agency_service_charge}</em>
+            </div>
+        </div>
+        <div class="a1">
+            <div class="item">
+                <span>支付方式</span>
+                <i>微信</i>
+            </div>
+        </div>
+    </div>
+    <div class="btn_a">
+       <!-- // <a href="javascript:void(0)" onclick="pay('{$agency_money+$agency_service_charge}','call()')">确认支付</a> -->
+        <a href="javascript:void(0)" onclick="get_wxurl();">确认支付</a>
+        
+        <!-- pay('8800','call()')  为降低测试成本，支付金额暂时调节至一分-->
+    </div>
+    
+    <iframe src="" frameborder="0" style="display: none;"></iframe>
+
+<script type="text/javascript" src="__JS__/pay.js"></script>     
+<script>
+var openid="{$openid??''}";
+if(openid!=""){
+    pay('{$agency_money+$agency_service_charge}','call()');
+}
+
+
+function call(){
+    window.location.replace("dlxz");
+}
+    function p(a,b,c){
+        if(self == top){
+            pay(a,b,c);
+        }else{
+            window.parent.pay(a,b,c,function(){
+                window.parent.look_fee();
+                window.parent.st_zhezhao.iframe_end();
+            });
+        }
+        
+    }
+
+        //调用微信JS api 支付
+    function jsApiCall(jsApiParameters,callback)
+    {
+        jsApiParameters=$.parseJSON(jsApiParameters);
+        WeixinJSBridge.invoke(
+            'getBrandWCPayRequest',
+            jsApiParameters,
+            function(res){
+                if(res.err_msg == 'get_brand_wcpay_request:ok'){
+                   alert("支付成功");
+                    window.location.replace("dlxz");
+                   (callback && typeof(callback) === "function") && callback();  
+                }else{
+                   //alert(res.err_msg);
+                }
+            }
+        );
+    }
+
+
+    function get_wxurl(){
+        var baseUrl=encodeURI("http://"+window.location.host+window.location.pathname);    
+        $.ajax({
+            type : "POST", //提交方式
+            url:"/api/v1.0/access/return_oauth2",
+            data : { 
+              "baseUrl" : baseUrl,
+              //"type" : 5,
+             },//数据，这里使用的是Json格式进行传输 
+            success:function(result){
+                console.log(result);
+                // s=0;
+                if(result.code == 0){
+                    //alert(result.data.url);
+                    window.location.replace(result.data.url);
+                }else{
+                    //alert(result.msg);
+                }
+               
+            },
+            error:function(err){
+                s=0;
+            }
+        });
+    }
+    function pay(money,callback){
+        
+         var get_pay_json={
+            "openid":openid,
+            //"money":1,
+            "money":money*100,
+            "pa":money,
+            "order_no":make_order_no(),
+            "user_id":{$user.member_id},
+            "platform_id":{$platform_id}
+            
+        }
+
+        //alert(money*100);
+
+         $.ajax({
+          type:'POST',
+          url:"/api/v1.0/pay/add",
+          dataType:'json',
+          data:get_pay_json,
+          success:function(r){
+            //alert(JSON.stringify(r));
+              if(r["code"] == "0" ){
+                var data=r["data"];
+                //alert(r["data"]);
+                
+                if (typeof WeixinJSBridge == "undefined"){
+                    if( document.addEventListener ){
+                        document.addEventListener('WeixinJSBridgeReady', jsApiCall(data,callback), false);
+                    }else if (document.attachEvent){
+                        document.attachEvent('WeixinJSBridgeReady', jsApiCall(data,callback)); 
+                        document.attachEvent('onWeixinJSBridgeReady', jsApiCall(data,callback));
+                    }
+                    }else{
+                        jsApiCall(data,callback);
+                    }
+              }
+          },
+          error:function(jqXHR){
+            //get_wxurl();
+            //alert(JSON.stringify(jqXHR));
+              //请求失败函数内容
+          }
+        }); 
+
+
+    }
+
+  function make_order_no(first) {
+        if(!first){first="";}
+        var order_no=first;
+        order_no+=Math.floor(new Date().getTime()/1000);
+        order_no+=Math.floor(Math.random()*3);
+        return order_no;
+  }
+</script>
+{/block}

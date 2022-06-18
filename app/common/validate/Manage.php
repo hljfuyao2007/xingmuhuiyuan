@@ -15,10 +15,11 @@ use think\Validate;
 class Manage extends Validate
 {
     protected $rule = [
-        'username|用户名'          => 'require|max:20|alphaNum',
+        //'username|用户名'          => 'require|max:20|alphaNum',
+        'username|用户名'          => 'require|max:20',
         'role_id|权限组'           => 'require',
         'avatar|头像'             => 'require',
-        'password|密码'           => 'requireWith:confirm_password|length:6,18|check_password',
+        'password|密码'           => 'requireWith:confirm_password|length:6,18',
         'confirm_password|确认密码' => 'requireWith:password|confirm:password|length:6,18',
         'phone|手机号'             => 'require|mobile',
         'email|邮箱号'             => 'email',

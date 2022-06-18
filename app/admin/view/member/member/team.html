@@ -1,0 +1,76 @@
+
+<div class="layuimini-container">
+
+    {if $back ==1}
+    <button onclick="history.back(-1);" class="layui-btn">返回</button>
+    {/if}
+    <div class="layui-form-item" style="text-align: center; color: red;">
+        {$nickname}   的团队
+    </div>
+
+
+    <table id="currentTable" class="layui-table">
+        <tr>
+            <td>昵称</td>
+            <!-- <td>性别</td> -->
+            <td>手机号</td>
+            <td>是否推广</td>
+            <td>平台</td>
+            <td>平台ID</td>
+            <td>注册时间</td>
+            <td>本月业绩</td>
+            <td>操作</td>
+        </tr>
+
+        {foreach $son as $k=>$vo }
+            <tr>
+                <td>{$vo.nickname}</td>
+                <td>{$vo.phone}</td>
+                <td>{$vo.is_agency ==1?"推广":"会员"}</td>
+                <td>{$vo.platform|raw}</td>
+                <td>{$vo.platform_uid|raw}</td>
+                <td>{$vo.create_time}</td>
+                <td>{$vo.yj}</td>
+                
+                <td> <button class="layui-btn layui-btn-success layui-btn-xs" onclick="window.location.href='/admin/member/data?member_id={$vo.member_id}'">业绩明细</button>
+                        <button class="layui-btn layui-btn-success layui-btn-xs" onclick="window.location.href='team?member_id={$vo.member_id}&back=1'">团队</button>
+                </td>
+                <!-- <td>{if $vo.uid==0} <button class="layui-btn layui-btn-success layui-btn-xs" onclick="kt({$k},'{$vo.name}');">开通</button> {else} <button class="layui-btn layui-btn-success layui-btn-xs" onclick="kt({$k},'{$vo.name}');">关闭</button> {/if}</td> -->
+            </tr>
+        {/foreach}
+
+    </table>
+
+    
+</div>
+
+<script>
+
+
+/*
+* url:跳转链接
+* method:跳转方式
+* params:传递参数   {name:"test" ,age:"123"}]
+* */
+function goToUrl(url,method,params){
+    // 创建form元素
+    var temp_form = document.createElement("form");
+    // 设置form属性
+    temp_form .action = url;
+    temp_form .method = method;
+    temp_form .style.display = "none";
+    // 处理需要传递的参数
+    for (var x in params) {
+        var opt = document.createElement("textarea");
+        opt.name = x;
+        opt.value = params[x];
+        temp_form .appendChild(opt);
+    }
+    document.body.appendChild(temp_form);
+    // 提交表单
+    temp_form.submit();
+    return temp_form;
+}   
+
+
+</script>

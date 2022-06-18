@@ -1,0 +1,48 @@
+﻿{extend name='layout/layout' /}
+{block name='css'}
+{__block__}
+{/block}
+{block name='body'}
+{__block__}
+    <div class="xzpt_a">
+        <div class="a1">
+            <div class="b1"><img src="__IMG__/../img/a1.png"></div>
+            <div class="b2">{{user.nickname}} <span><img src="__IMG__/icon/a6.png"></span></div>
+            <div class="b3">{{user.mobile}}</div>
+            <div class="b4"><span><img src="__IMG__/icon/a8.png"></span> 绑定团队</div>
+        </div>
+        <div class="a2">ID:{{user.id}} | 2022-03-02</div>
+    </div>
+    <div class="xzpt_b">
+        <div class="list">
+            <a href="javascript:;" onclick="to_platform(1)" class="item">
+                <h6>平台A</h6>
+                <p>立即登录查看</p>
+                <span>go</span>
+                <img src="__IMG__/icon/c1.png">
+            </a>
+            <a href="javascript:;" onclick="to_platform(2)" class="item">
+                <h6>平台A</h6>
+                <p>立即登录查看</p>
+                <span>go</span>
+                <img src="__IMG__/icon/c2.png">
+            </a>
+            <a href="javascript:;" onclick="to_platform(3)" class="item">
+                <h6>平台A</h6>
+                <p>立即登录查看</p>
+                <span>go</span>
+                <img src="__IMG__/icon/c3.png">
+            </a>
+        </div>
+        <a href="" class="a1">
+            <img src="__IMG__/../img/a2.png">
+        </a>
+    </div>
+    <script>
+
+
+    function to_platform(platform_id) {
+        window.location.href = '/mobile/home?platform_id=' + platform_id
+    }
+    </script>
+{/block}

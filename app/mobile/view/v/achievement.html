@@ -1,0 +1,62 @@
+﻿{extend name='layout/layout' /}
+{block name='css'}
+{__block__}
+{/block}
+{block name='body'}
+{__block__}
+    <div class="header_a">
+        <div class="a1">
+            <a href="javascript:void(0);" onclick="window.history.go(-1);"><img src="__STATIC__/mobile/images/icon/a11.png"></a>
+            {$title}的业绩明细
+        </div>
+    </div>
+    <div class="yjmx_a">
+        <div class="box">
+            <div class="a1">
+                <span id="timeBtn"></span>
+                <em>总业绩：{$enterprise}</em>
+            </div>
+            <div class="a2">
+                {volist name="yeji" id="vo"}
+                <div class="item">
+                    <span>{$vo.date}</span>
+                    <em>+{$vo.enterprise}</em>
+                </div>
+                {/volist}
+              <!--   <div class="item">
+                    <span>03-01</span>
+                    <em>+100.00</em>
+                </div>
+                <div class="item">
+                    <span>03-01</span>
+                    <em>+100.00</em>
+                </div> -->
+            </div>
+        </div>
+    </div>
+<script>
+    var calendar = new datePicker();
+    var date = new Date();
+    let Y = date.getFullYear();
+    let M = date.getMonth() + 1;
+    //$("#timeBtn").html(Y + '-' + (M < 10 ? '0' + M : M))
+    $("#timeBtn").html("{$date}")
+
+    calendar.init({
+        'trigger': '#timeBtn', /*按钮选择器，用于触发弹出插件*/
+        'type': 'ym',/*模式：date日期；datetime日期时间；time时间；ym年月；*/
+        'minDate': '1900-1-1',/*最小日期*/
+        'maxDate': Y + '-' + M,/*最大日期*/
+        'onSubmit': function () {
+            /*确认时触发事件*/
+            var theSelectData = calendar.value;
+            console.log(theSelectData);
+            $("#timeBtn").html(theSelectData);
+            window.location.replace("/mobile/achievement?member_id={$member_id}&date="+theSelectData);
+        },
+        'onClose': function () {
+            /*取消时触发事件*/
+        }
+    });
+</script>
+{/block}

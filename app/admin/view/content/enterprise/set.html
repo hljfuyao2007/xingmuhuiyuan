@@ -1,0 +1,75 @@
+<style>
+    .inc-btn {
+        height: 80vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #set {
+        width: 50%;
+    }
+</style>
+
+<div id="button_div">
+    <div class="layuimini-container" style="padding: 0;">
+        <div class="inc-btn">
+            <button class="layui-btn" id="set" onclick="set();">
+                <i class="layui-icon layui-icon-upload"></i>结算
+            </button>
+            <br><br><br>
+            
+       </div>
+    <!-- <div class="layuimini-container" style="padding: 0;"> -->
+            
+    </div>
+
+</div>
+
+<div id="table_div" style="display: none">
+    
+    <div>失败导入</div>
+        <table id="false_table" class="layui-table">
+            <tr>
+                <td></td>
+            </tr>
+        </table>
+    <div>成功导入</div>
+        <table id="success_table" class="layui-table">
+            <tr>
+                <td></td>
+            </tr>
+        </table>
+    <button class="layui-btn" style=" width: 100%;" onclick="reload();">
+        <i class="layui-icon"></i>确定
+    </button>
+</div>
+<script>
+
+function set(){
+    if(!confirm("确定结算上月业绩")){
+        return;
+    }
+    $.ajax({
+        type:"post",
+        url: "true_set",
+        data: {},
+        dataType: "json",
+        success: function(res){
+            if (res.code === 1) {
+                layer.msg(res.msg, function () {
+                   reload(); 
+                });
+            }else{
+                layer.msg(res.msg);
+
+            }
+        }
+    });
+}
+function reload(){
+    window.parent.location.reload();
+}
+
+</script>

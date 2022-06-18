@@ -1,0 +1,73 @@
+﻿{extend name='layout/layout' /}
+{block name='css'}
+{__block__}
+{/block}
+{block name='body'}
+{__block__}
+    <div class="header_a">
+        <div class="a1">
+            <a href="javascript:void(0);" onclick="window.history.go(-1);"><img src="__STATIC__/mobile/images/icon/a11.png"></a>
+            提现记录
+        </div>
+    </div>
+    <div class="yjmx_a">
+        <div class="box">
+           
+            <div class="a2">
+                <div class="item">
+                    <span>日期</span>
+                    <em>金额</em>
+                    <span>进度</span>
+                </div>
+                {volist name="text" id="vo"}
+                <div class="item">
+                    <span>{$vo.create_time|date="Y-m-d"}</span>
+                    <em>{$vo.money}</em>
+                    <span onclick="cause('{$vo.cause??''}');">{$vo.status==0?"待审核":($vo.status==1?"已打款":"已拒绝")}</span>
+                </div>
+                {/volist}
+              <!--  <div class="item">
+                    <span>03-01</span>
+                    <em>+100.00</em>
+                </div>
+                <div class="item">
+                    <span>03-01</span>
+                    <em>+100.00</em>
+                </div> -->
+            </div>
+        </div>
+    </div>
+<script>
+    var calendar = new datePicker();
+    var date = new Date();
+    let Y = date.getFullYear();
+    let M = date.getMonth() + 1;
+    //$("#timeBtn").html(Y + '-' + (M < 10 ? '0' + M : M))
+    $("#timeBtn").html("{$date}")
+
+    calendar.init({
+        'trigger': '#timeBtn', /*按钮选择器，用于触发弹出插件*/
+        'type': 'ym',/*模式：date日期；datetime日期时间；time时间；ym年月；*/
+        'minDate': '1900-1-1',/*最小日期*/
+        'maxDate': Y + '-' + M,/*最大日期*/
+        'onSubmit': function () {
+            /*确认时触发事件*/
+            var theSelectData = calendar.value;
+            console.log(theSelectData);
+            $("#timeBtn").html(theSelectData);
+            window.location.replace("/mobile/tx_log?date="+theSelectData);
+        },
+        'onClose': function () {
+            /*取消时触发事件*/
+        }
+    });
+    function cause(text){
+        if(text !== ""){
+            layui.use('layer', function(){
+              var layer = layui.layer;
+              layer.msg(text,{time:0,btn:"关闭"});
+            }); 
+        }
+    }   
+</script>
+{/block}

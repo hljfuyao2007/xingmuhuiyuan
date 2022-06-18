@@ -1,0 +1,94 @@
+<div class="layuimini-container">
+    <blockquote class="layui-elem-quote layui-text">
+        <div style="font-size: 15px; font-weight: bold;">
+            <i class="layui-icon" style="margin-right: 6px; color: #FFB800;">&#xe702;</i>操作提示
+        </div>
+        <ul>
+            <li>标注<font color="red">*</font>的为必填项。</li>
+        </ul>
+    </blockquote>
+
+
+
+    <form id="app-form" class="layui-form layuimini-form">
+
+        <div class="layui-form-item">
+            <label class="layui-form-label required">类型</label>
+            <div class="layui-input-block">
+                <select name="type" id="type_s" lay-filter="college">
+                    <option value="1">基础点位</option>
+                    <option value="2">增长点位</option>
+                    <option value="3">二级团队点位</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item" id="man_num" style="display: none;">
+            <label class="layui-form-label required">人数区间</label>
+            <div class="layui-input-block">
+                <input type="number" name="num"  class="layui-input" placeholder="请输入限制人数" value="">
+
+            </div>
+        </div>
+        <div class="layui-form-item" id="money_num">
+            <label class="layui-form-label required">业绩区间</label>
+            <div class="layui-input-block">
+                <input type="number" name="money"  class="layui-input" placeholder="请输入限制业绩" value="">
+
+            </div>
+        </div>
+        <div class="layui-form-item" id="dian">
+            <label class="layui-form-label required">点位</label>
+            <div class="layui-input-block">
+                <input type="number" name="dian" min=0 max=100 class="layui-input" placeholder="请输入点位" >
+
+            </div>
+        </div>
+
+        
+        <div class="layui-form-item text-center">
+            <button type="submit" class="layui-btn layui-btn-normal layui-btn-sm" lay-submit>确认</button>
+            <button type="reset" class="layui-btn layui-btn-primary layui-btn-sm">重置</button>
+        </div>
+    </form>
+</div>
+
+
+<script>
+layui.use(['element','form'], function(){
+    var element = layui.element;
+    var form = layui.form;
+    var  layer = layui.layer;
+ 
+ form.on('select(college)', function (data) {
+           var v=$("select[name=type").val();
+           if(v==3){
+                $("#man_num").show();
+                $("#money_num").show();
+            }else if(v==1){
+                $("#man_num").hide();
+                $("#money_num").show();
+            }else{
+                $("#man_num").show();
+                $("#money_num").hide();
+            }
+        });
+});
+
+function type_ch(v){
+
+
+    if(v==3){
+        $("#man_num").show();
+        $("#money_num").show();
+    }else if(v==1){
+        $("#man_num").hide();
+        $("#money_num").show();
+    }else{
+        $("#man_num").show();
+        $("#money_num").hide();
+    }
+
+
+}
+
+</script>

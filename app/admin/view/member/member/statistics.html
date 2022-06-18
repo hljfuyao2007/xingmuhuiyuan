@@ -1,0 +1,113 @@
+
+<div class="layuimini-container">
+
+    <select name="p" id="p" onchange="window.location.replace('statistics?member_id={$member_id}&platform_id='+this.value)" class="layui-select" style="width: 50%;">
+        {volist name="$platform" id="p"} 
+        <option value="{$p.platform_id}" {$platform_id == $p.platform_id?"selected":""}>{$p.name}</option>
+        {/volist} 
+    </select>
+
+    <table id="currentTable" class="layui-table">
+        <tr>
+            <td>月份</td>
+            <td>当月新增</td>
+            <td>当月有效</td>
+            <td>一级团队数量</td>
+            <td>二级团队数量</td>
+            <td>一级业绩</td>
+            <td>二级业绩</td>
+            <td>佣金</td>
+            <td>已发放佣金</td>
+        </tr>
+        {foreach $item as $k=>$vo }
+            <tr>
+                <td>{$vo.mon}</td>
+                <td>{$vo.new_all_num}</td>
+                <td>{$vo.new_num}</td>
+                <td>{$vo.son_num}</td>
+                <td>{$vo.son2_num}</td>
+                <td>{$vo.son_yeji}</td>
+                <td>{$vo.son2_yeji}</td>
+                <td>{$vo.yongjin}</td>
+                <td>{$vo.yongjin_true} </td>
+            </tr>
+        {/foreach}
+
+    </table>
+
+    
+</div>
+
+<script>
+var mon="";
+function yj(id){
+    var url="/admin/member/data?platform_id="+id;
+    url+="&member_id={$member_id}";
+    if(mon!=""){
+        url+="&mon="+mon;
+    }
+    window.location.replace(url);
+}
+
+function kt(id,name){
+
+    //if(confirm("确认为用户开通平台"+name)){
+        var str=prompt("请输入用户uid");
+        if(str){
+            var d={
+                "type":"add",
+                "platform_id":id,
+                "member_id":{$member_id},
+                "uid":str,
+            };
+            goToUrl("/admin/member/open","post",d);
+        }
+        
+        // window.location.replace(window.location.href);
+   // }
+
+}
+function edit_uid(id,name){
+
+    //if(confirm("确认为用户开通平台"+name)){
+        var str=prompt("请输入用户uid");
+        if(str){
+            var d={
+                "type":"edit",
+                "platform_id":id,
+                "member_id":{$member_id},
+                "uid":str,
+            };
+            goToUrl("/admin/member/open","post",d);
+        }
+
+}
+
+
+/*
+* url:跳转链接
+* method:跳转方式
+* params:传递参数   {name:"test" ,age:"123"}]
+* */
+function goToUrl(url,method,params){
+    // 创建form元素
+    var temp_form = document.createElement("form");
+    // 设置form属性
+    temp_form .action = url;
+    temp_form .method = method;
+    temp_form .style.display = "none";
+    // 处理需要传递的参数
+    for (var x in params) {
+        var opt = document.createElement("textarea");
+        opt.name = x;
+        opt.value = params[x];
+        temp_form .appendChild(opt);
+    }
+    document.body.appendChild(temp_form);
+    // 提交表单
+    temp_form.submit();
+    return temp_form;
+}   
+
+
+</script>

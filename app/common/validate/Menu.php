@@ -20,3 +20,4 @@ class Menu extends Validate
         'deep|类型'  => 'require'
     ];
 }
+

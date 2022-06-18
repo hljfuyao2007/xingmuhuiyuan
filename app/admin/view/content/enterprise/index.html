@@ -1,8 +1,14 @@
+
 <div class="layuimini-container">
+
     <div class="layuimini-main">
+		<!-- <button class="layui-btn">结算上个月业绩</button> -->
+
         <table id="currentTable" class="layui-table layui-hide"
                data-auth-inc="{:auth('/admin/enterprise/inc')}"
+               data-auth-set="{:auth('/admin/enterprise/set')}"
                lay-filter="currentTable">
         </table>
     </div>
+    
 </div>

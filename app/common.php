@@ -15,6 +15,8 @@ if (!function_exists('datetime')) {
     }
 }
 
+ 
+
 if (!function_exists('getRouteList')) {
     /**
      * 获取应用下已注册的所有路由

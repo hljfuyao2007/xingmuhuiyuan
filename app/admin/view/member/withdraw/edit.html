@@ -57,6 +57,13 @@
                 <input {in name="item.status" value="1,2"} disabled {/in} type="radio" name="status" value="2" title="已拒绝" {eq name="item.status|default=0" value="2"} checked {/eq}>
             </div>
         </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">审核理由</label>
+            <div class="layui-input-block">
+               <!--  <input type="text" name="cause" value="{$item.cause|default=''}"> -->
+               <textarea name="cause"    class="layui-textarea" rows="5">{$item.cause|default=''}</textarea>
+            </div>
+        </div>
 
         <div class="layui-form-item text-center">
             <input type="hidden" name="withdraw_id" value="{$item.withdraw_id|default=''}">

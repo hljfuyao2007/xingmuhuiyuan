@@ -11,6 +11,7 @@ namespace app\common\controller;
 
 
 use app\BaseController;
+use think\facade\Request;
 
 class ApiController extends BaseController
 {
@@ -24,6 +25,7 @@ class ApiController extends BaseController
      */
     protected function deToken(bool $type = true)
     {
+
         $request = app('request');
         // 需要检测是否登入
         if (!$type && !$request->mid) {

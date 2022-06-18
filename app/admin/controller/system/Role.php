@@ -235,4 +235,58 @@ class Role extends AdminController
 
         return $this->success([], '删除成功', 1);
     }
+
+
+    public function exportExcel($columName, $list, $fileName='demo',$download=false){
+        if ( empty($columName) || empty($list) ) {
+            return '列名或者内容不能为空';
+        }
+        if ( count($list[0]) != count($columName) ) {
+            return '列名跟数据的列不一致';
+        }
+        $EXT=".xlsx";
+        $setTitle='Sheet1';
+        //实例化PHPExcel类
+        $PHPExcel    =    new \PHPExcel();
+        //获得当前sheet对象
+        $PHPSheet    =    $PHPExcel    ->    getActiveSheet();
+        //定义sheet名称
+        $PHPSheet    ->    setTitle($setTitle);
+        //excel的列 这么多够用了吧？不够自个加 AA AB AC ……
+        $letter        =    [
+            'A','B','C','D','E','F','G','H','I','J','K','L','M',
+            'N','O','P','Q','R','S','T','U','V','W','X','Y','Z'
+        ];
+        //把列名写入第1行 A1 B1 C1 ...
+        for ($i=0; $i < count($list[0]); $i++) {
+            //$letter[$i]1 = A1 B1 C1  $letter[$i] = 列1 列2 列3
+            $PHPSheet->setCellValue("$letter[$i]1","$columName[$i]");
+        }
+        //内容第2行开始
+        foreach ($list as $key => $val) {
+            //array_values 把一维数组的键转为0 1 2 3 ..
+            foreach (array_values($val) as $key2 => $val2) {
+                //$letter[$key2].($key+2) = A2 B2 C2 ……
+                $PHPSheet->setCellValue($letter[$key2].($key+2),$val2);
+            }
+        }
+        //生成2007版本的xlsx
+        $PHPExcel_IOFactory=new \PHPExcel_IOFactory;
+        $PHPWriter = $PHPExcel_IOFactory->createWriter($PHPExcel,'Excel2007');
+        
+        
+        
+        if($download){
+             $load_Path=$_SERVER['SCRIPT_FILENAME'];
+             $load_Path="./";
+            $user_path = $load_Path.'excel/';//保存路径
+            $PHPWriter->save($user_path.$fileName.$EXT);//保存excle文件
+        }else{
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header('Content-Disposition: attachment;filename='.$fileName.'.xlsx');
+            header('Cache-Control: max-age=0');
+            $PHPWriter->save("php://output");
+        }
+         
+    }
 }

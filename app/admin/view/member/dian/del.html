@@ -1,0 +1,57 @@
+<style>
+    .inc-btn {
+        height: 80vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #inc {
+        width: 50%;
+    }
+</style>
+
+<div id="button_div">
+    <div class="layuimini-container" style="padding: 0;">
+        <div class="inc-btn">
+            <button class="layui-btn" onclick="dec();">
+                <i class="layui-icon layui-icon-upload"></i>删除
+            </button>
+          
+       </div>
+    <!-- <div class="layuimini-container" style="padding: 0;"> -->
+            
+    </div>
+
+</div>
+
+
+<script>
+
+function dec(){
+    if(!confirm("确认删除")){
+        return;
+    }
+    $.ajax({
+        type:"post",
+        url: "delete",
+        data: {id:{$id}},
+        dataType: "json",
+        success: function(res){
+            if (res.code === 1) {
+                layer.msg(res.msg, function () {
+                   reload(); 
+                });
+            }else{
+                layer.msg(res.msg);
+
+            }
+        }
+    });
+}
+function reload(){
+    window.parent.location.reload();
+}
+
+</script>

@@ -16,6 +16,7 @@ use app\api\model\Platform;
 use app\common\controller\ApiController;
 use app\common\service\EasyWechat;
 use think\facade\Request;
+use think\facade\Db;
 
 class My extends ApiController
 {
@@ -135,8 +136,7 @@ class My extends ApiController
 
         $data = Member
             ::where('member_id', $mid)
-            ->field('nickname,name,avatar,phone,alipay_account,id_card,platform_id,register_time,is_identity,sex,
-            username')
+            ->field('nickname,name,avatar,phone,alipay_account,id_card,platform_id,register_time,is_identity,sex,username')
             ->find();
         $data['age'] = getAgeByIdCard($data['id_card']);
 
@@ -151,19 +151,96 @@ class My extends ApiController
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
+    // public function authentication(Member $member)
+    // {
+    //     $post = $this->request->post();
+    //     $post['member_id'] = $this->deToken(0)->mid;
+    //     $post['is_identity'] = 1;
+
+    //     $member->valid($post, 'authentication');
+
+    //     $member::update($post);
+
+    //     return apiShow([], '操作成功', 1);
+    // }
+
     public function authentication(Member $member)
     {
         $post = $this->request->post();
-        $post['member_id'] = $this->deToken(0)->mid;
-        $post['is_identity'] = 1;
+        //$post['member_id'] = $this->deToken(0)->mid;
+        if(!isset($post['sex'])){
+            $post['sex']=0;
+        }
+        $update=[
+            //'member_id'=$post['member_id'],
+            'name'=>$post['name'],
+            'id_card'=>$post['id_card'],
+            'alipay_account'=>$post['alipay_account'],
+            'sex'=>$post['sex']==0?0:1,
+            'is_identity'=>2,
+            
+        ];
+ 
+        if(!$this->checkIdcard($update["id_card"])){
+            abort(-1, '身份证格式不正确');
+        }
+        if($update["name"]==""){
+            abort(-1, '姓名不正确');
+        }
+         if($update["alipay_account"]==""){
+            abort(-1, '支付宝账号不正确');
+        }
 
-        $member->valid($post, 'authentication');
+        //此处可接入身份证姓名对应的验证
 
-        $member::update($post);
+        $res=Db::name("member")
+        ->where("member_id",$post['mid'])
+        ->update($update);
 
         return apiShow([], '操作成功', 1);
     }
+  /**
+     * 身份证验证
+     * @param Member $member
+     * @return array|\think\response\Json
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+public function checkIdcard($idcard)
+{
 
+        $idcard = strtoupper($idcard);
+        if (!preg_match('#^\d{17}(\d|X)$#', $idcard)) {
+            return false;
+
+
+        }
+        // 判断出生年月日的合法性(解决号码为666666666666666666也能通过校验的问题)
+        $birth = substr($idcard, 6, 8);
+        if ($birth < "19000101" || $birth > date("Ymd")) {
+            return false;
+        }
+        $year = substr($birth, 0, 4);
+        $month = substr($birth, 4, 2);
+        $day = substr($birth, 6, 2);
+        if (!checkdate($month, $day, $year)) {
+            return false;
+        }
+        // 校验身份证格式(mod11-2)
+        // $check_sum = 0;
+        // for ($i = 0; $i < 17; $i++) {
+        //     // $factor = (1 << (17 - $i)) % 11;
+        //     $check_sum += $idcard[$i] * ((1 << (17 - $i)) % 11);
+        // }
+        // $check_code = (12 - $check_sum % 11) % 11;
+        // $check_code = $check_code == 10 ? 'X' : strval($check_code);
+        // if ($check_code !== substr($idcard, -1)) {
+        //     return 2;exit;
+        //     return false;
+        // }
+        return true;
+}
     /**
      * 成为代理
      * @return array|\think\response\Json
@@ -244,5 +321,45 @@ class My extends ApiController
             'order_number' => $order['order_number'],
             'total_fee'    => $order['total_fee']
         ]);
+    }
+
+
+
+
+    public function getMonMoney()
+    {
+       $yeji=5000;//月销售业绩
+       $num=6;//直推人数
+       $new=3;//新增有效人数
+       $dian=0;
+       if($yeji>800000){
+            $dian=13;
+       }elseif ($yeji>=400000) {
+            $dian=9;
+       }elseif ($yeji>=200000) {
+            $dian=7;
+       }elseif ($yeji>=100000) {
+            $dian=5;
+       }elseif ($yeji>=30000) {
+            $dian=4;
+       }elseif ($yeji>=2000) {
+            $dian=3;
+       }
+
+       if($new>50){
+            $dian+=4;
+       }elseif ($yeji>=20) {
+            $dian+=3;
+       }elseif ($yeji>=10) {
+            $dian+=2;
+       }elseif ($yeji>=5) {
+            $dian+=1.5;
+       }elseif ($yeji>=2) {
+            $dian+=1;
+       }
+
+
+
+
     }
 }

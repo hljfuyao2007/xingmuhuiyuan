@@ -1401,9 +1401,11 @@
       justify-content: space-between;
       align-items: center;
       line-height: 1;
-      &:last-child{
+
+      &:last-child {
         border-bottom: none;
       }
+
       span {
         font-size: 0.3rem;
         color: #212121;
@@ -1412,6 +1414,194 @@
       em {
         font-size: 0.3rem;
         color: #000000;
+      }
+    }
+  }
+}
+
+// 登录
+.box_a {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  background: url(../images/dl_bj.jpg) bottom center no-repeat;
+  background-size: cover;
+  overflow: hidden;
+
+  .a1 {
+    padding: 1rem 0.46rem 0;
+
+    .b1 {
+      height: 1.11rem;
+      margin-bottom: 0.7rem;
+
+      img {
+        height: 100%;
+        width: auto;
+        display: block;
+        margin: 0 auto;
+      }
+    }
+
+    .b2 {
+      margin: 0 0.14rem;
+      background: rgba(243, 242, 250, 0.4);
+      border-radius: 0.2rem;
+      margin-bottom: 1rem;
+      &.on{
+        .item {
+          height: 1rem;
+          padding-left: 1.62rem;
+          span {
+            padding-right: 0.2rem;
+            width: calc(4.2em + 0.2rem);
+            line-height: 0.5rem;
+            border-right: 1px solid #F6F8F7;
+            left: 0.2rem;
+            font-size: 0.26rem;
+            color: #FFFFFF;
+            text-align: justify;
+            text-align-last: justify;
+          }
+        }
+      }
+      .item {
+        height: 1.46rem;
+        display: flex;
+        align-items: center;
+        padding-left: 1.58rem;
+        position: relative;
+        padding-right: 0.3rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.8);
+        &.on{
+          padding-right: 2rem;
+        }
+        em{
+          position: absolute;
+          right: 0.3rem;
+          font-size: 0.26rem;
+          color: #fff;
+        }
+        &:last-child {
+          border-bottom: none;
+        }
+
+        span {
+          position: absolute;
+          width: 0.64rem;
+          height: 0.5rem;
+          border-right: 1px solid #F6F8F7;
+          left: 0.5rem;
+
+          img {
+            height: 100%;
+            width: auto;
+            display: block;
+          }
+        }
+
+        input {
+          width: 100%;
+          height: 0.6rem;
+          background: none;
+          border: none;
+          outline: none;
+          font-size: 0.28rem;
+          color: #FFFFFF;
+        }
+
+        input::-webkit-input-placeholder {
+          color: #FFFFFF;
+        }
+
+        input::-moz-placeholder {
+          color: #FFFFFF;
+        }
+
+        input:-moz-placeholder {
+          color: #FFFFFF;
+        }
+      }
+    }
+
+    .b3 {
+      height: 0.8rem;
+      background: #1267E6;
+      border-radius: 0.4rem;
+      font-size: 0.3rem;
+      text-align: center;
+      color: #FFFFFF;
+      line-height: 0.8rem;
+    }
+
+    .b4 {
+      padding: 0.2rem 0;
+      line-height: 0.44rem;
+      font-size: 0.26rem;
+      color: #FFFFFF;
+      opacity: 0.8;
+      display: flex;
+      justify-content: center;
+
+      a {
+        margin: 0 0.2rem;
+      }
+    }
+    .b5 {
+      font-size: 0.24rem;
+      color: #FFFFFF;
+      line-height: 0.46rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      em {
+        width: 0.24rem;
+        height: 0.24rem;
+        margin-right: 0.1rem;
+        input {
+          width: 100%;
+          height: 100%;
+          display: block;
+        }
+      }
+    }
+  }
+
+  .a2 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    bottom: 0.9rem;
+    width: 100%;
+    .b1 {
+      font-size: 0.26rem;
+      color: #FFFFFF;
+      line-height: 0.78rem;
+      opacity: 0.8;
+    }
+
+    .b2 {
+      width: 0.82rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .b3 {
+      font-size: 0.24rem;
+      color: #FFFFFF;
+      line-height: 0.46rem;
+      display: flex;
+      align-items: center;
+
+      em {
+        width: 0.24rem;
+        height: 0.24rem;
+        margin-right: 0.1rem;
+        input {
+          width: 100%;
+          height: 100%;
+          display: block;
+        }
       }
     }
   }

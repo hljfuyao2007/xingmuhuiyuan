@@ -1,0 +1,124 @@
+﻿{extend name='layout/layout' /}
+{block name='css'}
+{__block__}
+{/block}
+{block name='body'}
+{__block__}
+    <div class="header_a">
+        <div class="a1">
+            <a href="javascript:void(0);" onclick="window.history.go(-1);"><img src="__STATIC__/mobile/images/icon/a11.png"></a>
+            个人中心
+        </div>
+    </div>
+    <div class="content">
+        <div class="grzx_a">
+            <div class="a1" onclick="choice_img();">
+                <img src="{$user.avatar==''?'__STATIC__/mobile/img/a1.png':$user.avatar}" id="avatar">
+
+            </div>
+            <input type="file" accept="images" style="display: none;" id="img" onchange="upload_img();" >
+            <input type="hidden" name="mid" id="mid" value="{$user.member_id}">
+            <div class="a2" onclick="window.location.href='/mobile/txrz';">
+                <div class="b1">
+                    <!-- calss空为男 .on为女 -->
+                    {$user.nickname} 
+                    {if $user.sex==1 }
+                       <span><img src="__STATIC__/mobile/images/icon/a6.png" ></span>
+                    {else}
+                        <span class="on"><img src="__STATIC__/mobile/images/icon/a15.png"></span>
+                    {/if}
+
+                </div>
+                <!-- calss空为已认证 .on为未认证 -->
+                <div class="b2">
+                {if $user.is_identity == 2}
+                   <span>已认证</span>
+                {else}
+                    <span class="on">未认证</span>
+                {/if}
+                </div>
+            </div>
+        </div>
+        <div class="grzx_b">
+            {if $user.is_identity == 2}
+            <a href="/mobile/txrz" class="item">
+                <span>姓名</span>
+                <em>{$user.name} </em>
+            </a>
+            <a href="/mobile/txrz" class="item">
+                <span>身份证号</span>
+                <em>{$user.id_card}</em>
+            </a>
+            <a href="/mobile/txrz" class="item">
+                <span>年龄</span>
+                <em>{$age}岁</em>
+            </a>
+            {/if}
+            <a href="javascript:void(0);" class="item">
+                <span>账号</span>
+                <em>{$user.username}</em>
+            </a>
+            <a href="javascript:void(0);" class="item">
+                <span>用户ID</span>
+                <em>{$user.member_id}</em>
+            </a>
+            <a href="javascript:void(0);" class="item">
+                <span>注册时间</span>
+                <em>{$user.create_time|date="Y-m-d"}</em>
+            </a>
+            
+            {if $user.is_identity == 2}
+            <a href="/mobile/txrz" class="item">
+                <span>支付宝账号</span>
+                <em>{$user.alipay_account}</em>
+            </a>
+            {/if}
+        </div>
+    </div>
+
+    <script>
+
+
+    function choice_img(){
+        $("#img").click();
+    }
+
+    /**
+     * 上传图片
+     */
+    function upload_img() {
+        if ($("#img").val() == '') {
+            return;
+        }
+        var formData = new FormData();
+        formData.append('file', document.getElementById('img').files[0]);
+    
+       // formData.append('mid', document.getElementById('mid').value);
+        // alert({$user.member_id});
+        // console.log(formData);
+
+        $.ajax({
+            url:"/api/common/upload_avatar?mid={$user.member_id}",
+            type:"post",
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function(data) {
+                if (data.code == "0") {
+                    $("#avatar").attr("src", data.data.view_url);
+                    alert("上传成功");
+                    window.location.replace(window.location.href);
+                    //$("#productImg").val(data.filename);
+                } else {
+                    alert(data.msg);
+                }
+            },
+            error:function(data) {
+                alert("上传失败")
+            }
+        });
+    }
+
+
+    </script>
+{/block}

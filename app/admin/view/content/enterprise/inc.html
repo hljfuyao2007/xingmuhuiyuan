@@ -1,6 +1,6 @@
 <style>
     .inc-btn {
-        height: 100vh;
+        height: 80vh;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -12,10 +12,66 @@
     }
 </style>
 
-<div class="layuimini-container" style="padding: 0;">
-    <div class="inc-btn">
-        <button class="layui-btn" id="inc">
-            <i class="layui-icon layui-icon-upload"></i>导入业绩
-        </button>
+<div id="button_div">
+    <div class="layuimini-container" style="padding: 0;">
+        <div class="inc-btn">
+            <button class="layui-btn" id="inc">
+                <i class="layui-icon layui-icon-upload"></i>导入业绩
+            </button>
+            <br><br><br>
+            <button class="layui-btn" style=" width: 50%; margin-top: 20px; " onclick="dec();">
+                <i class="layui-icon"></i>回退前一天的数据
+            </button>
+       </div>
+    <!-- <div class="layuimini-container" style="padding: 0;"> -->
+            
     </div>
+
 </div>
+
+<div id="table_div" style="display: none">
+     <button class="layui-btn" style=" width: 100%;" onclick="reload();">
+        <i class="layui-icon"></i>确定
+    </button>
+    <div>失败导入</div>
+        <table id="false_table" class="layui-table">
+            <tr>
+                <td></td>
+            </tr>
+        </table>
+    <div>成功导入</div>
+        <table id="success_table" class="layui-table">
+            <tr>
+                <td></td>
+            </tr>
+        </table>
+   
+</div>
+<script>
+
+function dec(){
+    if(!confirm("操作不可逆，请确认操作")){
+        return;
+    }
+    $.ajax({
+        type:"post",
+        url: "dec",
+        data: {},
+        dataType: "json",
+        success: function(res){
+            if (res.code === 1) {
+                layer.msg(res.msg, function () {
+                   reload(); 
+                });
+            }else{
+                layer.msg(res.msg);
+
+            }
+        }
+    });
+}
+function reload(){
+    window.parent.location.reload();
+}
+
+</script>

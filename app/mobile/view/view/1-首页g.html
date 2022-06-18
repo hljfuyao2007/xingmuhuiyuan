@@ -1,0 +1,95 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>index</title>
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="swiper/swiper-bundle.min.css">
+    <script src="js/jquery-1.10.1.min.js"></script>
+    <script src="swiper/swiper-bundle.min.js"></script>
+    <script src="js/rem.js"></script>
+    <script src="js/index.js"></script>
+</head>
+
+<body>
+    <div class="ind_a">
+        <div class="a1">
+            <span><img src="img/a1.png"></span>
+            ID:12345678
+        </div>
+        <div class="a2">
+            <div class="b1">总平台业绩（元）</div>
+            <div class="b2">32,806.00</div>
+        </div>
+        <a href="" class="a3">开通代理</a>
+    </div>
+    <div class="ind_b">
+        <div class="tit">团队业绩</div>
+        <div class="list">
+            <div class="item">
+                <div class="b1"><span><img src="images/icon/a2.png"></span>一级业绩</div>
+                <div class="b2">¥5,433.00</div>
+            </div>
+            <div class="item">
+                <div class="b1"><span><img src="images/icon/a3.png"></span>一级佣金</div>
+                <div class="b2">¥3,168.00</div>
+            </div>
+            <div class="item">
+                <div class="b1"><span><img src="images/icon/a4.png"></span>二级业绩</div>
+                <div class="b2">¥5,433.00</div>
+            </div>
+            <div class="item">
+                <div class="b1"><span><img src="images/icon/a5.png"></span>二级佣金</div>
+                <div class="b2">¥3,168.00</div>
+            </div>
+        </div>
+    </div>
+    <div class="ind_c">
+        <div class="tit">团队管理</div>
+        <div class="list">
+            <div class="item">
+                <div class="b1"><img src="images/icon/b1.png"></div>
+                <div class="b2 tc_1">一级人数</div>
+                <div class="b3 tc_1">42</div>
+            </div>
+            <div class="item">
+                <div class="b1"><img src="images/icon/b2.png"></div>
+                <div class="b2 tc_1">二级人数</div>
+                <div class="b3 tc_1">100</div>
+            </div>
+            <div class="item">
+                <div class="b1"><img src="images/icon/b3.png"></div>
+                <div class="b2 tc_1">本月新注册</div>
+                <div class="b3 tc_1">142</div>
+            </div>
+            <div class="item">
+                <div class="b1"><img src="images/icon/b4.png"></div>
+                <div class="b2 tc_1">本月有效新增</div>
+                <div class="b3 tc_1">42</div>
+            </div>
+            <div class="item">
+                <div class="b1"><img src="images/icon/b5.png"></div>
+                <div class="b2 tc_1">总人数</div>
+                <div class="b3 tc_1">142</div>
+            </div>
+            <div class="item">
+                <div class="b1"><img src="images/icon/b6.png"></div>
+                <div class="b2 tc_1">可提现金额</div>
+                <div class="b3 tc_1">100</div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    $(function () {
+        $(document).on('click', '.nav_a .a2 span', function () {
+            $(this).addClass("on").siblings().removeClass("on");
+        });
+    })
+</script>
+
+</html>

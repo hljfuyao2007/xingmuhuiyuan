@@ -18,6 +18,11 @@ use app\common\service\sms\SMS;
 
 class Login extends ApiController
 {
+
+     public function ceshi(){
+        //http://app15.com/api/v1.0/access/ceshi
+        echo 0;exit;
+     }
     /**
      * 短信登录
      * @param Member $member
@@ -28,6 +33,8 @@ class Login extends ApiController
      */
     public function sms_login(Member $member)
     {
+
+
         $post = $this->request->post();
 
         $member->valid($post, 'smsLogin');
@@ -57,6 +64,65 @@ class Login extends ApiController
         header('token:' . $token);
 
         return apiShow([
+            'mid'         => $find['member_id'],
+            'phone'       => $find['phone'],
+            'nickname'    => $find['nickname'],
+            'avatar'      => $find['avatar'],
+            'invite_code' => $find['invite_code']
+        ], '登录成功');
+    }
+
+
+    /**
+     * 短信登录
+     * @param Member $member
+     * @return array|\think\response\Json
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function wx_sms_login(Member $member)
+    {
+
+
+        $post = $this->request->post();
+
+        $member->valid($post, 'smsLogin');
+
+        (new SMS())->verify($post['phone'], 5, $post['sms_code']);
+
+        $find = $member
+            ->where('phone', $post['phone'])
+            ->field('member_id,phone,avatar,nickname,status,open_id,union_id,login_ip,login_time,invite_code')
+            ->find();
+
+        if (!$find) {
+            abort(-1, '用户不存在');
+        }
+        if ($find['status'] == 0) {
+            abort(-1, '账号已被禁用或注销');
+        }
+
+        $find->login_time = time();
+        $find->login_ip = getRealIp();
+        $find->save();
+
+        $token = app('app\\common\\service\\JWTManager', [
+            'param' => [
+                'mid' => $find['member_id']
+            ]
+        ])->issueToken();
+
+        if($find["open_id"]==""){
+            $member->where('member_id', $find['member_id'])->update(["open_id"=>$post["open_id"]]);
+        }else{
+            abort(-1, '账号已绑定微信,请先解绑');
+        }
+        
+        header('token:' . $token);
+
+        return apiShow([
+            'mid'         => $find['member_id'],
             'phone'       => $find['phone'],
             'nickname'    => $find['nickname'],
             'avatar'      => $find['avatar'],
@@ -75,13 +141,24 @@ class Login extends ApiController
     public function wx_login(Member $member)
     {
         $post = $this->request->post();
+        $code=$post["code"];
+        //$member->valid($post, 'wx_login');
+        $config = config('wechat');
+        $JSAPI=$config["JSAPI"];
+        //$find = (new EasyWechat('JSAPI'))->applet_info($post['code']);
+        $url="https://api.weixin.qq.com/sns/oauth2/access_token?appid=".$JSAPI["app_id"]."&secret=".$JSAPI["secret"]."&code=".$code."&grant_type=authorization_code";
+            
+        $result=$this->curl($url);
+        $jsonObj=json_decode($result);
 
-        $member->valid($post, 'wx_login');
-
-        $find = (new EasyWechat('JSAPI'))->applet_info($post['code']);
-
+            //$jsonARR=json_decode($result,true);
+            //error(1,"ccc",$jsonARR);
+            
+        $openid=$jsonObj->openid;
+//return apiShow($openid);
         $memberInfo = $member
-            ->where('open_id', $find['open_id'])
+            ->where('open_id', $openid)
+            //->where('open_id', $find['open_id'])
             ->field('member_id,phone,avatar,nickname,status,open_id,union_id,login_ip,login_time,invite_code')
             ->find();
         if ($memberInfo && $memberInfo['status'] == 0) {
@@ -94,12 +171,24 @@ class Login extends ApiController
 
         // 用户不存在执行注册
         if (!$memberInfo) {
-            $memberInfo = $member::create([
-                'nickname' => $post['nickname'],
-                'avatar'   => $this->avatar_upload($post['avatar']),
-                'open_id'  => $find['open_id'],
-                'phone'    => ''
-            ]);
+            $h=$this->get_wx_h($jsonObj);
+            return apiShow([
+                // 'mid'         => $find['member_id'],
+                // 'phone'       => $memberInfo['phone'],
+                'nickname'    => $h['nickname'],
+                'avatar'      => $h['headimgurl'],
+                'open_id'     => $openid,
+                // 'invite_code' => $memberInfo['invite_code'],
+                // 'session_key' => $find['session_key']
+            ], '用户不存在');
+
+            // $memberInfo = $member::create([
+            //     'nickname' => $post['nickname'],
+            //     'avatar'   => $this->avatar_upload($post['avatar']),
+            //     'open_id'  => $find['open_id'],
+            //     'phone'    => ''
+            // ]);
+
         } else {
             $memberInfo->login_time = time();
             $memberInfo->login_ip = getRealIp();
@@ -114,12 +203,13 @@ class Login extends ApiController
         header('token:' . $token);
 
         return apiShow([
+            'mid'         => $memberInfo['member_id'],
             'phone'       => $memberInfo['phone'],
             'nickname'    => $memberInfo['nickname'],
             'avatar'      => $memberInfo['avatar'],
             'open_id'     => $memberInfo['open_id'],
             'invite_code' => $memberInfo['invite_code'],
-            'session_key' => $find['session_key']
+            //'session_key' => $find['session_key']
         ], '登录成功');
     }
 
@@ -162,6 +252,7 @@ class Login extends ApiController
         $this->db->commit();
 
         return apiShow([
+            'mid'         => $find['member_id'],
             'phone'       => $find['phone'],
             'nickname'    => $find['nickname'],
             'avatar'      => $find['avatar'],
@@ -210,12 +301,19 @@ class Login extends ApiController
         header('token:' . $token);
 
         return apiShow([
+            'mid'         => $find['member_id'],
             'phone'       => $find['phone'],
             'nickname'    => $find['nickname'],
             'avatar'      => $find['avatar'],
             'invite_code' => $find['invite_code']
         ], '登录成功');
     }
+
+
+public function check_str($str){
+    $res = preg_match('/^[\x{4e00}-\x{9fa5}A-Za-z0-9 _:：,，.。…\/、~`＠＃￥％＆×＋｜｛｝＝－＊＾＄～｀!@#$%^&*()\+-—=（）！￥{}【】\[\]\|\"\'’‘“”；;《》<>\?\？\·]+$/u', $str);
+    return $res ? TRUE : FALSE;
+}
 
     /**
      * 注册
@@ -229,20 +327,68 @@ class Login extends ApiController
     public function register(Member $member, SMS $sms)
     {
         $post = $this->request->post();
+        $invite_code="";
+
+        if(!$this->check_str( $post['nickname'])){
+            return apiShow([], '昵称含有不合法字符', -1);
+        }
+        //正则匹配验证码
+        $pattern = "/^[A-Za-z0-9]{6}-[1-3]$/";
+        //return apiShow([], $post['nickname'], -1);
+        if( $post['invite_code'] !=""){
+            // list($invite_code,$platform_id)=explode("-", $post['invite_code']);
+            // if(!preg_match($pattern, $invite_code)){
+            //     return apiShow([], '邀请码格式不正确', -1);
+            // }
+            
+            // $post['invite_code']=$invite_code;
+            $invite_code=$post['invite_code'];
+        }
+        
 
         $member->valid($post, 'register');
+
 
         $sms->verify($post['phone'], 1, $post['sms_code']);
 
         $this->db->startTrans();
 
-        $create = $member::create($post);
+        //nickname不重复
+        //return apiShow([], '测试', -1);
+        $nick=$member
+            ->where('nickname', $post['nickname'])
+            ->find();
+
+        if($nick){
+            return apiShow([], '昵称已存在', -1);
+        }
+
+
         // 绑定分销关系
-        $parent_id = $member->where('invite_code', $post['invite_code'] ?? '')->value('member_id', 0);
-        $this->bind_relation($create['member_id'], $parent_id);
+        if($invite_code!=""){
+            //$parent_id = $member->where('invite_code', $post['invite_code'] ?? '')->value('member_id', 0);
+            $parent = $member
+            ->field("member_id,parent_id,parent2_id")
+            ->where('nickname', $post['invite_code'])
+            ->find();
+            //->value('member_id', 0);
+            // if($parent_id>0){
+            //     $parent2_id = $member->where('member_id', $parent_id)->value('member_id', 0);
+            // }
+            // 
+            //不自动添加平台了
+            //$parent_id=$parent["member_id"];
+           // $this->bind_relation($create['member_id'], $parent_id,$platform_id);
+           
+           if($parent){
+                $post["parent_id"]=$parent["member_id"];
+                $post["parent2_id"]=$parent["parent_id"];
+           }
 
+        }
+        
+        $create = $member::create($post);
         $this->db->commit();
-
         return apiShow([], '注册成功', 1);
     }
 
@@ -254,6 +400,8 @@ class Login extends ApiController
      */
     public function forgetPwd(Member $member, SMS $sms)
     {
+
+
         $post = $this->request->post();
 
         $member->valid($post, 'forgetPwd');
@@ -274,7 +422,7 @@ class Login extends ApiController
      * @throws \think\db\exception\DbException
      * @throws \think\db\exception\ModelNotFoundException
      */
-    private function bind_relation($member_id, $parent_id)
+    private function bind_relation($member_id, $parent_id,$platform_id)
     {
         $memberTreeModel = new MemberTree();
 
@@ -284,28 +432,48 @@ class Login extends ApiController
             $saveData[] = [
                 'member_id' => $member_id,
                 'parent_id' => $parent_id,
+                'platform_id'=> $platform_id,
                 'level'     => 1
             ];
 
             // 查出所有父级的上级
-            $superior = MemberTree::where('member_id', $parent_id)->select();
+            // $superior = MemberTree::where('member_id', $parent_id)->where('platform_id',$platform_id)->select();
+            // if (!$superior->isEmpty()) {
+            //     foreach ($superior as $item) {
+            //         if ($item['parent_id']) {
+            //             $saveData[] = [
+            //                 'member_id' => $member_id,
+            //                 'parent_id' => $item['parent_id'],
+            //                 'level'     => $item['level'] + 1,
+            //                 'platform_id'=> $platform_id
+            //             ];
+            //         }
+            //     }
+            // }
+            // $memberTreeModel->saveAll($saveData);
+            $superior = MemberTree::where('member_id', $parent_id)->where('platform_id',$platform_id)->find();
             if (!$superior->isEmpty()) {
-                foreach ($superior as $item) {
-                    if ($item['parent_id']) {
-                        $saveData[] = [
-                            'member_id' => $member_id,
-                            'parent_id' => $item['parent_id'],
-                            'level'     => $item['level'] + 1
-                        ];
-                    }
+                //foreach ($superior as $item) {
+                if ($superior['parent_id']) {
+                    $saveData[] = [
+                        'member_id' => $member_id,
+                        'parent_id' => $superior['member_id'],
+                        'parent2_id' => $superior['parent_id'],
+                        'level'     => $superior['level'] + 1,
+                        'platform_id'=> $platform_id
+                    ];
                 }
+                //}
             }
             $memberTreeModel->saveAll($saveData);
+
         } else { // 不存在父级
             $memberTreeModel::create([
                 'member_id' => $member_id,
                 'parent_id' => 0,
-                'level'     => 0
+                'parent2_id' => 0,
+                'level'     => 0,
+                'platform_id'=> $platform_id
             ]);
         }
     }
@@ -360,4 +528,43 @@ class Login extends ApiController
             return false;
         }
     }
+
+    public function return_oauth2(){
+        //oauth2
+        $post = $this->request->param();
+        $config = config('wechat');
+        $JSAPI=$config["JSAPI"];
+       
+        $url="https://open.weixin.qq.com/connect/oauth2/authorize?appid=".$JSAPI["app_id"]."&redirect_uri=".$post['baseUrl']."&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect";
+        //  echo $url;
+        // exit;
+        return apiShow(["url"=>$url]);
+
+    }
+
+    public function curl($url){
+       // $url = "http://git.oschina.net/yunluo/API/raw/master/notice.txt";
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+        $notice = curl_exec($ch);
+
+        return $notice;
+    }
+
+    public function get_wx_h($jsonObj){
+        $openid = $jsonObj->openid;
+        $access_token = $jsonObj->access_token;
+        $url ="https://api.weixin.qq.com/sns/userinfo?access_token=".$access_token."&openid=".$openid;
+        $res = file_get_contents($url);
+        $json = json_decode($res,true);//这里是将返回过来的json对象转成数组
+        $headimgurl = $json['headimgurl'];
+        $nickname = $json['nickname'];
+        
+
+        return $json;
+    
+     }
 }

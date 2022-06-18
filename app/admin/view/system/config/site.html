@@ -30,6 +30,21 @@
             </div>
         </div>
     </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">前端月份</label>
+        <div class="layui-input-block">
+            <input type="text" name="user_month" id="user_month1" lay-verify="required"  placeholder="请选择前端月份" class="layui-input" value="{:sysconfig('site', 'user_month')}">
+        </div>
+    </div>
+<script>
+layui.use("laydate",function(){
+    var laydate = layui.laydate;
+    laydate.render({
+        elem:'#user_month1', // 绑定id为test4的元素
+        type: 'month', // 日期选择器   
+    });
+});
+</script>
 
     <div class="layui-form-item">
         <label class="layui-form-label">平台所在地</label>
