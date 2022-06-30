@@ -18,6 +18,8 @@ Route::group('index', function () {
     Route::get('init', 'init');
     // 欢迎页
     Route::get('welcome', 'welcome');
+
+    Route::get('show_list', 'show_list');
     // 清除缓存
     Route::get('clear', 'clear');
 })->prefix('admin/Index/');

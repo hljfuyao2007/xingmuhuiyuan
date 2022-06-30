@@ -84,7 +84,7 @@ function change_create_time(date_id,platform_id,uid){
         data: {platform_id:platform_id,member_id:{$member_id},uid:uid,value:value},
         dataType: "json",
         success: function(res){
-            alert(res.msg);
+            alert("修改成功");
             window.location.href=window.location.href;
         }
     });

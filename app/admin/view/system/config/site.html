@@ -36,6 +36,12 @@
             <input type="text" name="user_month" id="user_month1" lay-verify="required"  placeholder="请选择前端月份" class="layui-input" value="{:sysconfig('site', 'user_month')}">
         </div>
     </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">最低提现限制</label>
+        <div class="layui-input-block">
+            <input type="number" name="min_money" id="min_money" lay-verify="required"  placeholder="请填入最低提现限制" class="layui-input" value="{:sysconfig('site', 'min_money')}">
+        </div>
+    </div>
 <script>
 layui.use("laydate",function(){
     var laydate = layui.laydate;

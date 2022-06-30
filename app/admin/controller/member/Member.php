@@ -1062,7 +1062,10 @@ class Member extends AdminController
             ->where("uid",$param["uid"])
             ->where("member_id",$param["member_id"])
             ->where("platform_id",$param["platform_id"])
-            ->update(["create_time"=>strtotime($param["value"])]);
+            ->update([
+                "create_time"=>strtotime($param["value"]),
+                "create_mon"=>date("Ym",strtotime($param["value"])),
+                ]);
             if($u){
                 $this->success([], '修改成功');
             }else{

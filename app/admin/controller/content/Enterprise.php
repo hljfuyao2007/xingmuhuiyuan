@@ -632,8 +632,17 @@ class Enterprise extends AdminController
 
 
 
-    public function exportExcel($columName, $list, $fileName='xingmu_downloadfile',$download=false){
+    public function exportExcel(){
 
+        $param = $this->request->param();
+        // print_r($param);exit;
+        $columName=$param["columName"];
+        $list=$param["list"];
+        $fileName=$param["fileName"]??'xingmu_downloadfile';
+        $download=$param["download"]??false;
+        if(!is_array($columName))$columName=json_decode($columName,true);
+        if(!is_array($list))$list=json_decode($list,true);
+        
         $count = count($columName);  //计算表头数量
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();

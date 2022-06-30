@@ -880,6 +880,8 @@ class Index extends MobileController
             ->where("platform_id",$platform_id)
             ->find();
         $v=$v->assign("tree",$tree);
+        $min_money=Db::name("system_config")->where("name","min_money")->value("value");
+        $v=$v->assign("min_money",$min_money);
         return $v->fetch('v/withdrawal');
     }
 

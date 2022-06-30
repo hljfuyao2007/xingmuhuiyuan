@@ -1,0 +1,159 @@
+<style>
+
+/* 分页 */
+.pagination {display: inline-block;padding-left: 0;border-radius: 4px;}
+.pagination > li {display: inline;}
+.pagination > li > a, .pagination > li > span {position: relative;float: left;padding: 10px 15px;margin-left: -1px;line-height: 1.42857143;color: #222222;text-decoration: none;background-color: #fff;border: 1px solid #EEEEEE;}
+.pagination > li:first-child > a,.pagination > li:first-child > span {margin-left: 0;border-top-left-radius: 4px;border-bottom-left-radius: 4px;}
+.pagination > li:last-child > a, .pagination > li:last-child > span {border-top-right-radius: 4px;border-bottom-right-radius: 4px;}
+.pagination > li > a:hover, .pagination > li > span:hover, .pagination > li > a:focus, .pagination > li > span:focus {z-index: 2;color:#04a07b;background-color: #F9F9F9;border-color: #EEEEEE;}
+.pagination > .active > a, .pagination > .active > span, .pagination > .active > a:hover, .pagination > .active > span:hover, .pagination > .active > a:focus, .pagination > .active > span:focus {z-index: 3;color: #FFFFFF;cursor: default;background-color: #04a07b;border-color: #04a07b;}
+.pagination > .disabled > span, .pagination > .disabled > span:hover, .pagination > .disabled > span:focus, .pagination > .disabled > a, .pagination > .disabled > a:hover, .pagination > .disabled > a:focus {color: #CCCCCC;cursor: not-allowed;background-color: #fff;border-color: #EEEEEE;}
+</style>
+<div class="layuimini-container">
+   <input name="button" id="outexcel" class="layui-btn" style="width: 100px;" onclick="outexcel();" value="导出">
+   </input>
+
+        <table  class="layui-table" id="table">
+            <tr>
+                <td>序号</td>
+                <td>id</td>
+                <td>用户</td>
+                <td>uid</td>
+                <td>手机号</td>
+                <td>业绩</td>
+                <td>平台</td>
+                <td>代理</td>
+            </tr>
+        {volist name="$good_member_list" id="v"}  
+            <tr>
+                <td>{$key+1}</td>
+                <td>{$v.id}</td>
+                <td>{$v.nickname}</td>
+                <td>{$v.uid}</td>
+                <td>{$v.phone}</td>
+                <td>{$v.e}</td>
+                <td>{$p[$v.platform_id-1]["name"]}</td>
+                <td>{$v.agent==0?"会员":"代理"}</td>
+               
+            </tr>
+        {/volist}
+          
+
+        </table>
+       
+    </div>
+    
+</div>
+
+
+<script>
+var time=[];
+layui.use("laydate",function(){
+    var laydate = layui.laydate;
+
+    laydate.render({
+            elem:'#date', // 绑定id为test4的元素
+            type: 'date', // 日期选择器   
+            range: true ,
+            done: function(value, date, endDate){
+                   //起始时间
+                   let first = value.substr(0,10);
+                   let f1 = new Date(first);
+                   //终止时间
+                   let last = value.substr(13,13);
+                   let l1 = new Date(last);
+                   time=[f1/1000,l1/1000];
+
+//console.log('value',f1.getTime());
+
+                   var day = l1.getTime() - f1.getTime();
+                   var time = parseInt(day/(1000*60*60*24));
+            }
+    });
+
+
+});
+
+function sss(){
+
+    var url="/admin/enterprise/commission";
+    var platform_id=document.getElementById("platform").value;
+    url+="?platform_id="+platform_id;
+    var value=$("#date").val();
+    var nick=$("#nickname").val();
+    if(nick!=""){
+        url+="&nickname="+nick;
+    }
+   //time=[f1/1000,l1/1000];
+    if(value !== ''){
+        let first = value.substr(0,10);
+        let f1 = new Date(first);
+        //终止时间
+        let last = value.substr(13,13);
+        let l1 = new Date(last);
+        url+="&starttime="+f1/1000;
+        url+="&endtime="+l1/1000;
+    }
+    window.location.href=url;
+}
+
+function outexcel(){
+     var t = document.getElementById("table"); //获取第一个表格   
+        var list=[],title=[];
+        for(var i=0;i<t.rows.length;i++){  
+            let c=[];
+            for(var j=0;j<t.rows[i].cells.length;j++){  
+                c.push(t.rows[i].cells[j].innerHTML);
+            }  
+            if(i == 0){
+                title=c;
+            }else{
+                list.push(c);
+            }
+        }  
+
+        // goToUrl("/admin/enterprise/exportExcel","post",{columName:title ,download:"0",list:list});
+    // parent.load_excel(title,list);
+    // window.location.href="/admin/enterprise/exportExcel?columName="+title+"$download=0&list="+list;
+    $.ajax({
+        type:"post",
+        url: "/admin/enterprise/exportExcel",
+        data: {columName:title,list:list,download:1},
+        dataType: "json",
+        success: function(res){
+            window.open("/excel/"+res);
+        }
+    });
+
+
+}
+
+
+
+        /*
+        * url:跳转链接
+        * method:跳转方式
+        * params:传递参数   {name:"test" ,age:"123"}]
+        * */
+        function goToUrl(url,method,params){
+            // 创建form元素
+            var temp_form = document.createElement("form");
+            // 设置form属性
+            temp_form .action = url;
+            temp_form .method = method;
+            temp_form .style.display = "none";
+            // 处理需要传递的参数
+            for (var x in params) {
+                var opt = document.createElement("textarea");
+                opt.name = x;
+                opt.value = params[x];
+                temp_form .appendChild(opt);
+            }
+            document.body.appendChild(temp_form);
+            // 提交表单
+            temp_form.submit();
+            return temp_form;
+        }   
+
+</script>

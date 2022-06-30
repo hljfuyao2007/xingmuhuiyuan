@@ -49,8 +49,8 @@ function do_withdraw(){
     if(money<=0){
         return;
     }
-    if(money<50){
-        alert("提现金额需大于50元");
+    if(money<{$min_money}){
+        alert("提现金额需大于{$min_money}元");
         return;
     }
     if(!confirm("确定提现"+money+"元")){

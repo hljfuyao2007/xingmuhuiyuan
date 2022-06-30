@@ -58,7 +58,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="layui-col-xs6">
+                                        <div class="layui-col-xs6" onclick="show_good_member(0);">
                                             <div class="panel layui-bg-number">
                                                 <div class="panel-body">
                                                     <div class="panel-title">
@@ -134,7 +134,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="layui-col-xs6">
+                                        <div class="layui-col-xs6" onclick="show_good_member({$v.platform_id});">
                                             <div class="panel layui-bg-number">
                                                 <div class="panel-body">
                                                     <div class="panel-title">
@@ -232,74 +232,6 @@
 
 <script>
 
-// var optionRecords = {
-//     title: {
-//         text: '用户统计'
-//     },
-//     tooltip: {
-//         trigger: 'axis'
-//     },
-//     legend: {
-//         data: ['会员总数', '昨日新增', '新增有效会员']
-//     },
-//     grid: {
-//         left: '3%',
-//         right: '4%',
-//         bottom: '3%',
-//         containLabel: true
-//     },
-
-//     xAxis: {
-//         type: 'category',
-//         boundaryGap: false,
-//         data: [
-//             {volist name="$p" id="v"}
-//             "{$v.name}",
-//             {/volist}
-//             '总计'
-//             ]
-//     },
-//     yAxis: {
-//         type: 'value'
-//     },
-//     series: [
-//         {
-//             name: '会员总数',
-//             type: 'line',
-//             stack: '总量',
-//             data: [
-//             {volist name="$p" id="v"}
-//                 {$v.zong_num},
-//             {/volist}
-//                 {$all.zong_num}
-//             ]
-//         },
-//         {
-//             name: '昨日新增',
-//             type: 'line',
-//             stack: '总量',
-//             data: [
-                
-//                 {volist name="$p" id="v"}
-//                 {$v.yestoday_new_tree},
-//                 {/volist}
-//                 {$all.yestoday_member}
-//             ]
-//         },
-//         {
-//             name: '新增有效会员',
-//             type: 'line',
-//             stack: '总量',
-//             data: [
-//             {volist name="$p" id="v"}
-//                 {$v.good_member},
-//             {/volist}
-//                 {$all.good_member}
-//             ]
-//         }
-//     ]
-// };
-
 var optionRecords = {
     title: {
         text: '用户统计'
@@ -360,26 +292,12 @@ var optionRecords = {
     ]
 };
 
-// define(['echarts'], function (echarts) {
-//             /**
-//              * 报表功能
-//              */
-//             var echartsRecords = echarts.init(document.getElementById('echarts-records'), 'walden');
-            
-//             echartsRecords.setOption(optionRecords);
-
-
-//             console.log(optionRecords);
-//             window.addEventListener("resize", function () {
-//                 echartsRecords.resize();
-//             });
-// })
-
-
 
 
 layui.use('laydate', function(){
   var laydate = layui.laydate;
+  // var layer=layui.layer;
+  // window.layer=layui.layer;
   // laydate.render({
   //   elem: '#test1'
   // });
@@ -397,7 +315,46 @@ layui.use('laydate', function(){
              window.location.replace("/admin/index/welcome?start_date="+start_date+"&end_date="+end_date)
         }
     });
+
+    // function show_good_member(id){
+    //     layer.open({
+    //             type: 2
+    //             ,title: '人员明细详情'
+    //             ,content: '{:url("admin.index/show_list")}?platform_id='+id
+    //             ,area: ['90%', '90%']
+    //         })
+    // }
+    // window.show_good_member=show_good_member;
 });
+function show_good_member(id){
+    var start="{$date[1]??''}";
+    var end="{$date[2]??''}";
+    var url='{:url("index/show_list")}?platform_id='+id;
+    if(start!=""){
+        url+="&start_date="+start;
+    }
+    if(end!=""){
+        url+="&end_date="+end;
+    }
+    layer.open({
+        type: 2
+        ,title: '人员明细详情'
+        ,content: url
+        ,area: ['90%', '90%']
+    })
+    // good_member(id);
+}
 
+function load_excel(title,list){
 
+     $.ajax({
+        type:"post",
+        url: "/admin/enterprise/exportExcel",
+        data: {columName:title,list:list,download:1},
+        dataType: "json",
+        success: function(res){
+            window.open("/excel/"+res);
+        }
+    });
+}
 </script>

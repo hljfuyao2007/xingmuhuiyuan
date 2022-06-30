@@ -36,7 +36,7 @@
         "ext-json": "*",
         "guzzlehttp/guzzle": "^7.3",
         "ext-gd": "*",
-        "phpoffice/phpspreadsheet": "^1.22"
+        "endroid/qr-code": "^4.2"
     },
     "require-dev": {
         "symfony/var-dumper": "^4.2",
@@ -51,10 +51,7 @@
         }
     },
     "config": {
-        "preferred-install": "dist",
-        "allow-plugins": {
-            "easywechat-composer/easywechat-composer": true
-        }
+        "preferred-install": "dist"
     },
     "scripts": {
         "post-autoload-dump": [
