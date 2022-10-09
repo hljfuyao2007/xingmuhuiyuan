@@ -676,7 +676,7 @@ class Enterprise extends AdminController
         $out=[];
         set_time_limit(0);
         ignore_user_abort(true);
-        $platform=[1=>"不就", 2=>"蜜悦love", 3=>"心田"];
+        $platform=[1=>"不就", 2=>"可对", 3=>"心田"];
         $now_datetime=date("Y-m-d H:i:s");
         $mon=date("Ym",strtotime('-1 month'));
         //$mon=date("Ym");

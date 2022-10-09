@@ -1,0 +1,160 @@
+<style>
+
+
+/* 分页 */
+.pagination {display: inline-block;padding-left: 0;border-radius: 4px;}
+.pagination > li {display: inline;}
+.pagination > li > a, .pagination > li > span {position: relative;float: left;padding: 10px 15px;margin-left: -1px;line-height: 1.42857143;color: #222222;text-decoration: none;background-color: #fff;border: 1px solid #EEEEEE;}
+.pagination > li:first-child > a,.pagination > li:first-child > span {margin-left: 0;border-top-left-radius: 4px;border-bottom-left-radius: 4px;}
+.pagination > li:last-child > a, .pagination > li:last-child > span {border-top-right-radius: 4px;border-bottom-right-radius: 4px;}
+.pagination > li > a:hover, .pagination > li > span:hover, .pagination > li > a:focus, .pagination > li > span:focus {z-index: 2;color:#04a07b;background-color: #F9F9F9;border-color: #EEEEEE;}
+.pagination > .active > a, .pagination > .active > span, .pagination > .active > a:hover, .pagination > .active > span:hover, .pagination > .active > a:focus, .pagination > .active > span:focus {z-index: 3;color: #FFFFFF;cursor: default;background-color: #04a07b;border-color: #04a07b;}
+.pagination > .disabled > span, .pagination > .disabled > span:hover, .pagination > .disabled > span:focus, .pagination > .disabled > a, .pagination > .disabled > a:hover, .pagination > .disabled > a:focus {color: #CCCCCC;cursor: not-allowed;background-color: #fff;border-color: #EEEEEE;}
+
+</style>
+<div class="layuimini-container">
+
+    <input name="button" id="outexcel" class="layui-btn" style="width: 100px;" onclick="outexcel();" value="导出"></input>
+    <div class="layuimini-main">
+        <table  class="layui-table" id="table">
+            <tr>
+                <td>序号</td>
+                <td>用户</td>
+                <td>昵称</td>
+                <td>电话</td>
+                <td>月份</td>
+
+                <td>平台</td>
+                <td>时间</td>
+                <td>一级团队业绩</td>
+                <td>二级团队业绩</td>
+                <td>一级点位</td>
+                <td>二级点位</td>
+                <!--<td>一级数量</td>-->
+                <!--<td>二级数量</td>-->
+                <td>一级团队佣金</td>
+                <td>二级团队佣金</td>
+                <td>佣金</td>
+<!--                <td>二级团队</td>-->
+                <td>uid </td>
+            </tr>
+        {volist name="$item" id="v"}  
+            <tr>
+                <td>{$key+1}</td>
+                <td>{$v.member_id}</td>
+                <td>{$v.nickname}</td>
+                <td>{$v.phone}</td>
+                <td>{$v.mon}</td>
+                <td>{$v.platform}</td>
+                <td>{$v.create_time}</td>
+                <td>{$v.s_y}</td>
+                <td>{$v.s2_y}</td>
+                <td>{$v.dian}</td>
+                <td>{$v.dian2}</td>
+
+                
+                <td>{$v.son_yongjin}</td>
+                <td>{$v.son2_yongjin}</td>
+                <td>{$v.money}</td>
+                <td>{$v.uid}</td>
+
+            </tr>
+        {/volist}
+
+
+        </table>
+
+    </div>
+    
+</div>
+
+
+<script>
+var time=[];
+var layer;
+layui.use(["laydate","layer"],function(){
+    var laydate = layui.laydate;
+    layer=layui.layer;
+    laydate.render({
+            elem:'#date', // 绑定id为test4的元素
+            type: 'date', // 日期选择器   
+            range: true ,
+            done: function(value, date, endDate){
+                   //起始时间
+                   let first = value.substr(0,10);
+                   let f1 = new Date(first);
+                   //终止时间
+                   let last = value.substr(13,13);
+                   let l1 = new Date(last);
+                   time=[f1/1000,l1/1000];
+
+//console.log('value',f1.getTime());
+
+                   var day = l1.getTime() - f1.getTime();
+                   var time = parseInt(day/(1000*60*60*24));
+            }
+    });
+
+
+});
+
+
+var loading;
+var list_50=[];
+function outexcel(){
+     var t = document.getElementById("table"); //获取第一个表格   
+     var random=Math.random();
+     loading = layer.load(1);
+     var num=0;
+     var list=[],title=[];
+        for(var i=0;i<t.rows.length;i++){  
+            let c=[];
+            for(var j=0;j<t.rows[i].cells.length;j++){  
+                c.push(t.rows[i].cells[j].innerHTML);
+            }  
+            if(i == 0){
+                title=c;
+            }else{
+                list.push(c);
+            }
+            if(num++>=50){
+                num=0;
+                list1=list;
+                list=[];
+                list_50.push(list1);
+            }
+        }  
+    list_50.push(list);
+    down50(0,title,random);
+}
+function down50(num,title,random){
+    var download=2;
+    if(num>=(list_50.length-1)){
+        download=1;
+        $.ajax({
+            type:"post",
+            url: "/admin/enterprise/exportExcel",
+            data: {columName:title,list:list_50[num],download:download,random:random},
+            dataType: "json",
+            success: function(res){
+                layer.close(loading); 
+                window.open("/excel/"+res);
+                // window.open("/excel/"+res);
+            }
+        });
+    }else{
+        $.ajax({
+            type:"post",
+            url: "/admin/enterprise/exportExcel",
+            data: {columName:title,list:list_50[num++],download:download,random:random},
+            dataType: "json",
+            success: function(res){
+                // num=num+1;
+                down50(num,title,random);
+                // window.open("/excel/"+res);
+            }
+        });
+    }
+    
+}
+</script>

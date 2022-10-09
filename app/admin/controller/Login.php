@@ -55,6 +55,7 @@ class Login extends AdminController
             if ($admin['status'] == 0) {
                 return $this->error([], '账号已被禁用, 请联系管理员');
             }
+
             $admin->login_num += 1;
             $admin->last_login_ip = getRealIp();
             $admin->login_time = time();
