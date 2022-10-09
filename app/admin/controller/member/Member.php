@@ -729,19 +729,20 @@ class Member extends AdminController
 
         $member_id=$get["member_id"];
         $platform_id=$get["platform_id"];
+        $now_mon=strtotime(date("Y-m")."-1 01:00:00");
         $mon_arr=[
-            date("Ym"),
-            date("Ym",strtotime("-1 month")),
-            date("Ym",strtotime("-2 month")),
-            date("Ym",strtotime("-3 month")),
-            date("Ym",strtotime("-4 month")),
-            date("Ym",strtotime("-5 month")),
-            date("Ym",strtotime("-6 month")),
-            date("Ym",strtotime("-7 month")),
-            date("Ym",strtotime("-8 month")),
-            date("Ym",strtotime("-9 month")),
-            date("Ym",strtotime("-10 month")),
-            date("Ym",strtotime("-11 month")),
+            date("Ym",$now_mon),
+            date("Ym",strtotime("-1 month",$now_mon)),
+            date("Ym",strtotime("-2 month",$now_mon)),
+            date("Ym",strtotime("-3 month",$now_mon)),
+            date("Ym",strtotime("-4 month",$now_mon)),
+            date("Ym",strtotime("-5 month",$now_mon)),
+            date("Ym",strtotime("-6 month",$now_mon)),
+            date("Ym",strtotime("-7 month",$now_mon)),
+            date("Ym",strtotime("-8 month",$now_mon)),
+            date("Ym",strtotime("-9 month",$now_mon)),
+            date("Ym",strtotime("-10 month",$now_mon)),
+            date("Ym",strtotime("-11 month",$now_mon)),
         ];
        
         $r=[];
@@ -782,7 +783,6 @@ class Member extends AdminController
             ->where("create_mon","<=",$mon)
             ->where("platform_id",$platform_id)
             ->select();
-       // print_r($son_man);
 
         $son_arr=[];$new_arr=[];
         foreach ($son_man as $key => $value) {
@@ -791,36 +791,19 @@ class Member extends AdminController
              $new_arr[]=$value["member_id"];
            }
         }
-
         $son_yeji=Db::name("member_data")
             ->field("SUM(enterprise) s")
             ->whereIn("member_id",$son_arr)
             ->where("platform_id",$platform_id)
             ->where("mon",$mon)
             ->find();
-
         $new_youxiao=Db::name("member_data")
             ->field("SUM(enterprise) s,member_id")
             ->whereIn("member_id",$new_arr)
             ->where("platform_id",$platform_id)
             ->group("member_id")
             ->select();
-        // $new_youxiao=Db::name("member_data")
-        //     ->field("SUM(enterprise) s,member_id")
-        //     ->whereIn("member_id",$new_arr)
-        //     ->where("platform_id",$platform_id)
-        //     ->group("member_id")
-        //     ->select();
          $new_num=0;
-        // $new_yx=[];
-        // foreach ($new_youxiao as $key => $value) {
-        //     if($value["s"]>=50){
-        //         $new_num++;//有效新增人数
-        //         $new_yx[]=$value["member_id"];
-        //     }
-        // }
-        // 
-        // 
         foreach ($new_arr as $key => $value) {
             $r=Db::name("member_data")
             ->field("SUM(enterprise) s")
@@ -833,9 +816,6 @@ class Member extends AdminController
                 $new_yx[]=$value;
             }
         }
-        //echo 1;exit;
-        // print_r($new_yx);
-        // exit;
         if( $ssjs || date("Ym")== $mon){
             $dian=$this->getdian($son_yeji["s"],$new_num);
             $son_yongjin=round($dian*$son_yeji["s"]/100,2);
@@ -869,27 +849,13 @@ class Member extends AdminController
                         $s2num++;
                     }
                 }
-           // $s2_man_is_y=Db::name("member_data")
-           //      ->field("member_id")
-           //      ->where("member_id",$value["member_id"])
-           //      ->where("enterprise",">",0)
-           //      ->where("platform_id",$platform_id)
-           //      ->limit(1)
-           //      ->find();
-           // if($s2_man_is_y["s"]){
-           //      $s2num++;
-           // }
-
-
-
-
         }
         $son2_yeji=Db::name("member_data")
         ->field("SUM(enterprise) s")
         ->whereIn("member_id",$son2_arr)
         ->where("mon",$mon)
         ->where("platform_id",$platform_id)
-        ->find()??0;
+        ->find();
         //var_dump($son2_yeji);
         // $dian2=$this->getdian2($son2_yeji["s"],count($son2_man));
         // $son2_yongjin=round($dian2*$son2_yeji["s"]/100,2);
@@ -921,12 +887,13 @@ class Member extends AdminController
             "mon"=>$mon,
             "yongjin"=>$yongjin,
             "yeji"=>(float) $yeji["s"],
-            //"son_yeji"=>(float) $dian,
+            "dian"=>(float) $dian,
+            "dian2"=>(float) $dian2,
             "son_yeji"=>(float) $son_yeji["s"],
             "son2_yeji"=>(float) $son2_yeji["s"],
             "son_num"=>(int) count($son_man),
             "son2_num"=>$s2_all_num1,
-            //"son2_num"=>(int) count($son2_man),
+            "son2_array"=>json_encode($son2_arr),
             "new_all_num"=>(int) count($new_arr),
             "new_num"=>(int) $new_num,
             "all_num"=> (int) count($son_man)+(int) count($son2_man),

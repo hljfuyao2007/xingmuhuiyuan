@@ -39,6 +39,7 @@
                 <td>一级业绩 </td>
                 <td>二级业绩 </td>
                 <td>佣金 </td>
+                <td>统计佣金 </td>
             </tr>
         {volist name="$item" id="v"}  
             <tr>
@@ -54,6 +55,7 @@
                 <td>{$v.s_y} </td>
                 <td>{$v.s2_y} </td>
                 <td>{$v.money} </td>
+                <td>{$v.money2??0} </td>
 
             </tr>
         {/volist}
@@ -69,6 +71,7 @@
                 <td>{$zong.s_y} </td>
                 <td>{$zong.s2_y} </td>
                 <td>{$zong.money} </td>
+                <td></td>
 
         </table>
         <div class="pagination"> {$page|raw|default=""}</div>
@@ -80,9 +83,10 @@
 
 <script>
 var time=[];
-layui.use("laydate",function(){
+var layer;
+layui.use(["laydate","layer"],function(){
     var laydate = layui.laydate;
-
+    layer=layui.layer;
     laydate.render({
             elem:'#date', // 绑定id为test4的元素
             type: 'date', // 日期选择器   
@@ -129,9 +133,14 @@ function sss(){
     window.location.href=url;
 }
 
+var loading;
+var list_50=[];
 function outexcel(){
      var t = document.getElementById("table"); //获取第一个表格   
-        var list=[],title=[];
+     var random=Math.random();
+     loading = layer.load(1);
+     var num=0;
+     var list=[],title=[];
         for(var i=0;i<t.rows.length;i++){  
             let c=[];
             for(var j=0;j<t.rows[i].cells.length;j++){  
@@ -142,19 +151,44 @@ function outexcel(){
             }else{
                 list.push(c);
             }
+            if(num++>=50){
+                num=0;
+                list1=list;
+                list=[];
+                list_50.push(list1);
+            }
         }  
-
-    $.ajax({
-        type:"post",
-        url: "/admin/enterprise/exportExcel",
-        data: {columName:title,list:list,download:1},
-        dataType: "json",
-        success: function(res){
-            window.open("/excel/"+res);
-        }
-    });
-    // console.log('title',title);
-    // console.log('list',list);
-
+    list_50.push(list);
+    down50(0,title,random);
+}
+function down50(num,title,random){
+    var download=2;
+    if(num>=(list_50.length-1)){
+        download=1;
+        $.ajax({
+            type:"post",
+            url: "/admin/enterprise/exportExcel",
+            data: {columName:title,list:list_50[num],download:download,random:random},
+            dataType: "json",
+            success: function(res){
+                layer.close(loading); 
+                window.open("/excel/"+res);
+                // window.open("/excel/"+res);
+            }
+        });
+    }else{
+        $.ajax({
+            type:"post",
+            url: "/admin/enterprise/exportExcel",
+            data: {columName:title,list:list_50[num++],download:download,random:random},
+            dataType: "json",
+            success: function(res){
+                // num=num+1;
+                down50(num,title,random);
+                // window.open("/excel/"+res);
+            }
+        });
+    }
+    
 }
 </script>

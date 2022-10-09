@@ -30,7 +30,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="layui-col-xs6">
+                                        <div class="layui-col-xs6" onclick="show_good_member(0,'all_member');">
                                             <div class="panel layui-bg-number">
                                                 <div class="panel-body">
                                                     <div class="panel-title">
@@ -44,7 +44,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="layui-col-xs6">
+                                        <div class="layui-col-xs6" onclick="show_good_member(0,'yestoday_member');">
                                             <div class="panel layui-bg-number">
                                                 <div class="panel-body">
                                                     <div class="panel-title">
@@ -58,7 +58,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="layui-col-xs6" onclick="show_good_member(0);">
+                                        <div class="layui-col-xs6" onclick="show_good_member(0,'good_member');">
                                             <div class="panel layui-bg-number">
                                                 <div class="panel-body">
                                                     <div class="panel-title">
@@ -106,7 +106,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="layui-col-xs6">
+                                        <div class="layui-col-xs6" onclick="show_good_member({$v.platform_id},'all_member');">
                                             <div class="panel layui-bg-number">
                                                 <div class="panel-body">
                                                     <div class="panel-title">
@@ -120,7 +120,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="layui-col-xs6">
+                                        <div class="layui-col-xs6" onclick="show_good_member({$v.platform_id},'yestoday_member');">
                                             <div class="panel layui-bg-number">
                                                 <div class="panel-body">
                                                     <div class="panel-title">
@@ -134,7 +134,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="layui-col-xs6" onclick="show_good_member({$v.platform_id});">
+                                        <div class="layui-col-xs6" onclick="show_good_member({$v.platform_id},'good_member');">
                                             <div class="panel layui-bg-number">
                                                 <div class="panel-body">
                                                     <div class="panel-title">
@@ -326,10 +326,10 @@ layui.use('laydate', function(){
     // }
     // window.show_good_member=show_good_member;
 });
-function show_good_member(id){
+function show_good_member(id,type){
     var start="{$date[1]??''}";
     var end="{$date[2]??''}";
-    var url='{:url("index/show_list")}?platform_id='+id;
+    var url='{:url("index/show_list")}?platform_id='+id+'&member_type='+type;
     if(start!=""){
         url+="&start_date="+start;
     }

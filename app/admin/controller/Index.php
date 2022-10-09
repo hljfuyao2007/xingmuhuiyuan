@@ -243,6 +243,10 @@ class Index extends AdminController
         if(!isset($param["platform_id"])){
             $param["platform_id"]=0;
         }
+        if(!isset($param["member_type"])){
+            $param["member_type"]="good_member";
+        }
+        $this->assign("member_type",$param["member_type"]);
         if($admin["role_id"]==5){
             $member=Db::name("member")->field("member_id")->where("manage_id",$admin["manage_id"])->select();
         }else{
@@ -276,6 +280,14 @@ class Index extends AdminController
         $mon_start=strtotime(date("Y-m",strtotime("-1 month"))."-1 00:00:00");
         $all["yeji"]=0;
         foreach ($p as $key => $value) {
+            $platform[]=[
+                    "platform_id"=>$value["platform_id"],
+                    "name"=>$value["name"],
+                ];
+            if( $param["platform_id"]!= $value["platform_id"]){
+                // $param["platform_id"] !=0 &&
+                continue;
+            }
 
             //平台的总业绩，
             $yeji_zong=Db::name("member_data")
@@ -296,29 +308,32 @@ class Index extends AdminController
                 ->sum("enterprise");
 
             // 昨天新增加的绑定的ABC三个平台的人数
-            $yestoday_new_tree=Db::name("member_tree")
-                ->where("platform_id",$value["platform_id"]);
+            $yestoday_new_tree=Db::name("member_tree")->alias("t")
+                ->field("t.*,member.nickname,member.phone,member.is_agency")
+                ->join("member","member.member_id=t.member_id")
+                ->where("t.platform_id",$value["platform_id"]);
             //->where("create_time","between",$yestoday)
 
             if(isset($param["start_date"]) && isset($param["end_date"]) ){
                 $yestoday_new_tree=$yestoday_new_tree
-                    ->where("create_time","between",[strtotime($param["start_date"]." 00:00:00"),strtotime($param["end_date"]." 00:00:00")]);
+                    ->where("t.create_time","between",[strtotime($param["start_date"]." 00:00:00"),strtotime($param["end_date"]." 00:00:00")]);
             }else{
                 $yestoday_new_tree=$yestoday_new_tree
-                    ->where("create_time","between",$yestoday);
+                    ->where("t.create_time","between",$yestoday);
                 //->where("d.create_time",">",$mon_start)
             }
             $yestoday_new_tree=$yestoday_new_tree
-                ->where("member_id","in",$m)
-                ->where("delete_time","=",null)
-                ->count();
+                ->where("t.member_id","in",$m)
+                ->where("t.delete_time","=",null)
+                ->select();
+
+
             $all["yeji"]+=$yeji_zong;
 
             $good_member=Db::name("member_tree")
-
                 ->alias("m")
                 ->join("member","member.member_id=m.member_id")
-                ->field("m.*,SUM(d.enterprise) e,member.nickname,member.phone")
+                ->field("m.*,SUM(d.enterprise) e,member.nickname,member.phone,member.is_agency")
                 ->join("member_data d","m.member_id=d.member_id","left");
 
             if(isset($param["start_date"]) && isset($param["end_date"]) ){
@@ -349,90 +364,121 @@ class Index extends AdminController
                 }
             }
 
-            $zong_num=Db::name("member_tree")
-                ->where("platform_id",$value["platform_id"])
-                ->where("delete_time","=",null);
+            $zong_num=Db::name("member_tree")->alias("t")
+                ->join("member","member.member_id=t.member_id")
+                ->field("t.*,member.nickname,member.phone,member.is_agency")
+                ->where("t.platform_id",$value["platform_id"])
+                ->where("t.delete_time","=",null);
 
             if(isset($param["start_date"]) && isset($param["end_date"]) ){
                 $zong_num=$zong_num
-                    ->where("create_time","between",[strtotime($param["start_date"]." 00:00:00"),strtotime($param["end_date"]." 00:00:00")]);
+                    ->where("t.create_time","between",[strtotime($param["start_date"]." 00:00:00"),strtotime($param["end_date"]." 00:00:00")]);
             }
             $zong_num=$zong_num
-                ->where("member_id","in",$m)
-                ->count();
-            if($param["platform_id"] == $value["platform_id"]){
+                ->where("t.member_id","in",$m)
+                ->select();
+            if($param["platform_id"] == $value["platform_id"] && $param["member_type"] == "all_member"){
+                $this->assign("good_member_list",$zong_num);
+            }
+            if($param["platform_id"] == $value["platform_id"] && $param["member_type"] == "good_member"){
                 $this->assign("good_member_list",$good_member_list);
             }
-            //$yestoday_new_tree=Db::name("member_tree")->where("platform_id",$value["platform_id"])->where("create_time","between",$yestoday)->count();
-            $platform[]=[
-                "platform_id"=>$value["platform_id"],
-                "name"=>$value["name"],
-                "yestoday_new_tree"=>$yestoday_new_tree,
-                "yeji_zong"=>$yeji_zong,
-                "good_member"=>$g,
-                "zong_num"=>$zong_num,
-                "good_member_list"=>$good_member_list
-            ];
-        }
 
-
-        $all["yestoday_member"]=Db::name("member");
-        if(isset($param["start_date"]) && isset($param["end_date"]) ){
-            $all["yestoday_member"]=$all["yestoday_member"]->where("create_time","between",[strtotime($param["start_date"]." 00:00:00"),strtotime($param["end_date"]." 00:00:00")]);
-        }else{
-            $all["yestoday_member"]=$all["yestoday_member"]->where("create_time","between",$yestoday);
-        }
-
-        $all["yestoday_member"]=$all["yestoday_member"]->where("delete_time","=",null)
-            ->where("member_id","in",$m)
-            ->count();
-
-
-        $all["zong_num"]=Db::name("member")
-            ->where("member_id","in",$m);
-        if(isset($param["start_date"]) && isset($param["end_date"]) ){
-            $all["zong_num"]=$all["zong_num"]->where("create_time","between",[strtotime($param["start_date"]." 00:00:00"),strtotime($param["end_date"]." 00:00:00")]);
-        }
-        $all["zong_num"]=$all["zong_num"]->where("delete_time","=",null)
-            ->count();
-        $good_member_zong=Db::name("member_tree")
-            ->alias("m")
-            ->field("m.*,SUM(d.enterprise) e,member.nickname,member.phone")
-            ->join("member_data d","m.member_id=d.member_id","left")
-            ->join("member","member.member_id=m.member_id","left");
-
-        if(isset($param["start_date"]) && isset($param["end_date"]) ){
-            $good_member_zong=$good_member_zong
-                ->where("m.create_time","between",[strtotime($param["start_date"]." 00:00:00"),strtotime($param["end_date"]." 00:00:00")])
-                ->where("d.create_time","between",[strtotime($param["start_date"]." 00:00:00"),strtotime($param["end_date"]." 00:00:00")]);
-        }else{
-            $good_member_zong=$good_member_zong
-                ->where("m.create_time",">",$mon_start);
-            //->where("d.create_time",">",$mon_start)
-        }
-
-        // ->where("m.create_time",">",$mon_start)
-
-        $good_member_zong=$good_member_zong->where("m.member_id","in",$m)
-            // ->where("d.platform_id",$value["platform_id"])
-            // ->where("m.platform_id",$value["platform_id"])
-            ->group("m.member_id")
-            ->select();
-        $good_member_zong_list=[];
-        $all["good_member"]=0;
-        foreach ($good_member_zong as $k => $v) {
-            if($v["e"]>=50){
-                $all["good_member"]++;
-                $good_member_zong_list[]=$v;
+            if($param["platform_id"] == $value["platform_id"] && $param["member_type"] == "yestoday_member"){
+                $this->assign("good_member_list",$yestoday_new_tree);
             }
+            $yestoday_new_tree=count($yestoday_new_tree);
+            $zong_num=count($zong_num);
+            //$yestoday_new_tree=Db::name("member_tree")->where("platform_id",$value["platform_id"])->where("create_time","between",$yestoday)->count();
+            // $platform[]=[
+            //     "platform_id"=>$value["platform_id"],
+            //     "name"=>$value["name"],
+            //     "yestoday_new_tree"=>$yestoday_new_tree,
+            //     "yeji_zong"=>$yeji_zong,
+            //     "good_member"=>$g,
+            //     "zong_num"=>$zong_num,
+            //     "good_member_list"=>$good_member_list
+            // ];
         }
 
-        $this->assign("p",$platform);
 
-        $this->assign("all",$all);
-    if($param["platform_id"] == 0){
+        if($param["platform_id"] == 0 && $param["member_type"] == "yestoday_member"){
+
+            $all["yestoday_member"]=Db::name("member");
+            if(isset($param["start_date"]) && isset($param["end_date"]) ){
+                $all["yestoday_member"]=$all["yestoday_member"]->where("create_time","between",[strtotime($param["start_date"]." 00:00:00"),strtotime($param["end_date"]." 00:00:00")]);
+            }else{
+                $all["yestoday_member"]=$all["yestoday_member"]->where("create_time","between",$yestoday);
+            }
+
+            $all["yestoday_member"]=$all["yestoday_member"]->where("delete_time","=",null)
+                ->where("member_id","in",$m)
+                ->select();
+        
+            $this->assign("good_member_list",$all["yestoday_member"]);
+            $all["yestoday_member"]->count($all["yestoday_member"]);
+        }
+        
+        if($param["platform_id"] == 0 && $param["member_type"] == "all_member"){
+            
+                $all["zong_num"]=Db::name("member")
+                    ->where("member_id","in",$m);
+                if(isset($param["start_date"]) && isset($param["end_date"]) ){
+                    $all["zong_num"]=$all["zong_num"]->where("create_time","between",[strtotime($param["start_date"]." 00:00:00"),strtotime($param["end_date"]." 00:00:00")]);
+                }
+
+                $all["zong_num"]=$all["zong_num"]->where("delete_time","=",null)
+                ->select();
+            
+                $this->assign("good_member_list",$all["zong_num"]);
+
+                $all["zong_num"]=count($all["zong_num"]);
+
+        }
+        
+        if($param["platform_id"] == 0 && $param["member_type"] == "good_member"){
+
+
+
+            $good_member_zong=Db::name("member_tree")
+                ->alias("m")
+                ->field("m.*,SUM(d.enterprise) e,member.nickname,member.phone,member.is_agency")
+                ->join("member_data d","m.member_id=d.member_id","left")
+                ->join("member","member.member_id=m.member_id","left");
+
+            if(isset($param["start_date"]) && isset($param["end_date"]) ){
+                $good_member_zong=$good_member_zong
+                    ->where("m.create_time","between",[strtotime($param["start_date"]." 00:00:00"),strtotime($param["end_date"]." 00:00:00")])
+                    ->where("d.create_time","between",[strtotime($param["start_date"]." 00:00:00"),strtotime($param["end_date"]." 00:00:00")]);
+            }else{
+                $good_member_zong=$good_member_zong
+                    ->where("m.create_time",">",$mon_start);
+                //->where("d.create_time",">",$mon_start)
+            }
+
+            // ->where("m.create_time",">",$mon_start)
+
+            $good_member_zong=$good_member_zong->where("m.member_id","in",$m)
+                // ->where("d.platform_id",$value["platform_id"])
+                // ->where("m.platform_id",$value["platform_id"])
+                ->group("m.member_id")
+                ->select();
+            $good_member_zong_list=[];
+            $all["good_member"]=0;
+            foreach ($good_member_zong as $k => $v) {
+                if($v["e"]>=50){
+                    $all["good_member"]++;
+                    $good_member_zong_list[]=$v;
+                }
+            }
+
+    
         $this->assign("good_member_list",$good_member_zong_list);
     }
+
+
+    $this->assign("p",$platform);
+    // $this->assign("all",$all);
 
     // dump($good_member_zong_list);
     // exit;

@@ -19,6 +19,11 @@
                 <i class="layui-icon layui-icon-upload"></i>结算
             </button>
             <br><br><br>
+            <br><br><br><br><br><br><br><br><br>
+
+            <button class="layui-btn"  style="margin-top: 30px; width: 50%;" onclick="look();">
+                <i class="layui-icon layui-icon-upload"></i>模拟结算
+            </button>
             
        </div>
     <!-- <div class="layuimini-container" style="padding: 0;"> -->
@@ -48,12 +53,13 @@
 <script>
 
 function set(){
+    var url="true_set";
     if(!confirm("确定结算上月业绩")){
         return;
     }
     $.ajax({
         type:"post",
-        url: "true_set",
+        url: url,
         data: {},
         dataType: "json",
         success: function(res){
@@ -67,6 +73,9 @@ function set(){
             }
         }
     });
+}
+function look(){
+    window.location.href="true_set_list";
 }
 function reload(){
     window.parent.location.reload();

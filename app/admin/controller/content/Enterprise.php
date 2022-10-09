@@ -14,8 +14,10 @@ use app\admin\model\MemberData;
 use app\common\controller\AdminController;
 use app\common\service\Excel;
 use think\facade\Db;
+use think\facade\Cache;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use app\admin\controller\Member\Member as Mcontroller;
 
 
 class Enterprise extends AdminController
@@ -158,7 +160,17 @@ class Enterprise extends AdminController
                 foreach ($data as $item) {
 
                     if (!$item[0] || !$item[1] || !$item[2] || (!is_float($item[2]) &&!is_numeric($item[2]) )) {
+
                         $item[3]="数据错误";
+                        if (!$item[0] ) {
+                            $item[3]="第1列数据错误";
+                        }elseif(!$item[1]){
+                            $item[3]="第2列数据错误";
+                        }elseif(!$item[2]) {
+                            $item[3] = "第3列数据错误";
+                        }elseif(!is_float($item[2]) &&  !is_numeric($item[2])){
+                            $item[3]="[ ".$item[2]." ]第3列不是数字/浮点数";
+                        }
                         $item[0]=$this->excelTime($item[0]);
                         $false_item[]=$item;
                         continue;
@@ -172,6 +184,7 @@ class Enterprise extends AdminController
 
                     //除十取整  积分换算成钱数
                     $money=floor($money/10);
+//                    $money=intval($money/10);
 
                     $mt=Db::name("member_tree")->field("member_id,platform_id")->where("uid",$uid)->find();
                     if(!$mt){
@@ -262,11 +275,6 @@ class Enterprise extends AdminController
 
         $param = $this->request->param();
 
-        // echo $this->getdian(500000,5);
-        // print_r($this->dian_arr);
-        // die;
-
-
         $platform=Db::name("platform")->field("name,platform_id")->select();
         $this->assign("platform",$platform);
         $p=[];
@@ -277,6 +285,7 @@ class Enterprise extends AdminController
         ->join("member m","m.member_id=c.member_id","left")
         ->join("member_tree t","t.member_id=c.member_id and t.member_id=c.member_id","left")
         ->field("c.*,m.nickname,m.phone,t.uid")
+        ->where("c.money",">",0)
         ->group("c.id")
         ->order("id desc");
 
@@ -302,14 +311,14 @@ class Enterprise extends AdminController
             $page = $res->render();
             $this->assign("page",$page);
         }
-        
-     
-        
+
         // $res=$res->toArray();
         //$page=1111;
         $re=[];
-        $zong=["y"=>0,"s_y"=>0,"s2"=>0,"s2_y"=>0,"s_new"=>0,"money"=>0];
+        $zong=["y"=>0,"s_y"=>0,"s2"=>0,"s2_y"=>0,"s_new"=>0,"money"=>0,"money2"=>0];
         foreach ($res as $key => $value) {
+            $sta_mon=$this->sta_mon($value["member_id"],$value["platform_id"],$value["mon"]);
+            $value["money2"]=$sta_mon["yongjin"];
             $json=json_decode($value["json"],true);
             $value["y"]=$json["y"];
             $value["s_y"]=$json["s_y"];
@@ -322,7 +331,7 @@ class Enterprise extends AdminController
             $zong["s2_y"]+=$json["s2_y"];
             $zong["s_new"]+=$json["s_new"];
             $zong["money"]+=$value["money"];
-
+            $zong["money2"]+=$value["money2"];
             $value["platform"]=$p[$value["platform_id"]];
             $re[]=$value;
         }
@@ -332,6 +341,7 @@ class Enterprise extends AdminController
     }
 
     public function true_set(){
+        $out=[];
         set_time_limit(0);
         ignore_user_abort();
 
@@ -408,43 +418,38 @@ class Enterprise extends AdminController
         }
 
 
-
-// echo "<pre>";
-// print_r($p_tree);
-// exit;
-
        foreach ($p_tree as $key => $value) {//$key为平台platform_id
            foreach ($value as $k =>$v) {//$k为用户member_id
              // echo $k;
                 $is_2=Db::name("member")->where("member_id",$v["member_id"])->value("is_2");
                 $dian=$this->getdian($v["s_y"],$v["s_new"]);
-                if($is_2==0){$dian2=0;}else{
+                
                     $s2num=0;$v["s2_y"]=0;
                     foreach ($v["s2_arr"] as $s2_item) {
                         // $parent_id=Db::name("member")->where("member_id",$s2_item)->value("parent_id");
                         // $is_agency=Db::name("member")->where("member_id",$parent_id)->value("is_agency");
-
                         //if()
-                        $is_agency=$value[$v["parent_id"]]["is_agency"]??0;
+//                        $is_agency=$value[$v["parent_id"]]["is_agency"]??0;
+
+                        $is_agency=$value[$value[$s2_item]["parent_id"]]["is_agency"]??0;
                         if($is_agency == 1){ //上级是代理，才计入人数
                             $s2_man_is_y=$value[$s2_item]["y"];
                             //本月必须有业绩才算入人数
                    
                            if($s2_man_is_y){
                                 $s2num++;
-                                $v["s2_y"]+=$value[$s2_item]["y"];;
+                                $v["s2_y"]+=$value[$s2_item]["y"];
                            }
                         }
                         
                     }
                     //$dian2=$this->getdian2($v["s2_y"],$v["s2"]);
-                    $dian2=$this->getdian2($v["s2_y"],$s2num);
-                }
+                $dian2=$this->getdian2($v["s2_y"],$s2num);
+                if($is_2==0){$dian2=0;}
                 if($v["s_y"]>0){$son_yongjin=round($dian*$v["s_y"]/100,2);}else{ $son_yongjin=0;};
 
                 if($v["s2_y"]>0){$son2_yongjin=round($dian2*$v["s2_y"]/100,2);}else{ $son2_yongjin=0;};
                 // $son2_yongjin=round($dian2*$v["s2_y"]/100,2);
-
 
                 $in=[
                         "money"=>(float)$son_yongjin + (float)$son2_yongjin,
@@ -452,8 +457,8 @@ class Enterprise extends AdminController
                         "member_id"=>$k,
                         "platform_id"=>$v["platform_id"],
                         "json"=>json_encode($v),
-                        // "son_yongjin"=>$son_yongjin,
-                        // "son2_yongjin"=>$son2_yongjin,
+                         "son_yongjin"=>$son_yongjin,
+                         "son2_yongjin"=>$son2_yongjin,
                         "create_time"=>$now_datetime,
                         "update_time"=>$now_datetime,
                         "uid"=>$v["uid"]
@@ -463,17 +468,17 @@ class Enterprise extends AdminController
                 //     file_put_contents("commission.log", json_encode($in)."\r\n",FILE_APPEND);
                 // }
                 
-                
+
                 Db::name("commission")->insert($in);//佣金发放日志
                 if($son_yongjin+$son2_yongjin > 0){
                     Db::name("member_tree")->where("member_id",$k)->where("platform_id",$key)->inc("money",$son_yongjin+$son2_yongjin)->update();
                 }
-                
+
+
            }
        }
-       // exit;
+        Db::name("member_data")->where("mon",$mon)->where("set",0)->update(["set"=>1]);
 
-        //Db::name("member_data")->where("mon",$mon)->where("set",0)->update(["set"=>1]);
        return $this->success([], '结算成功', 1);
 
 
@@ -510,33 +515,7 @@ class Enterprise extends AdminController
                 break;
            }
         }
-
-           // if($yeji>800000){
-           //      $dian=13;
-           // }elseif ($yeji>=400000) {
-           //      $dian=9;
-           // }elseif ($yeji>=200000) {
-           //      $dian=7;
-           // }elseif ($yeji>=100000) {
-           //      $dian=5;
-           // }elseif ($yeji>=30000) {
-           //      $dian=4;
-           // }elseif ($yeji>=2000) {
-           //      $dian=3;
-           // }
-
-           // if($new>50){
-           //      $dian+=4;
-           // }elseif ($yeji>=20) {
-           //      $dian+=3;
-           // }elseif ($yeji>=10) {
-           //      $dian+=2;
-           // }elseif ($yeji>=5) {
-           //      $dian+=1.5;
-           // }elseif ($yeji>=2) {
-           //      $dian+=1;
-           // }
-           return $dian;
+        return $dian;
 
 
 
@@ -561,16 +540,6 @@ class Enterprise extends AdminController
                 break;
            }
        }
-       
-       // if($yeji>500000 && $num>=100){
-       //      $dian=3;
-       // }elseif ($yeji>=200000 && $num>=50) {
-       //      $dian=2;
-       // }elseif ($yeji>=100000 && $num>=20) {
-       //      $dian=1.5;
-       // }elseif ($num>=10) {
-       //      $dian=1;
-       // }
        return $dian;
 
     }
@@ -614,9 +583,11 @@ class Enterprise extends AdminController
 
     }
 
-
     public function excelTime($days){
         if(is_numeric($days)){
+            if($days>10000000 && $days<99999999){
+                return date("Y-m-d",strtotime($days));
+            }
             $jd = GregorianToJD(1, 1, 1970);
             $gregorian = JDToGregorian($jd+intval($days)-25569);
             $myDate = explode('/',$gregorian);
@@ -637,12 +608,26 @@ class Enterprise extends AdminController
         $param = $this->request->param();
         // print_r($param);exit;
         $columName=$param["columName"];
-        $list=$param["list"];
+        $list=$param["list"]??[];
         $fileName=$param["fileName"]??'xingmu_downloadfile';
         $download=$param["download"]??false;
         if(!is_array($columName))$columName=json_decode($columName,true);
         if(!is_array($list))$list=json_decode($list,true);
         
+        if(isset($param["random"])){
+            $g=Cache::get("list".$param["random"]);
+            if($g && $g!=null){
+                $g = json_decode($g,true);
+                foreach ($list as $value) {
+                    $g[]=$value;
+                }
+                $list=$g;
+            }
+            Cache::set("list".$param["random"],json_encode($list));
+            if($download && $download == 2){
+                return  json($list);
+            }
+        }
         $count = count($columName);  //计算表头数量
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
@@ -661,9 +646,10 @@ class Enterprise extends AdminController
             }
 
         }
-
-
         $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+        if(isset($param["random"])){
+            Cache::set("list".$param["random"],null);
+        }
         if($download){
             $load_Path=$_SERVER['SCRIPT_FILENAME'];
             $load_Path="./";
@@ -680,58 +666,268 @@ class Enterprise extends AdminController
         }
          
 
-        
 
-        // if ( empty($columName) || empty($list) ) {
-        //     return '列名或者内容不能为空';
-        // }
-        // if ( count($list[0]) != count($columName) ) {
-        //     return '列名跟数据的列不一致';
-        // }
-        // $EXT=".xlsx";
-        // $setTitle='Sheet1';
-        // //实例化PHPExcel类
-        // $PHPExcel    =    new \PHPExcel();
-        // //获得当前sheet对象
-        // $PHPSheet    =    $PHPExcel    ->    getActiveSheet();
-        // //定义sheet名称
-        // $PHPSheet    ->    setTitle($setTitle);
-        // //excel的列 这么多够用了吧？不够自个加 AA AB AC ……
-        // $letter        =    [
-        //     'A','B','C','D','E','F','G','H','I','J','K','L','M',
-        //     'N','O','P','Q','R','S','T','U','V','W','X','Y','Z'
-        // ];
-        // //把列名写入第1行 A1 B1 C1 ...
-        // for ($i=0; $i < count($list[0]); $i++) {
-        //     //$letter[$i]1 = A1 B1 C1  $letter[$i] = 列1 列2 列3
-        //     $PHPSheet->setCellValue("$letter[$i]1","$columName[$i]");
-        // }
-        // //内容第2行开始
-        // foreach ($list as $key => $val) {
-        //     //array_values 把一维数组的键转为0 1 2 3 ..
-        //     foreach (array_values($val) as $key2 => $val2) {
-        //         //$letter[$key2].($key+2) = A2 B2 C2 ……
-        //         $PHPSheet->setCellValue($letter[$key2].($key+2),$val2);
-        //     }
-        // }
-        // //生成2007版本的xlsx
-        // $PHPExcel_IOFactory=new \PHPExcel_IOFactory;
-        // $PHPWriter = $PHPExcel_IOFactory->createWriter($PHPExcel,'Excel2007');
-        
-        
-        
-        // if($download){
-        //      $load_Path=$_SERVER['SCRIPT_FILENAME'];
-        //      $load_Path="./";
-        //     $user_path = $load_Path.'excel/';//保存路径
-        //     $PHPWriter->save($user_path.$fileName.$EXT);//保存excle文件
-        // }else{
-        //     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        //     header('Content-Disposition: attachment;filename='.$fileName.'.xlsx');
-        //     header('Cache-Control: max-age=0');
-        //     $PHPWriter->save("php://output");
-        // }
          
     }
+
+
+
+    public function true_set_list(){
+        $out=[];
+        set_time_limit(0);
+        ignore_user_abort(true);
+        $platform=[1=>"不就", 2=>"蜜悦love", 3=>"心田"];
+        $now_datetime=date("Y-m-d H:i:s");
+        $mon=date("Ym",strtotime('-1 month'));
+        //$mon=date("Ym");
+        //获取上个月所有的业绩
+        $member_data=Db::name("member_data")
+            ->where("mon",$mon)
+//            ->where("set",0)
+            ->where("delete_time","=",null)
+            ->select();
+
+        //获取所有平台用户
+        $tree=Db::name("member_tree")
+            ->alias("t")
+            ->join("member m","t.member_id=m.member_id")
+            ->field("t.*,m.is_agency,m.is_2")
+            ->select();
+        $p_tree=[0=>[],1=>[],2=>[],3=>[]];//按照平台划分出用户
+        foreach ($tree as $key => $value) {
+            if(!isset($p_tree[$value["platform_id"]])){
+                $p_tree[$value["platform_id"]]=[];
+            }
+            $value["y"]=0;
+            $value["s_y"]=0;
+            $value["s2"]=0;
+            $value["s2_y"]=0;
+            $value["s_new"]=0;
+            $value["s2_arr"]=[];
+            $p_tree[$value["platform_id"]][$value["member_id"]]=$value;
+        }
+        foreach ($member_data as $key => $value) {//业绩
+            if(!isset($p_tree[$value["platform_id"]][$value["member_id"]])){
+                continue;
+            }
+            $p_tree[$value["platform_id"]][$value["member_id"]]["y"]+=$value["enterprise"];
+        }
+
+        foreach ($tree as $key => $value) { //计算团队下各种人数
+
+            if($value["parent_id"]!=0){
+                if(isset($p_tree[$value["platform_id"]][$value["parent_id"]])){
+                    $p_tree[$value["platform_id"]][$value["parent_id"]]["s_y"]+=$p_tree[$value["platform_id"]][$value["member_id"]]["y"];//为上级的一级团队业绩累加
+                    if($value["create_mon"] == $mon && $p_tree[$value["platform_id"]][$value["member_id"]]["y"]>=50){
+                        //上月新增 业绩大于50(有效新增)
+                        $p_tree[$value["platform_id"]][$value["parent_id"]]["s_new"]+=1;//有效新增
+                    }
+                }
+
+            }
+            if($value["parent2_id"]!=0){
+                //上级及上上及都存在在这个平台
+                if(isset($p_tree[$value["platform_id"]][$value["parent2_id"]]) && isset($p_tree[$value["platform_id"]][$value["parent_id"]])){
+                    $p_tree[$value["platform_id"]][$value["parent2_id"]]["s2"]+=1;//2级团队人数
+                    $p_tree[$value["platform_id"]][$value["parent2_id"]]["s2_arr"][]=$value["member_id"];//2级团队人数
+                    $p_tree[$value["platform_id"]][$value["parent2_id"]]["s2_y"]+=$p_tree[$value["platform_id"]][$value["member_id"]]["y"];//为上上级的2级团队业绩累加
+                }
+
+            }
+        }
+        foreach ($p_tree as $key => $value) {//$key为平台platform_id
+            foreach ($value as $k =>$v) {//$k为用户member_id
+//                $is_2=Db::name("member")->where("member_id",$v["member_id"])->value("is_2");
+                $is_2=$value[$v["member_id"]]["is_2"];
+                $dian=$this->getdian($v["s_y"],$v["s_new"]);
+                $s2num=0;$v["s2_y"]=0;
+                foreach ($v["s2_arr"] as $s2_item) {
+                    $is_agency=$value[$value[$s2_item]["parent_id"]]["is_agency"]??0;
+                    if($is_agency == 1){ //上级是代理，才计入人数
+                        $s2_man_is_y=$value[$s2_item]["y"];
+                        //本月必须有业绩才算入人数
+                        if($s2_man_is_y){
+                            $s2num++;
+                            $v["s2_y"]+=$value[$s2_item]["y"];
+                        }
+                    }
+
+                }
+
+                //$dian2=$this->getdian2($v["s2_y"],$v["s2"]);
+                $dian2=$this->getdian2($v["s2_y"],$s2num);
+                if($is_2==0){$dian2=0;}
+                if($v["s_y"]>0){$son_yongjin=round($dian*$v["s_y"]/100,2);}else{ $son_yongjin=0;};
+
+                if($v["s2_y"]>0){$son2_yongjin=round($dian2*$v["s2_y"]/100,2);}else{ $son2_yongjin=0;};
+                // $son2_yongjin=round($dian2*$v["s2_y"]/100,2);
+                $user=Db::name("member")->field("phone,nickname")->where("member_id",$k)->find();
+                $in=[
+                    "money"=>(float)$son_yongjin + (float)$son2_yongjin,
+                    "mon"=>$mon,
+                    "nickname"=>$user["nickname"],
+                    "phone"=>$user["phone"],
+                    "member_id"=>$k,
+                    "platform_id"=>$v["platform_id"],
+                    "platform"=>$platform[$v["platform_id"]],
+                    "json"=>json_encode($v),
+                    "s_y"=>$v["s_y"],
+                    "s2_y"=>$v["s2_y"],
+                    "dian"=>$dian,
+                    "dian2"=>$dian2,
+                    "son_yongjin"=>$son_yongjin,
+                    "son2_yongjin"=>$son2_yongjin,
+                    "create_time"=>$now_datetime,
+                    "update_time"=>$now_datetime,
+                    "uid"=>$v["uid"],
+
+                ];
+
+                if($in["money"]>0){
+                    $out[]=$in;
+                }
+
+            }
+        }
+
+        $this->assign("item",$out);
+        return $this->fetch("set_list");
+//        return $this->success([], '结算成功', 1);
+
+
+    }
+
+
+
+    public function sta_mon($member_id,$platform_id,$mon)
+    {
+        $ssjs=true;
+        $get=[
+            "member_id"=>$member_id,
+            "mon"=>$mon
+        ];
+        $member_id=$get["member_id"];
+        $user=Db::name("member")->where("member_id",$get["member_id"])->find();
+        $yeji=Db::name("member_data")
+            ->field("SUM(enterprise) s")
+            ->where("member_id",$get["member_id"])
+            ->where("platform_id",$platform_id)
+            ->where("mon",$mon)
+            ->find();
+        $son_man=Db::name("member_tree")
+            ->field("member_id,create_mon")
+            ->where("parent_id",$get["member_id"])
+            ->where("create_mon","<=",$mon)
+            ->where("platform_id",$platform_id)
+            ->select();
+
+        $son_arr=[];$new_arr=[];
+        foreach ($son_man as $key => $value) {
+            $son_arr[]=$value["member_id"];
+            if($value["create_mon"] == $mon){
+                $new_arr[]=$value["member_id"];
+            }
+        }
+        $son_yeji=Db::name("member_data")
+            ->field("SUM(enterprise) s")
+            ->whereIn("member_id",$son_arr)
+            ->where("platform_id",$platform_id)
+            ->where("mon",$mon)
+            ->find();
+        $new_youxiao=Db::name("member_data")
+            ->field("SUM(enterprise) s,member_id")
+            ->whereIn("member_id",$new_arr)
+            ->where("platform_id",$platform_id)
+            ->group("member_id")
+            ->select();
+        $new_num=0;
+        foreach ($new_arr as $key => $value) {
+            $r=Db::name("member_data")
+                ->field("SUM(enterprise) s")
+                ->where("member_id",$value)
+                ->where("platform_id",$platform_id)
+                ->where("mon",$mon)
+                ->find();
+            if($r["s"]>=50){
+                $new_num++;//有效新增人数
+                $new_yx[]=$value;
+            }
+        }
+        if( $ssjs || date("Ym")== $mon){
+            $dian=$this->getdian($son_yeji["s"],$new_num);
+            $son_yongjin=round($dian*$son_yeji["s"]/100,2);
+        }
+        $son2_man=Db::name("member_tree")
+            ->field("member_id")
+            ->where("parent2_id",$get["member_id"])
+            ->where("create_mon","<=",$mon)
+            ->where("platform_id",$platform_id)
+            ->select();
+        $son2_arr=[];$s2num=0; $s2_all_num1=0;
+        foreach ($son2_man as $key => $value) {
+            $son_parent_id=Db::name("member")->where("member_id",$value["member_id"])->value("parent_id");
+            $is_agency=Db::name("member")->where("member_id",$son_parent_id)->value("is_agency");
+            if($is_agency == 1  && in_array($son_parent_id,$son_arr) ){ //上级是代理，才计入人数
+                $s2_all_num1++;
+                //本月必须有业绩才算入人数
+                $s2_man_is_y=Db::name("member_data")
+                    ->field("member_id")
+                    ->where("member_id",$value["member_id"])
+                    ->where("enterprise",">",0)
+                    ->where("platform_id",$platform_id)
+                    ->where("mon",$mon)
+                    ->limit(1)
+                    ->find();
+                if($s2_man_is_y){
+                    $son2_arr[]=$value["member_id"];
+                    $s2num++;
+                }
+            }
+        }
+        $son2_yeji=Db::name("member_data")
+            ->field("SUM(enterprise) s")
+            ->whereIn("member_id",$son2_arr)
+            ->where("mon",$mon)
+            ->where("platform_id",$platform_id)
+            ->find();
+        if($ssjs || date("Ym")==$mon){
+            $dian2=$this->getdian2($son2_yeji["s"],$s2num);
+            //$dian2=$this->getdian2($son2_yeji["s"],count($son2_man));
+            $son2_yongjin=round($dian2*$son2_yeji["s"]/100,2);
+            $yongjin=$son2_yongjin+$son_yongjin;
+        }else{
+            $yongjin=Db::name("commission")
+                ->where("member_id",$member_id)
+                ->where("platform_id",$platform_id)
+                ->where("mon",$mon)
+                ->value("money");
+        }
+//        $yongjin_true=Db::name("commission")
+//                ->where("member_id",$member_id)
+//                ->where("platform_id",$platform_id)
+//                ->where("mon",$mon)
+//                ->value("money")??0;
+        if(!$yongjin){
+            $yongjin=0;
+        }
+        $return=[
+            "mon"=>$mon,
+            "yongjin"=>$yongjin,
+            "yeji"=>(float) $yeji["s"],
+            "dian"=>(float) $dian,
+            "dian2"=>(float) $dian2,
+            "son_yeji"=>(float) $son_yeji["s"],
+            "son2_yeji"=>(float) $son2_yeji["s"],
+            "son_num"=>(int) count($son_man),
+            "son2_num"=>$s2_all_num1,
+            "son2_array"=>json_encode($son2_arr),
+            "new_all_num"=>(int) count($new_arr),
+            "new_num"=>(int) $new_num,
+            "all_num"=> (int) count($son_man)+(int) count($son2_man),
+//            "yongjin_true"=>$yongjin_true
+        ];
+        return $return;
+    }
+
 
 }

@@ -12,6 +12,7 @@
 </style>
 <div class="layuimini-container">
    <input name="button" id="outexcel" class="layui-btn" style="width: 100px;" onclick="outexcel();" value="导出">
+   <!--<span style="font-size:12px; color: red;">导出条数过多时,将会每100条自动拆分为一个文件</span>-->
    </input>
 
         <table  class="layui-table" id="table">
@@ -19,22 +20,22 @@
                 <td>序号</td>
                 <td>id</td>
                 <td>用户</td>
-                <td>uid</td>
+    {if $member_type == "good_member"} <td>uid</td>{/if}
                 <td>手机号</td>
-                <td>业绩</td>
-                <td>平台</td>
+    {if $member_type == "good_member"}  <td>业绩</td>{/if}
+    {if $member_type == "good_member"}  <td>平台</td>{/if}
                 <td>代理</td>
             </tr>
         {volist name="$good_member_list" id="v"}  
             <tr>
                 <td>{$key+1}</td>
-                <td>{$v.id}</td>
+                <td>{$v.id??$v.member_id}</td>
                 <td>{$v.nickname}</td>
-                <td>{$v.uid}</td>
+    {if $member_type == "good_member"} <td>{$v.uid??0}</td>{/if}
                 <td>{$v.phone}</td>
-                <td>{$v.e}</td>
-                <td>{$p[$v.platform_id-1]["name"]}</td>
-                <td>{$v.agent==0?"会员":"代理"}</td>
+    {if $member_type == "good_member"}<td>{$v.e??0}</td>{/if}
+    {if $member_type == "good_member"}<td>{$p[$v.platform_id-1]["name"]}</td>{/if}
+                <td>{$v.is_agency==0?"会员":"代理"}</td>
                
             </tr>
         {/volist}
@@ -49,9 +50,10 @@
 
 <script>
 var time=[];
-layui.use("laydate",function(){
+var layer;
+layui.use(["laydate","layer"],function(){
     var laydate = layui.laydate;
-
+    layer=layui.layer;
     laydate.render({
             elem:'#date', // 绑定id为test4的元素
             type: 'date', // 日期选择器   
@@ -98,36 +100,51 @@ function sss(){
     window.location.href=url;
 }
 
-function outexcel(){
-     var t = document.getElementById("table"); //获取第一个表格   
-        var list=[],title=[];
-        for(var i=0;i<t.rows.length;i++){  
-            let c=[];
-            for(var j=0;j<t.rows[i].cells.length;j++){  
-                c.push(t.rows[i].cells[j].innerHTML);
-            }  
-            if(i == 0){
-                title=c;
-            }else{
-                list.push(c);
-            }
-        }  
+// function outexcel(){
+//      var t = document.getElementById("table"); //获取第一个表格 
+//      var random=Math.random();  
+//      var num=0;
+//         var list=[],title=[];
+//         for(var i=0;i<t.rows.length;i++){  
+//             let c=[];
+//             for(var j=0;j<t.rows[i].cells.length;j++){  
+//                 c.push(t.rows[i].cells[j].innerHTML);
+//             }  
+//             if(i == 0){
+//                 title=c;
+//             }else{
+//                 list.push(c);
+//             }
+//             if(num++>=50){
+//                 num=0;
+//                 list1=list;
+//                 list=[];
+//                 $.ajax({
+//                     type:"post",
+//                     url: "/admin/enterprise/exportExcel",
+//                     data: {columName:title,list:list1,download:2,random:random},
+//                     dataType: "json",
+//                     success: function(res){
+//                         // window.open("/excel/"+res);
+//                     }
+//                 });
+//             }
+//         }
+//     setTimeout(function(){
+//         $.ajax({
+//             type:"post",
+//             url: "/admin/enterprise/exportExcel",
+//             data: {columName:title,list:list,download:1,random:random},
+//             dataType: "json",
+//             success: function(res){
+//                 window.open("/excel/"+res);
+//             }
+//         });
+//     }, 1000);
+    
 
-        // goToUrl("/admin/enterprise/exportExcel","post",{columName:title ,download:"0",list:list});
-    // parent.load_excel(title,list);
-    // window.location.href="/admin/enterprise/exportExcel?columName="+title+"$download=0&list="+list;
-    $.ajax({
-        type:"post",
-        url: "/admin/enterprise/exportExcel",
-        data: {columName:title,list:list,download:1},
-        dataType: "json",
-        success: function(res){
-            window.open("/excel/"+res);
-        }
-    });
 
-
-}
+// }
 
 
 
@@ -156,4 +173,63 @@ function outexcel(){
             return temp_form;
         }   
 
+
+var list_50=[];
+var loading;
+function outexcel(){
+     var t = document.getElementById("table"); //获取第一个表格   
+     loading = layer.load(1);
+     var random=Math.random();
+     var num=0;
+     var list=[],title=[];
+        for(var i=0;i<t.rows.length;i++){  
+            let c=[];
+            for(var j=0;j<t.rows[i].cells.length;j++){  
+                c.push(t.rows[i].cells[j].innerHTML);
+            }  
+            if(i == 0){
+                title=c;
+            }else{
+                list.push(c);
+            }
+            if(num++>=50){
+                num=0;
+                list1=list;
+                list=[];
+                list_50.push(list1);
+            }
+        }  
+    list_50.push(list);
+    down50(0,title,random);
+}
+function down50(num,title,random){
+    var download=2;
+    if(num>=(list_50.length-1)){
+        download=1;
+        $.ajax({
+            type:"post",
+            url: "/admin/enterprise/exportExcel",
+            data: {columName:title,list:list_50[num],download:download,random:random},
+            dataType: "json",
+            success: function(res){
+                window.layer.close(window.loading); 
+                window.open("/excel/"+res);
+                // window.open("/excel/"+res);
+            }
+        });
+    }else{
+        $.ajax({
+            type:"post",
+            url: "/admin/enterprise/exportExcel",
+            data: {columName:title,list:list_50[num++],download:download,random:random},
+            dataType: "json",
+            success: function(res){
+                // num=num+1;
+                down50(num,title,random);
+                // window.open("/excel/"+res);
+            }
+        });
+    }
+    
+}
 </script>

@@ -155,5 +155,6 @@ Route::group('enterprise', function () {
 
 
     Route::any('exportExcel', 'exportExcel');
-   
+    Route::any('true_set_list', 'true_set_list');
+
 })->prefix('admin/content.Enterprise/');

@@ -19,7 +19,7 @@ Route::group('index', function () {
     // 欢迎页
     Route::get('welcome', 'welcome');
 
-    Route::get('show_list', 'show_list');
+    Route::any('show_list', 'show_list');
     // 清除缓存
     Route::get('clear', 'clear');
 })->prefix('admin/Index/');

@@ -21,8 +21,8 @@
         {foreach $item as $k=>$vo }
             <tr>
                 <td>{$pp[$vo.platform_id]}</td>
-                <td>{$vo.t==1?"结算":"提现"}</td>
-                <td>{$vo.t==1?"+":"-"}{$vo.money}</td>
+                <td>{$vo.t==0?"结算":"提现"}</td>
+                <td>{$vo.t==0?"+":"-"}{$vo.money}</td>
                 <td>{$vo.status==1?"已完成":($vo.status==0?"待审核":"已退回")}</td>
                 <td>{$vo.create_time|date="Y-m-d H:i:s"}</td>
             </tr>
