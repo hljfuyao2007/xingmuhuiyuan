@@ -35,7 +35,7 @@ class Index extends AdminController
      * @return mixed
      */
     public function welcome()
-    {   
+    {
         $admin=session("admin");
         if($admin["role_id"]==5){
           $member=Db::name("member")->field("member_id")->where("manage_id",$admin["manage_id"])->select();

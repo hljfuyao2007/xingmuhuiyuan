@@ -50,6 +50,7 @@ class Login extends AdminController
                 return $this->error([], '用户不存在或已被禁用');
             }
             if (encrypt($param['password']) != $admin['password']) {
+
                 return $this->error([], '密码或用户名错误');
             }
             if ($admin['status'] == 0) {

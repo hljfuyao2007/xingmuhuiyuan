@@ -1,6 +1,3 @@
-# backend_template_v6
-## [文档地址](https://v6doc.kassy.vip/)
-
 ## 特别感谢
 ThinkPHP：https://github.com/top-think/framework <br/>
 EasyAadmin: http://easyadmin.99php.cn <br/>
